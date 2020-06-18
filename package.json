@@ -1,18 +1,18 @@
 {
-  "name": "@jupyterlab-examples/server-extension",
+  "name": "@omazapa/jupyter_swan",
   "version": "0.1.0",
-  "description": "A minimal JupyterLab extension with backend and frontend parts.",
+  "description": "CERN SWAN JupyterLab extension with backend and frontend parts.",
   "keywords": [
     "jupyter",
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "https://github.com/jupyterlab/extension-examples",
+  "homepage": "https://github.com/omazapa/jupyter_swan",
   "bugs": {
-    "url": "https://github.com/jupyterlab/extension-examples/issues"
+    "url": "https://github.com/omazapa/jupyter_swan/issues"
   },
   "license": "BSD-3-Clause",
-  "author": "JupyterLab",
+  "author": "Omar Zapata",
   "files": [
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
     "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
@@ -22,16 +22,16 @@
   "style": "style/index.css",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jupyterlab/extension-examples.git"
+    "url": "https://github.com/omazapa/jupyter_swan.git"
   },
   "scripts": {
     "build": "jlpm run build:lib",
-    "build:labextension": "cd jlab_ext_example && rimraf labextension && mkdirp labextension && cd labextension && npm pack ../..",
+    "build:labextension": "cd jupyterlab_swan && rimraf labextension && mkdirp labextension && cd labextension && npm pack ../..",
     "build:lib": "tsc",
     "build:all": "jlpm run build:labextension",
     "clean": "jlpm run clean:lib",
     "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
-    "clean:labextension": "rimraf jlab_ext_example/labextension",
+    "clean:labextension": "rimraf jupyterlab_swan/labextension",
     "clean:all": "jlpm run clean:lib && jlpm run clean:labextension",
     "eslint": "eslint . --ext .ts,.tsx --fix",
     "eslint:check": "eslint . --ext .ts,.tsx",
@@ -67,7 +67,7 @@
           "pip"
         ],
         "base": {
-          "name": "jlab_ext_example"
+          "name": "jupyterlab_swan"
         }
       }
     },

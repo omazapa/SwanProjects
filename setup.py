@@ -13,7 +13,7 @@ import setuptools
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 # The name of the project
-name="jlab_ext_example"
+name="jupyterlab_swan"
 
 # Ensure a valid python version
 ensure_python(">=3.5")
@@ -21,7 +21,7 @@ ensure_python(">=3.5")
 # Get the version
 version = get_version(pjoin(name, "_version.py"))
 
-lab_path = pjoin(HERE, name, "labextension")
+lab_path = pjoin(HERE, name, "jupyterlab_swan")
 
 # Representative files that should exist after a successful build
 jstargets = [
@@ -37,7 +37,7 @@ package_data_spec = {
 data_files_spec = [
     ("share/jupyter/lab/extensions", lab_path, "*.tgz"),
     ("etc/jupyter/jupyter_notebook_config.d",
-     "jupyter-config", "jlab_ext_example.json"),
+     "jupyter-config", "jupyterlab_swan.json"),
 ]
 
 cmdclass = create_cmdclass("jsdeps",
@@ -56,9 +56,9 @@ with open("README.md", "r") as fh:
 setup_args = dict(
     name=name,
     version=version,
-    url="https://github.com/jupyterlab/extension-examples",
-    author="JupyterLab",
-    description="A minimal JupyterLab extension with backend and frontend parts.",
+    url="https://github.com/omazapa/jupyter_swan",
+    author="Omar Zapata",
+    description="CERN SWAN JupyterLab extension with backend and frontend parts.",
     long_description= long_description,
     long_description_content_type="text/markdown",
     cmdclass= cmdclass,
