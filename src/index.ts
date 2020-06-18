@@ -18,6 +18,20 @@ namespace CommandIDs {
   export const get = 'server:get-file';
 }
 
+
+class IFrameWidget extends IFrame {
+  constructor() {
+    super();
+    const baseUrl = PageConfig.getBaseUrl();
+    this.url = baseUrl + 'swan/static/index.html';
+    this.id = 'doc-example';
+    this.title.label = 'SWAN Server Doc';
+    this.title.closable = true;
+    this.node.style.overflowY = 'auto';
+  }
+}
+
+
 /**
  * Initialization data for the server-extension-example extension.
  */
@@ -38,11 +52,11 @@ const extension: JupyterFrontEndPlugin<void> = {
       const data = await requestAPI<any>('hello');
       console.log(data);
     } catch (reason) {
-      console.error(`Error on GET /jlab-ext-example/hello.\n${reason}`);
+      console.error(`Error on GET /swan/hello.\n${reason}`);
     }
 
     // POST request
-    const dataToSend = { name: 'George' };
+    const dataToSend = { name: 'Omar' };
     try {
       const reply = await requestAPI<any>('hello', {
         body: JSON.stringify(dataToSend),
@@ -51,17 +65,17 @@ const extension: JupyterFrontEndPlugin<void> = {
       console.log(reply);
     } catch (reason) {
       console.error(
-        `Error on POST /jlab-ext-example/hello ${dataToSend}.\n${reason}`
+        `Error on POST /swan/hello ${dataToSend}.\n${reason}`
       );
     }
 
     const { commands, shell } = app;
     const command = CommandIDs.get;
-    const category = 'Extension Examples';
+    const category = 'SWAN';
 
     commands.addCommand(command, {
-      label: 'Get Server Content in a IFrame Widget',
-      caption: 'Get Server Content in a IFrame Widget',
+      label: 'SWAN Docs',
+      caption: 'Testing IFrame Widget',
       execute: () => {
         const widget = new IFrameWidget();
         shell.add(widget, 'main');
@@ -81,15 +95,3 @@ const extension: JupyterFrontEndPlugin<void> = {
 };
 
 export default extension;
-
-class IFrameWidget extends IFrame {
-  constructor() {
-    super();
-    const baseUrl = PageConfig.getBaseUrl();
-    this.url = baseUrl + 'jlab-ext-example/static/index.html';
-    this.id = 'doc-example';
-    this.title.label = 'Server Doc';
-    this.title.closable = true;
-    this.node.style.overflowY = 'auto';
-  }
-}
