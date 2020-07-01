@@ -71,7 +71,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     const command = CommandIDs.get;
     const category = 'SWAN';
 
-    commands.addCommand(command, {
+/*    commands.addCommand(command, {
       label: 'SWAN Docs',
       caption: 'Testing IFrame Widget',
       execute: () => {
@@ -79,7 +79,6 @@ const extension: JupyterFrontEndPlugin<void> = {
         shell.add(widget, 'main');
       }
     });
-
     palette.addItem({ command, category: category });
 
     if (launcher) {
@@ -89,7 +88,7 @@ const extension: JupyterFrontEndPlugin<void> = {
         category: category
       });
     }
-
+*/
     const scram_options = ['slc7_amd64_gcc820','slc7_amd64_gcc700','slc7_amd64_gcc630'];
     let scram_option = scram_options[0];
 
@@ -149,9 +148,27 @@ const extension: JupyterFrontEndPlugin<void> = {
             }
             ///actions to execute witih the env HERE!
             console.log('selected item ' + value.value);
+            commands.addCommand(command, {
+              label: 'SWAN Projects',
+              caption: 'CMSSW',
+              execute: () => {
+                const widget = new IFrameWidget();
+                shell.add(widget, 'main');
+              }
+            });
+
+            palette.addItem({ command, category: category });
+
+            if (launcher) {
+              // Add launcher
+              launcher.add({
+                command: command,
+                category: "SWAN Projects"
+              });
+            }        
+
           });
         });
-
       }
     });
 
