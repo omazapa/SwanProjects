@@ -30,12 +30,12 @@ namespace CommandIDs {
 
 
 class IFrameWidget extends IFrame {
-  constructor() {
+  constructor(project_name:string) {
     super();
     const baseUrl = PageConfig.getBaseUrl();
     this.url = baseUrl + 'swan/static/index.html';
     this.id = 'doc-example';
-    this.title.label = 'SWAN Server Doc';
+    this.title.label = project_name;
     this.title.closable = true;
     this.node.style.overflowY = 'auto';
   }
@@ -68,7 +68,6 @@ const extension: JupyterFrontEndPlugin<void> = {
 */
 
     const { commands, shell } = app;
-    const command = CommandIDs.get;
     const category = 'SWAN';
 
 /*    commands.addCommand(command, {
@@ -107,11 +106,18 @@ const extension: JupyterFrontEndPlugin<void> = {
       caption: 'Create a new CMSSW Env',
       icon: args => (args['isPalette'] ? null : cmsicon),
       execute: async args => {
-        return InputDialog.getItem({
+        return InputDialog.getText(
+          {
+            title: 'Project Name',
+          }
+        ).then(project_name => { 
+          if (project_name ==null) return
+        InputDialog.getItem({
           title: 'Pick an SCRAM Version',
           items: scram_options,
           current: Math.max(0, scram_options.indexOf(scram_option))
         }).then(value => {
+          if(value==null) return
           console.log('selected item ' + value.value);
           if (value.value === 'slc7_amd64_gcc820')
           {
@@ -132,6 +138,7 @@ const extension: JupyterFrontEndPlugin<void> = {
             current: Math.max(0, cmssw_options.indexOf(cmssw_option))
           }).then(cmssw_value => {
 
+            if(cmssw_value==null) return
             // POST request
             const dataToSend = { SCRAM: value.value, CMSSW:cmssw_value.value  };
             try {
@@ -146,13 +153,14 @@ const extension: JupyterFrontEndPlugin<void> = {
                 `Error on POST /swan/hello ${dataToSend}.\n${reason}`
               );
             }
+            const command ='swan_project_'+project_name.value
             ///actions to execute witih the env HERE!
             console.log('selected item ' + value.value);
             commands.addCommand(command, {
-              label: 'SWAN Projects',
-              caption: 'CMSSW',
+              label: project_name.value,
+              caption: project_name.value,
               execute: () => {
-                const widget = new IFrameWidget();
+                const widget = new IFrameWidget(project_name.value);
                 shell.add(widget, 'main');
               }
             });
@@ -169,6 +177,7 @@ const extension: JupyterFrontEndPlugin<void> = {
 
           });
         });
+      });
       }
     });
 
