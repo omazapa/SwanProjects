@@ -20,11 +20,20 @@ class RouteHandler(APIHandler):
     def post(self):
         # input_data is a dictionnary with a key "name"
         input_data = self.get_json_body()
+        SWANP_DIR="SWAN_projects"
         SCRAM = input_data["SCRAM"]
         CMSSW = input_data["CMSSW"]
-        create_cmd="/home/ozapatam/Projects/swan/jupyter_swan/bin/create_kernel_lab.sh"+" "+SCRAM+" "+CMSSW
+        PROJECT_NAME = input_data["PROJECT_NAME"]
+        #create_cmd="/home/ozapatam/Projects/swan/jupyter_swan/bin/create_kernel_lab.sh"+" "+SCRAM+" "+CMSSW
+        create_cmd="/home/ozapatam/Projects/swan/jupyter_swan/bin/create_project.sh "+PROJECT_NAME+" "+SCRAM+" "+CMSSW
         os.system(create_cmd)
-        data = {"greetings": "executed {}, kernel added".format(create_cmd)}
+
+        JSON_PATH='/home/ozapatam/Projects/swan/jupyter_swan/'+SWANP_DIR+'/'+PROJECT_NAME+'/.kernel.json'
+        jfile=open(JSON_PATH)
+        kernel_content=jfile.read()
+        jfile.close()
+
+        data = {"greetings": "executed {}, kernel added".format(create_cmd),'kernel':kernel_content}
         self.finish(json.dumps(data))
 
 

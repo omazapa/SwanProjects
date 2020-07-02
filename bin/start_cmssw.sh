@@ -2,13 +2,14 @@
 SCRAM=$1
 CMSSW=$2
 PYTHON=$3
-
+PROJECT_PATH=$4
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 cms_basedir=/cvmfs/cms.cern.ch
 export PATH=${cms_basedir}/common:$PATH
 
 #by default I will load the environment in the cvmfs path in read only
-cd /cvmfs/cms.cern.ch/$SCRAM/cms/cmssw/$CMSSW
+#cd /cvmfs/cms.cern.ch/$SCRAM/cms/cmssw/$CMSSW
+cd $PROJECT_PATH
 scramv1 runtime -sh
 cd
 #requires to prepend the lib and bin paths

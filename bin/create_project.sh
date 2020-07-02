@@ -20,6 +20,7 @@ echo "{
   \"$SCRAM\",
   \"$CMSSW\",
   \"python3\",
+  \"$PROJECT_PATH/$CMSSW\",
   \"-f\",  
   \"{connection_file}\"
  ]

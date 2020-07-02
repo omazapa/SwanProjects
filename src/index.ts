@@ -140,7 +140,7 @@ const extension: JupyterFrontEndPlugin<void> = {
 
             if(cmssw_value==null) return
             // POST request
-            const dataToSend = { SCRAM: value.value, CMSSW:cmssw_value.value  };
+            const dataToSend = { SCRAM: value.value, CMSSW:cmssw_value.value, PROJECT_NAME:project_name.value };
             try {
               requestAPI<any>('hello', {
                 body: JSON.stringify(dataToSend),
