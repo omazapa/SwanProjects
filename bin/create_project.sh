@@ -6,11 +6,16 @@ SWANP_DIR="SWAN_projects"
 PROJECT_NAME=$1
 SCRAM=$2
 CMSSW=$3
-PROJECT_PATH=/home/ozapatam/Projects/swan/jupyter_swan/$SWANP_DIR/$PROJECT_NAME
+PROJECT_PATH="/home/ozapatam/Projects/swan/jupyter_swan/$SWANP_DIR/$PROJECT_NAME"
 
 mkdir -p $PROJECT_PATH
 
 SCRIPT_PATH=/home/ozapatam/Projects/swan/jupyter_swan/bin
+KERNEL_DIR=$HOME/.local/share/jupyter/kernels/
+PYKERNELDIR=$KERNEL_DIR/$SCRAM"_"$CMSSW"_python3"
+echo $PYKERNELDIR
+mkdir -p $PYKERNELDIR
+
 echo "{
  \"display_name\": \"SCRAM: $SCRAM CMSSW:$CMSSW Python 3\",
  \"language\": \"python\",
@@ -24,7 +29,8 @@ echo "{
   \"-f\",  
   \"{connection_file}\"
  ]
-}" > $PROJECT_PATH/.kernel.json
+}" > $PYKERNELDIR/kernel.json
+
 cd $PROJECT_PATH
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 export SCRAM_ARCH=$SCRAM

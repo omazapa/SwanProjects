@@ -10,14 +10,14 @@ export PATH=${cms_basedir}/common:$PATH
 #by default I will load the environment in the cvmfs path in read only
 #cd /cvmfs/cms.cern.ch/$SCRAM/cms/cmssw/$CMSSW
 cd $PROJECT_PATH
-scramv1 runtime -sh
+eval `scramv1 runtime -sh`
 cd
 #requires to prepend the lib and bin paths
 export LD_LIBRARY_PATH=/cvmfs/cms.cern.ch/$SCRAM/cms/cmssw/$CMSSW/external/$SCRAM/lib/:$LD_LIBRARY_PATH
 export PATH=/cvmfs/cms.cern.ch/$SCRAM/cms/cmssw/$CMSSW/external/$SCRAM/bin/:$PATH
 which python2
 echo $@
-echo $PYTHON -m ipykernel_launcher $4 $5
-$PYTHON -m ipykernel_launcher $4 $5
+echo $PYTHON -m ipykernel_launcher $5 $6
+$PYTHON -m ipykernel_launcher $5 $6
 #python2 /home/ozapatam/Projects/swan/jupyter_swan/bin/start_ipykernel.py
 

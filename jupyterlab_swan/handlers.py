@@ -28,12 +28,12 @@ class RouteHandler(APIHandler):
         create_cmd="/home/ozapatam/Projects/swan/jupyter_swan/bin/create_project.sh "+PROJECT_NAME+" "+SCRAM+" "+CMSSW
         os.system(create_cmd)
 
-        JSON_PATH='/home/ozapatam/Projects/swan/jupyter_swan/'+SWANP_DIR+'/'+PROJECT_NAME+'/.kernel.json'
-        jfile=open(JSON_PATH)
-        kernel_content=jfile.read()
-        jfile.close()
+        #JSON_PATH='/home/ozapatam/Projects/swan/jupyter_swan/'+SWANP_DIR+'/'+PROJECT_NAME+'/.kernel.json'
+        #jfile=open(JSON_PATH)
+        #kernel_content=jfile.read()
+        #jfile.close()
 
-        data = {"greetings": "executed {}, kernel added".format(create_cmd),'kernel':kernel_content}
+        data = {"greetings": "executed {}, kernel added".format(create_cmd)}
         self.finish(json.dumps(data))
 
 
