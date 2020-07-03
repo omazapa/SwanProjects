@@ -3,9 +3,9 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { ICommandPalette, IFrame } from '@jupyterlab/apputils';
+import { ICommandPalette} from '@jupyterlab/apputils';
 
-import { PageConfig } from '@jupyterlab/coreutils';
+//import { PageConfig } from '@jupyterlab/coreutils';
 
 import { ILauncher } from '@jupyterlab/launcher';
 
@@ -17,6 +17,7 @@ import { LabIcon } from '@jupyterlab/ui-components';
 
 import { InputDialog } from '@jupyterlab/apputils';
 
+import {  Widget } from '@lumino/widgets';
 
 const PALETTE_CATEGORY = 'SWAN';
 
@@ -28,16 +29,13 @@ namespace CommandIDs {
   export const get_cmssw = 'server:create_env';
 }
 
-
-class IFrameWidget extends IFrame {
+class ProjectWidget extends Widget {
   constructor(project_name:string) {
     super();
-    const baseUrl = PageConfig.getBaseUrl();
-    this.url = baseUrl + 'swan/static/index.html';
-    this.id = 'doc-example';
+    this.addClass('jp-example-view');
+    this.id = project_name;
     this.title.label = project_name;
     this.title.closable = true;
-    this.node.style.overflowY = 'auto';
   }
 }
 
@@ -160,7 +158,7 @@ const extension: JupyterFrontEndPlugin<void> = {
               label: project_name.value,
               caption: project_name.value,
               execute: () => {
-                const widget = new IFrameWidget(project_name.value);
+                const widget = new ProjectWidget(project_name.value);
                 shell.add(widget, 'main');
               }
             });
