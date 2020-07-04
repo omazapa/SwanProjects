@@ -3,8 +3,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { ICommandPalette} from '@jupyterlab/apputils';
-
+import { MainAreaWidget,ICommandPalette} from '@jupyterlab/apputils';
 //import { PageConfig } from '@jupyterlab/coreutils';
 
 import { ILauncher } from '@jupyterlab/launcher';
@@ -17,27 +16,19 @@ import { LabIcon } from '@jupyterlab/ui-components';
 
 import { InputDialog } from '@jupyterlab/apputils';
 
-import {  Widget } from '@lumino/widgets';
+import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 
 const PALETTE_CATEGORY = 'SWAN';
+
+import {ProjectWidget} from './ProjectWidget'
 
 /**
  * The command IDs used by the server extension plugin.
  */
 namespace CommandIDs {
-  export const get = 'server:get-file';
-  export const get_cmssw = 'server:create_env';
+  export const get_cmssw = 'swan:create-project';
 }
 
-class ProjectWidget extends Widget {
-  constructor(project_name:string) {
-    super();
-    this.addClass('jp-example-view');
-    this.id = project_name;
-    this.title.label = project_name;
-    this.title.closable = true;
-  }
-}
 
 
 /**
@@ -51,22 +42,16 @@ const extension: JupyterFrontEndPlugin<void> = {
   activate: async (
     app: JupyterFrontEnd,
     palette: ICommandPalette,
-    launcher: ILauncher | null
+    launcher: ILauncher | null,
+    browserFactory: IFileBrowserFactory
   ) => {
     console.log('JupyterLab extension SWAN is activated!');
     const manager = app.serviceManager;
     let cmsIconStr = '../style/CMS_logo.svg';
-    // GET request
-/*    try {
-      const data = await requestAPI<any>('hello');
-      console.log(data);
-    } catch (reason) {
-      console.error(`Error on GET /swan/hello.\n${reason}`);
-    }
-*/
 
+    //const { commands } = app;
     const { commands, shell } = app;
-    const category = 'SWAN';
+    //const category = 'SWAN';
 
 /*    commands.addCommand(command, {
       label: 'SWAN Docs',
@@ -151,28 +136,37 @@ const extension: JupyterFrontEndPlugin<void> = {
                 `Error on POST /swan/hello ${dataToSend}.\n${reason}`
               );
             }
-            const command ='swan_project_'+project_name.value
+            const cwd =
+            (args['cwd'] as string) ||
+            (browserFactory ? browserFactory.defaultBrowser.model.path : '');
+            let content: ProjectWidget;
+            content = new ProjectWidget(app,cwd);
+            content.title.label = project_name.value;
+            content.title.caption = project_name.value;
+            console.log(content)
+            const command_project ='swan_project_'+project_name.value
             ///actions to execute witih the env HERE!
             console.log('selected item ' + value.value);
-            commands.addCommand(command, {
+            console.log(MainAreaWidget)
+            commands.addCommand(command_project, {
               label: project_name.value,
               caption: project_name.value,
               execute: () => {
-                const widget = new ProjectWidget(project_name.value);
+                const widget = new MainAreaWidget({ content });
                 shell.add(widget, 'main');
               }
             });
-
-            palette.addItem({ command, category: category });
-
+            
+            palette.addItem({ command:command_project, category: 'SWAN Projects' });
+            
             if (launcher) {
               // Add launcher
               launcher.add({
-                command: command,
+                command: command_project,
                 category: "SWAN Projects"
               });
             }        
-
+            
           });
         });
       });
