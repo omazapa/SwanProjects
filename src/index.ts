@@ -1,4 +1,5 @@
 import {
+  ILabShell,
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
@@ -6,7 +7,6 @@ import {
 import { MainAreaWidget,ICommandPalette} from '@jupyterlab/apputils';
 //import { PageConfig } from '@jupyterlab/coreutils';
 
-import { ILauncher } from '@jupyterlab/launcher';
 
 import { requestAPI } from './jlabextexample';
 
@@ -18,6 +18,8 @@ import { InputDialog } from '@jupyterlab/apputils';
 
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 
+import ProjectLauncher from './launcher'
+
 const PALETTE_CATEGORY = 'SWAN';
 
 import {ProjectWidget} from './ProjectWidget'
@@ -27,9 +29,16 @@ import {ProjectWidget} from './ProjectWidget'
  */
 namespace CommandIDs {
   export const get_cmssw = 'swan:create-project';
+  export const open_project = 'swan_launcher:create';
+  
 }
 
+import { ILauncher} from '@jupyterlab/launcher';
+//import { launcherIcon } from '@jupyterlab/ui-components';
 
+//import { toArray } from '@lumino/algorithm';
+//import { JSONObject } from '@lumino/coreutils';
+//import { Widget } from '@lumino/widgets';
 
 /**
  * Initialization data for the server-extension-example extension.
@@ -43,11 +52,14 @@ const extension: JupyterFrontEndPlugin<void> = {
     app: JupyterFrontEnd,
     palette: ICommandPalette,
     launcher: ILauncher | null,
+    labShell: ILabShell,
     browserFactory: IFileBrowserFactory
   ) => {
     console.log('JupyterLab extension SWAN is activated!');
     const manager = app.serviceManager;
     let cmsIconStr = '../style/CMS_logo.svg';
+    ProjectLauncher.activate(app)
+
 
     //const { commands } = app;
     const { commands, shell } = app;
@@ -173,6 +185,18 @@ const extension: JupyterFrontEndPlugin<void> = {
       }
     });
 
+    // Add the command to the launcher
+    if (launcher) {
+      void manager.ready.then(() => {
+        launcher.add({
+          command: CommandIDs.open_project,
+          category: PALETTE_CATEGORY,
+          rank: 1,
+          kernelIconUrl: ""
+        });
+      })
+    }
+
 
     // Add the command to the launcher
     if (launcher) {
@@ -204,5 +228,6 @@ const extension: JupyterFrontEndPlugin<void> = {
 
   }
 };
+
 
 export default extension;
