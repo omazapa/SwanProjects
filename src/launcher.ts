@@ -27,7 +27,7 @@ namespace CommandIDs {
 const ProjectLauncher: JupyterFrontEndPlugin<ILauncher> = {
   activate,
   id: '@jupyterlab/launcher-extension:ProjectLauncher',
-  requires: [ILabShell],
+  requires: [ILauncher],
   optional: [ICommandPalette],
   provides: ILauncher,
   autoStart: true
@@ -48,7 +48,7 @@ function activate(
 ): ILauncher {
   const { commands } = app;
   const model = new LauncherModel();
-
+  
   commands.addCommand(CommandIDs.create, {
     label: 'Open SWAN Project Launcher',
     execute: args => {
@@ -60,12 +60,39 @@ function activate(
       const callback = (item: Widget) => {
         labShell.add(item, 'main', { ref: id });
       };
+    
+      let command1:ILauncher.IItemOptions = {
+        command:'swan:create-project',
+        category:'Notebook',
+        kernelIconUrl:launcherIcon.name
+
+      }
+      model.add(command1)
+      let command2:ILauncher.IItemOptions = {
+        command:'swan:create-project',
+        category:'Console',
+        kernelIconUrl:launcherIcon.name
+      }
+      model.add(command2)
+      
+      let command3:ILauncher.IItemOptions = {
+        command:'swan:create-project',
+        category:'Other',
+        kernelIconUrl:launcherIcon.name
+      }
+      model.add(command3)
+      let command4:ILauncher.IItemOptions = {
+        command:'swan:create-project',
+        category:'SWAN Test',
+        kernelIconUrl:launcherIcon.name
+      }
+      model.add(command4)
+      //commands.addCommand(command)
       const launcher = new Launcher({ model, cwd, callback, commands });
 
       launcher.model = model;
       launcher.title.icon = launcherIcon;
       launcher.title.label = 'SWAN Project';
-
       const main = new MainAreaWidget({ content: launcher });
 
       // If there are any other widgets open, remove the launcher close icon.
@@ -76,9 +103,9 @@ function activate(
 
       labShell.layoutModified.connect(() => {
         // If there is only a launcher open, remove the close icon.
-        main.title.closable = toArray(labShell.widgets('main')).length > 1;
+        main.title.closable = true;//toArray(labShell.widgets('main')).length > 1;
       }, main);
-
+      
       return main;
     }
   });
@@ -97,5 +124,5 @@ namespace Private {
   /**
    * The incrementing id used for launcher widgets.
    */
-  export let id = 1;
+  export let id = 10;
 }
