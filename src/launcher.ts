@@ -8,12 +8,18 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { ICommandPalette, MainAreaWidget } from '@jupyterlab/apputils';
-import { ILauncher, LauncherModel, Launcher } from '@jupyterlab/launcher';
+//import { ILauncher, LauncherModel, Launcher} from '@jupyterlab/launcher';
 import { launcherIcon } from '@jupyterlab/ui-components';
 
 import { toArray } from '@lumino/algorithm';
 //import { JSONObject } from '@lumino/coreutils';
 import { Widget } from '@lumino/widgets';
+//import * as React from 'react';
+
+
+import { ILauncher, LauncherModel, SWANLauncher } from './swanlauncher'
+
+
 /**
  * The command IDs used by the launcher plugin.
  */
@@ -32,6 +38,9 @@ const ProjectLauncher: JupyterFrontEndPlugin<ILauncher> = {
   provides: ILauncher,
   autoStart: true
 };
+
+
+
 
 /**
  * Export the plugin as default.
@@ -61,7 +70,7 @@ function activate(
         labShell.add(item, 'main', { ref: id });
       };
     
-      let command1:ILauncher.IItemOptions = {
+/*      let command1:ILauncher.IItemOptions = {
         command:'swan:create-project',
         category:'Notebook',
         kernelIconUrl:launcherIcon.name
@@ -81,14 +90,20 @@ function activate(
         kernelIconUrl:launcherIcon.name
       }
       model.add(command3)
-      let command4:ILauncher.IItemOptions = {
+      */
+     let command4:ILauncher.IItemOptions = {
         command:'swan:create-project',
         category:'SWAN Test',
         kernelIconUrl:launcherIcon.name
       }
       model.add(command4)
       //commands.addCommand(command)
-      const launcher = new Launcher({ model, cwd, callback, commands });
+      const launcher = new SWANLauncher({ model, cwd, callback, commands });
+
+      //launcher.render = function(): React.ReactElement<any> | null {
+        // Wrap the sections in body and content divs.
+        //return null
+      //}
 
       launcher.model = model;
       launcher.title.icon = launcherIcon;
