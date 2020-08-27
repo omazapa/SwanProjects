@@ -17,7 +17,9 @@ import { Widget } from '@lumino/widgets';
 //import * as React from 'react';
 
 
-import { ILauncher, LauncherModel, SWANLauncher } from './swanlauncher'
+//import { ILauncher, LauncherModel, SWANLauncher } from './swanlauncher'
+import { ILauncher, SWANLauncher } from './swanlauncher'
+import { LauncherModel} from '@jupyterlab/launcher';
 
 
 /**

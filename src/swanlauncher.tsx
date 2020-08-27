@@ -3,7 +3,6 @@
 
 import {
   showErrorMessage,
-  VDomModel,
   VDomRenderer
 } from '@jupyterlab/apputils';
 
@@ -16,9 +15,6 @@ import {
 import { classes, LabIcon } from '@jupyterlab/ui-components';
 
 import {
-  ArrayExt,
-  ArrayIterator,
-  IIterator,
   map,
   each,
   toArray
@@ -28,7 +24,7 @@ import { CommandRegistry } from '@lumino/commands';
 
 import { Token, ReadonlyJSONObject } from '@lumino/coreutils';
 
-import { DisposableDelegate, IDisposable } from '@lumino/disposable';
+import {  IDisposable } from '@lumino/disposable';
 
 import { AttachedProperty } from '@lumino/properties';
 
@@ -37,7 +33,7 @@ import { Widget } from '@lumino/widgets';
 import * as React from 'react';
 
 import ReactMarkdown from  'react-markdown'
-
+import { LauncherModel} from '@jupyterlab/launcher';
 /**
  * The class name added to Launcher instances.
  */
@@ -67,43 +63,6 @@ export interface ILauncher {
   add(options: ILauncher.IItemOptions): IDisposable;
 }
 
-/**
- * LauncherModel keeps track of the path to working directory and has a list of
- * LauncherItems, which the Launcher will render.
- */
-export class LauncherModel extends VDomModel implements ILauncher {
-  /**
-   * Add a command item to the launcher, and trigger re-render event for parent
-   * widget.
-   *
-   * @param options - The specification options for a launcher item.
-   *
-   * @returns A disposable that will remove the item from Launcher, and trigger
-   * re-render event for parent widget.
-   *
-   */
-  add(options: ILauncher.IItemOptions): IDisposable {
-    // Create a copy of the options to circumvent mutations to the original.
-    const item = Private.createItem(options);
-
-    this._items.push(item);
-    this.stateChanged.emit(void 0);
-
-    return new DisposableDelegate(() => {
-      ArrayExt.removeFirstOf(this._items, item);
-      this.stateChanged.emit(void 0);
-    });
-  }
-
-  /**
-   * Return an iterator of launcher items.
-   */
-  items(): IIterator<ILauncher.IItemOptions> {
-    return new ArrayIterator(this._items);
-  }
-
-  private _items: ILauncher.IItemOptions[] = [];
-}
 
 /**
  * A virtual-DOM-based widget for the Launcher.
@@ -257,7 +216,7 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
           <div className="jp-Launcher-section" key='Readme'>
             <div className="jp-Launcher-sectionHeader">
               <LabIcon.resolveReact
-                icon="https://raw.githubusercontent.com/google/material-design-icons/master/src/file/text_snippet/materialicons/24px.svg"
+                icon=""
                 //iconClass={classes(iconClass, 'jp-Icon-cover')}
                 stylesheet="launcherSection"
               />
