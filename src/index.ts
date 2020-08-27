@@ -24,12 +24,15 @@ const PALETTE_CATEGORY = 'SWAN';
 
 import {ProjectWidget} from './ProjectWidget'
 
+import {CreateProject} from './CreateProject'
+
 /**
  * The command IDs used by the server extension plugin.
  */
 namespace CommandIDs {
   export const get_cmssw = 'swan:create-project';
   export const open_project = 'swan_launcher:create';
+  export const create_project = 'swan:create-project-new';
   
 }
 
@@ -53,6 +56,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     palette: ICommandPalette,
     launcher: ILauncher | null,
     labShell: ILabShell,
+    project: CreateProject,
     browserFactory: IFileBrowserFactory
   ) => {
     console.log('JupyterLab extension SWAN is activated!');
@@ -94,7 +98,16 @@ const extension: JupyterFrontEndPlugin<void> = {
       name: 'launcher:cmssw-icon',
       svgstr: cmsIconStr
     });
-
+    commands.addCommand(CommandIDs.create_project, {
+      label: args => (args['isPalette'] ? 'New Project' : 'New Project'),
+      caption: 'New Project',
+      icon: args => (args['isPalette'] ? null : cmsicon),
+      execute: async args => {
+        project =new CreateProject();
+        project.launch()
+        project.render()
+      }
+    });
 
     commands.addCommand(cmssw_command, {
       label: args => (args['isPalette'] ? 'New CMSSW Env' : 'CMSSW Env'),
@@ -192,6 +205,18 @@ const extension: JupyterFrontEndPlugin<void> = {
           command: CommandIDs.open_project,
           category: PALETTE_CATEGORY,
           rank: 1,
+          kernelIconUrl: ""
+        });
+      })
+    }
+
+    // Add the command to the launcher
+    if (launcher) {
+      void manager.ready.then(() => {
+        launcher.add({
+          command: CommandIDs.create_project,
+          category: PALETTE_CATEGORY,
+          rank: 0,
           kernelIconUrl: ""
         });
       })
