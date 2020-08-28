@@ -6,12 +6,6 @@ import {
   VDomRenderer
 } from '@jupyterlab/apputils';
 
-import {
-  nullTranslator,
-  TranslationBundle,
-  ITranslator
-} from '@jupyterlab/translation';
-
 import { classes, LabIcon } from '@jupyterlab/ui-components';
 
 import {
@@ -22,10 +16,6 @@ import {
 
 import { CommandRegistry } from '@lumino/commands';
 
-import { Token, ReadonlyJSONObject } from '@lumino/coreutils';
-
-import {  IDisposable } from '@lumino/disposable';
-
 import { AttachedProperty } from '@lumino/properties';
 
 import { Widget } from '@lumino/widgets';
@@ -33,36 +23,13 @@ import { Widget } from '@lumino/widgets';
 import * as React from 'react';
 
 import ReactMarkdown from  'react-markdown'
-import { LauncherModel} from '@jupyterlab/launcher';
+
+import { ILauncher, LauncherModel} from '@jupyterlab/launcher';
+
 /**
  * The class name added to Launcher instances.
  */
 const LAUNCHER_CLASS = 'jp-Launcher';
-
-/* tslint:disable */
-/**
- * The launcher token.
- */
-export const ILauncher = new Token<ILauncher>('@jupyterlab/launcher:ILauncher');
-/* tslint:enable */
-
-/**
- * The launcher interface.
- */
-export interface ILauncher {
-  /**
-   * Add a command item to the launcher, and trigger re-render event for parent
-   * widget.
-   *
-   * @param options - The specification options for a launcher item.
-   *
-   * @returns A disposable that will remove the item from Launcher, and trigger
-   * re-render event for parent widget.
-   *
-   */
-  add(options: ILauncher.IItemOptions): IDisposable;
-}
-
 
 /**
  * A virtual-DOM-based widget for the Launcher.
@@ -74,8 +41,6 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
   constructor(options: ILauncher.IOptions) {
     super(options.model);
     this._cwd = options.cwd;
-    this.translator = options.translator || nullTranslator;
-    this._trans = this.translator.load('jupyterlab');
     this._callback = options.callback;
     this._commands = options.commands;
     this.addClass(LAUNCHER_CLASS);
@@ -120,7 +85,7 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
     // First group-by categories
     const categories = Object.create(null);
     each(this.model.items(), (item, index) => {
-      const cat = item.category || this._trans.__('Other');
+      const cat = item.category || 'Other';
       if (!(cat in categories)) {
         categories[cat] = [];
       }
@@ -185,7 +150,6 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
                     item,
                     this,
                     this._commands,
-                    this._trans,
                     this._callback
                   );
                 })
@@ -204,7 +168,6 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
     return (
       <div>
         <div className="jp-Launcher-body">
-
         <div className="jp-Launcher-content">
         <div className="jp-Launcher-cwd">
             <p style={{float:"left",textAlign:"center"}}><b>{project_name}</b></p> <p style={{float:"right",textAlign:"center"}}><b>{stackname}</b>&nbsp;&nbsp;<input type="button" onClick={this.changeStack} style={{float:"right",background:"url('http://endlessicons.com/wp-content/uploads/2012/11/setting-icon-2-110x110.png') no-repeat 5px center"}} value="  " /></p>
@@ -232,111 +195,10 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
     );
   }
 
-  protected translator: ITranslator;
-  private _trans: TranslationBundle;
   private _commands: CommandRegistry;
   private _callback: (widget: Widget) => void;
   private _pending = false;
   private _cwd = '';
-}
-
-/**
- * The namespace for `ILauncher` class statics.
- */
-export namespace ILauncher {
-  /**
-   * The options used to create a Launcher.
-   */
-  export interface IOptions {
-    /**
-     * The model of the launcher.
-     */
-    model: LauncherModel;
-
-    /**
-     * The cwd of the launcher.
-     */
-    cwd: string;
-
-    /**
-     * The command registry used by the launcher.
-     */
-    commands: CommandRegistry;
-
-    /**
-     * The application language translation.
-     */
-    translator?: ITranslator;
-
-    /**
-     * The callback used when an item is launched.
-     */
-    callback: (widget: Widget) => void;
-  }
-
-  /**
-   * The options used to create a launcher item.
-   */
-  export interface IItemOptions {
-    /**
-     * The command ID for the launcher item.
-     *
-     * #### Notes
-     * If the command's `execute` method returns a `Widget` or
-     * a promise that resolves with a `Widget`, then that widget will
-     * replace the launcher in the same location of the application
-     * shell. If the `execute` method does something else
-     * (i.e., create a modal dialog), then the launcher will not be
-     * disposed.
-     */
-    command: string;
-
-    /**
-     * The arguments given to the command for
-     * creating the launcher item.
-     *
-     * ### Notes
-     * The launcher will also add the current working
-     * directory of the filebrowser in the `cwd` field
-     * of the args, which a command may use to create
-     * the activity with respect to the right directory.
-     */
-    args?: ReadonlyJSONObject;
-
-    /**
-     * The category for the launcher item.
-     *
-     * The default value is the an empty string.
-     */
-    category?: string;
-
-    /**
-     * The rank for the launcher item.
-     *
-     * The rank is used when ordering launcher items for display. After grouping
-     * into categories, items are sorted in the following order:
-     *   1. Rank (lower is better)
-     *   3. Display Name (locale order)
-     *
-     * The default rank is `Infinity`.
-     */
-    rank?: number;
-
-    /**
-     * For items that have a kernel associated with them, the URL of the kernel
-     * icon.
-     *
-     * This is not a CSS class, but the URL that points to the icon in the kernel
-     * spec.
-     */
-    kernelIconUrl?: string;
-
-    /**
-     * Metadata about the item.  This can be used by the launcher to
-     * affect how the item is displayed.
-     */
-    metadata?: ReadonlyJSONObject;
-  }
 }
 
 /**
@@ -357,7 +219,6 @@ function Card(
   item: ILauncher.IItemOptions,
   launcher: SWANLauncher,
   commands: CommandRegistry,
-  trans: TranslationBundle,
   launcherCallback: (widget: Widget) => void
 ): React.ReactElement<any> {
   // Get some properties of the command
@@ -389,7 +250,7 @@ function Card(
       })
       .catch(err => {
         launcher.pending = false;
-        void showErrorMessage(trans._p('Error', 'Launcher Error'), err);
+        void showErrorMessage('Launcher Error', err);
       });
   };
 
@@ -415,7 +276,7 @@ function Card(
       onClick={onclick}
       onKeyPress={onkeypress}
       tabIndex={100}
-      data-category={item.category || trans.__('Other')}
+      data-category={item.category || 'Other'}
       key={Private.keyProperty.get(item)}
     >
       <div className="jp-LauncherCard-icon">
