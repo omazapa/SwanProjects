@@ -26,6 +26,14 @@ import ReactMarkdown from  'react-markdown'
 
 import { ILauncher, LauncherModel} from '@jupyterlab/launcher';
 
+
+import swanProjectIcon from "../style/project.svg";
+
+export const swanIcon = new LabIcon({
+  name: "jupyterlab_swan:project",
+  svgstr: swanProjectIcon
+});
+
 /**
  * The class name added to Launcher instances.
  */
@@ -66,10 +74,15 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
   set pending(value: boolean) {
     this._pending = value;
   }
+
+  /**
+   * Launch dialog to change the stack of the project.
+   */
   protected changeStack():void
   {
-    console.log('call dialogs and API procedures ')
+    console.log('call dialogs and API procedures TODO!')
   }
+
   /**
    * Render the launcher to virtual DOM nodes.
    */
@@ -163,14 +176,21 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
     let readme="# Some markDown \n * added readme support here from request to our API";
     let stackname="LCG97";
     let project_name="Project 1";
-    
+    const projectIcon = new LabIcon({
+      name: 'swan:project_icon',
+      svgstr: swanIcon.svgstr
+    });
     // Wrap the sections in body and content divs.
     return (
       <div>
         <div className="jp-Launcher-body">
         <div className="jp-Launcher-content">
         <div className="jp-Launcher-cwd">
-            <p style={{float:"left",textAlign:"center"}}><b>{project_name}</b></p> <p style={{float:"right",textAlign:"center"}}><b>{stackname}</b>&nbsp;&nbsp;<input type="button" onClick={this.changeStack} style={{float:"right",background:"url('http://endlessicons.com/wp-content/uploads/2012/11/setting-icon-2-110x110.png') no-repeat 5px center"}} value="  " /></p>
+            <p style={{float:"left",textAlign:"center"}}> <LabIcon.resolveReact
+                icon={projectIcon}
+                stylesheet="launcherSection"
+                title={project_name}
+              /></p> <p style={{float:"right",textAlign:"center"}}><b>{stackname}</b>&nbsp;&nbsp;<input type="button" onClick={this.changeStack} style={{float:"right",background:"url('http://endlessicons.com/wp-content/uploads/2012/11/setting-icon-2-110x110.png') no-repeat 5px center"}} value="  " /></p>
             <br/>
             <h3>{this.cwd}</h3>
           </div>
