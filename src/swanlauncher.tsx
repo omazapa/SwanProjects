@@ -22,16 +22,30 @@ import { Widget } from '@lumino/widgets';
 
 import * as React from 'react';
 
-import ReactMarkdown from  'react-markdown'
+import ReactMarkdown from 'react-markdown'
 
-import { ILauncher, LauncherModel} from '@jupyterlab/launcher';
+import { ILauncher, LauncherModel } from '@jupyterlab/launcher';
 
 
-import swanProjectIcon from "../style/project.svg";
+import swanProjectIconStr from "../style/project.svg";
+import swanReadmeIconStr from "../style/list-alt.svg";
+import swanConfigIconStr from "../style/cog.svg";
 
-export const swanIcon = new LabIcon({
+
+
+export const swanProjectIcon = new LabIcon({
   name: "jupyterlab_swan:project",
-  svgstr: swanProjectIcon
+  svgstr: swanProjectIconStr
+});
+
+export const swanReadmeIcon = new LabIcon({
+  name: "jupyterlab_swan:reame",
+  svgstr: swanReadmeIconStr
+});
+
+export const swanConfigIcon = new LabIcon({
+  name: "jupyterlab_swan:config",
+  svgstr: swanConfigIconStr
 });
 
 /**
@@ -78,8 +92,7 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
   /**
    * Launch dialog to change the stack of the project.
    */
-  protected changeStack():void
-  {
+  protected changeStack(): void {
     console.log('call dialogs and API procedures TODO!')
   }
 
@@ -173,45 +186,61 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
         sections.push(section);
       }
     });
-    let readme="# Some markDown \n * added readme support here from request to our API";
-    let stackname="LCG97";
-    let project_name="Project 1";
-    const projectIcon = new LabIcon({
-      name: 'swan:project_icon',
-      svgstr: swanIcon.svgstr
-    });
+    let readme = "# Some markDown \n * added readme support here from request to our API";
+    let stackname = "LCG97";
+    let project_name = "Project 1";
     // Wrap the sections in body and content divs.
     return (
       <div>
         <div className="jp-Launcher-body">
-        <div className="jp-Launcher-content">
-        <div className="jp-Launcher-cwd">
-            <p style={{float:"left",textAlign:"center"}}> <LabIcon.resolveReact
-                icon={projectIcon}
-                stylesheet="launcherSection"
-                title={project_name}
-              /></p> <p style={{float:"right",textAlign:"center"}}><b>{stackname}</b>&nbsp;&nbsp;<input type="button" onClick={this.changeStack} style={{float:"right",background:"url('http://endlessicons.com/wp-content/uploads/2012/11/setting-icon-2-110x110.png') no-repeat 5px center"}} value="  " /></p>
-            <br/>
-            <h3>{this.cwd}</h3>
-          </div>
-          {sections}
+          <div className="jp-Launcher-content">
+            <table style={{ width: "100%" }}>
+              < tr >
+                <td style={{width:"64px"}}>
+                  <LabIcon.resolveReact
+                    icon={swanProjectIcon}
+                    stylesheet="launcherSection"
+                  />
+                </td>
+                <td style={{textAlign:"left"}}>
+                  <h2 className="jp-Launcher-sectionTitle">{project_name}</h2>
+                </td>
+                <td style={{textAlign:"right"}}>
+                  <b>{stackname}</b>
+                </td>
+                <td style={{textAlign:"right",width:"64px"}}>
+                  <div className="jp-LauncherCard" id="swan_config_button" onClick={this.changeStack} tabIndex={100}>
+                    <div className="jp-LauncherCard-icon">
+                      {
+                        <LabIcon.resolveReact
+                          icon={swanConfigIcon}
+                        />
+                      }
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </table>
+            <div className="jp-Launcher-cwd">
+              <h3>{this.cwd}</h3>
+            </div>
+            {sections}
 
-          <div className="jp-Launcher-section" key='Readme'>
-            <div className="jp-Launcher-sectionHeader">
-              <LabIcon.resolveReact
-                icon=""
-                //iconClass={classes(iconClass, 'jp-Icon-cover')}
-                stylesheet="launcherSection"
-              />
-              <h2 className="jp-Launcher-sectionTitle">Readme</h2>
+            <div className="jp-Launcher-section" key='Readme'>
+              <div className="jp-Launcher-sectionHeader">
+                <LabIcon.resolveReact
+                  icon={swanReadmeIcon}
+                  stylesheet="launcherSection"
+                />
+                <h2 className="jp-Launcher-sectionTitle">Readme</h2>
+              </div>
+              <div className="jp-Launcher-cardContainer">
+              </div>
+              <ReactMarkdown source={readme}></ReactMarkdown>
             </div>
-            <div className="jp-Launcher-cardContainer">
-            </div>
-            <ReactMarkdown source={readme}></ReactMarkdown>
-          </div>
           </div>
         </div>
-      </div>
+      </div >
     );
   }
 
@@ -304,17 +333,17 @@ function Card(
           item.kernelIconUrl ? (
             <img src={item.kernelIconUrl} className="jp-Launcher-kernelIcon" />
           ) : (
-            <div className="jp-LauncherCard-noKernelIcon">
-              {label[0].toUpperCase()}
-            </div>
-          )
+              <div className="jp-LauncherCard-noKernelIcon">
+                {label[0].toUpperCase()}
+              </div>
+            )
         ) : (
-          <LabIcon.resolveReact
-            icon={icon}
-            iconClass={classes(iconClass, 'jp-Icon-cover')}
-            stylesheet="launcherCard"
-          />
-        )}
+            <LabIcon.resolveReact
+              icon={icon}
+              iconClass={classes(iconClass, 'jp-Icon-cover')}
+              stylesheet="launcherCard"
+            />
+          )}
       </div>
       <div className="jp-LauncherCard-label" title={title}>
         <p>{label}</p>
