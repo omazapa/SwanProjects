@@ -18,7 +18,8 @@ import { Widget } from '@lumino/widgets';
 
 
 //import { ILauncher, LauncherModel, SWANLauncher } from './swanlauncher'
-import {  SWANLauncher } from './swanlauncher'
+//import {  SWANLauncher } from './swanlauncher'
+import {  SWANLauncher } from '@ozapatam/launcher'
 import { ILauncher, LauncherModel} from '@jupyterlab/launcher';
 
 

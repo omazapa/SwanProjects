@@ -40,12 +40,15 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@jupyterlab/application": "^2.0.0",
+    "@jupyterlab/application": "^2.2.4",
     "@jupyterlab/coreutils": "^4.0.0",
     "@jupyterlab/filebrowser": "^2.0.0",
-    "@jupyterlab/launcher": "^2.0.0",
+    "@jupyterlab/launcher": "^2.2.4",
+    "@jupyterlab/launcher-extension": "^2.0.0",
     "@jupyterlab/services": "^5.0.0",
     "@jupyterlab/translation": "^3.0.0-alpha.14",
+    "@jupyterlab/ui-components": "^2.2.2",
+    "@ozapatam/launcher": "^2.2.4",
     "react-markdown": "^4.3.1"
   },
   "devDependencies": {
