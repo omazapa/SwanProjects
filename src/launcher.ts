@@ -34,7 +34,7 @@ namespace CommandIDs {
  */
 const ProjectLauncher: JupyterFrontEndPlugin<ILauncher> = {
   activate,
-  id: '@jupyterlab/launcher-extension:ProjectLauncher',
+  id: '@jupyterlab/launcher-extension:SWANLauncher',
   requires: [ILauncher],
   optional: [ICommandPalette],
   provides: ILauncher,
@@ -72,33 +72,30 @@ function activate(
         labShell.add(item, 'main', { ref: id });
       };
     
-/*      let command1:ILauncher.IItemOptions = {
+      let command1:ILauncher.IItemOptions = {
         command:'swan:create-project',
         category:'Notebook',
-        kernelIconUrl:launcherIcon.name
 
       }
       model.add(command1)
-      let command2:ILauncher.IItemOptions = {
-        command:'swan:create-project',
-        category:'Console',
-        kernelIconUrl:launcherIcon.name
-      }
-      model.add(command2)
-      
+      // let command2:ILauncher.IItemOptions = {
+      //   command:'swan:create-project',
+      //   category:'Console',
+      //   kernelIconUrl:launcherIcon.name
+      // }
+      // model.add(command2)
       let command3:ILauncher.IItemOptions = {
         command:'swan:create-project',
         category:'Other',
         kernelIconUrl:launcherIcon.name
       }
       model.add(command3)
-      */
-     let command4:ILauncher.IItemOptions = {
+/*     let command4:ILauncher.IItemOptions = {
         command:'swan:create-project',
         category:'SWAN Test',
         kernelIconUrl:launcherIcon.name
       }
-      model.add(command4)
+      model.add(command4)*/
       //commands.addCommand(command)
       const launcher = new SWANLauncher({ model, cwd, callback, commands });
 
@@ -119,8 +116,7 @@ function activate(
       labShell.add(main, 'main', { activate: args['activate'] as boolean });
 
       labShell.layoutModified.connect(() => {
-        // If there is only a launcher open, remove the close icon.
-        main.title.closable = true;//toArray(labShell.widgets('main')).length > 1;
+        main.title.closable = true;
       }, main);
       
       return main;
@@ -141,5 +137,5 @@ namespace Private {
   /**
    * The incrementing id used for launcher widgets.
    */
-  export let id = 10;
+  export let id = 0;
 }

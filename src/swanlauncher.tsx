@@ -105,8 +105,8 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
       return null;
     }
 
-    const knownCategories = [''];
-    const kernelCategories = [''];
+    const knownCategories = ['Notebook'];
+    const kernelCategories = ['Notebook'];
 
     // First group-by categories
     const categories = Object.create(null);
@@ -191,12 +191,12 @@ export class SWANLauncher extends VDomRenderer<LauncherModel> {
     let project_name = "Project 1";
     // Wrap the sections in body and content divs.
     return (
-      <div>
+      <div style={{overflow: "scroll"}}>
         <div className="jp-Launcher-body">
           <div className="jp-Launcher-content">
-            <table style={{ width: "100%" }}>
+            <table style={{ width: "100%",height:"64px" }}>
               < tr >
-                <td style={{width:"64px"}}>
+                <td style={{width:"48px"}}>
                   <LabIcon.resolveReact
                     icon={swanProjectIcon}
                     stylesheet="launcherSection"

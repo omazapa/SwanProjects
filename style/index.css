@@ -1,5 +1,19 @@
+@import url('~@lumino/widgets/style/index.css');
+@import url('~@jupyterlab/ui-components/style/index.css');
+@import url('~@jupyterlab/apputils/style/index.css');
+
+@import url('./base.css');
+
 #swan_config_button
 {
     width: 32px;
     height: 32px;
+}
+
+#swan-launcher-header
+{
+    width: "100%";
+    display:block;
+    overflow:auto;
+    max-height:248px;
 }
