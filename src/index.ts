@@ -11,16 +11,16 @@ import { MainAreaWidget,ICommandPalette} from '@jupyterlab/apputils';
 import { requestAPI } from './jlabextexample';
 
 
-import { LabIcon } from '@jupyterlab/ui-components';
-
+//import { LabIcon } from '@jupyterlab/ui-components';
+import {swanProjectIcon,cmsIcon} from './icons'
 
 import { InputDialog } from '@jupyterlab/apputils';
 
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 
-import ProjectLauncher from './launcher'
+//import ProjectLauncher from './launcher'
 
-const PALETTE_CATEGORY = 'SWAN';
+const PALETTE_CATEGORY = 'Project';
 
 import {ProjectWidget} from './ProjectWidget'
 
@@ -61,32 +61,14 @@ const extension: JupyterFrontEndPlugin<void> = {
   ) => {
     console.log('JupyterLab extension SWAN is activated!');
     const manager = app.serviceManager;
-    let cmsIconStr = '../style/CMS_logo.svg';
-    ProjectLauncher.activate(app)
+    //let cmsIconStr = '../style/CMS_logo.svg';
+    //ProjectLauncher.activate(app)
 
 
     //const { commands } = app;
     const { commands, shell } = app;
     //const category = 'SWAN';
 
-/*    commands.addCommand(command, {
-      label: 'SWAN Docs',
-      caption: 'Testing IFrame Widget',
-      execute: () => {
-        const widget = new IFrameWidget();
-        shell.add(widget, 'main');
-      }
-    });
-    palette.addItem({ command, category: category });
-
-    if (launcher) {
-      // Add launcher
-      launcher.add({
-        command: command,
-        category: category
-      });
-    }
-*/
     const scram_options = ['slc7_amd64_gcc820','slc7_amd64_gcc700','slc7_amd64_gcc630'];
     let scram_option = scram_options[0];
 
@@ -94,7 +76,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     let cmssw_option = cmssw_options[0];
 
     const cmssw_command = CommandIDs.get_cmssw;
-    const cmsicon = new LabIcon({
+/*    const cmsicon = new LabIcon({
       name: 'launcher:cmssw-icon',
       svgstr: cmsIconStr
     });
@@ -108,11 +90,11 @@ const extension: JupyterFrontEndPlugin<void> = {
         project.render()
       }
     });
-
+*/
     commands.addCommand(cmssw_command, {
-      label: args => (args['isPalette'] ? 'New CMSSW Env' : 'CMSSW Env'),
-      caption: 'Create a new CMSSW Env',
-      icon: args => (args['isPalette'] ? null : cmsicon),
+      icon:swanProjectIcon,
+      label: 'New',
+      caption: 'New',
       execute: async args => {
         return InputDialog.getText(
           {
@@ -174,6 +156,7 @@ const extension: JupyterFrontEndPlugin<void> = {
             console.log('selected item ' + value.value);
             console.log(MainAreaWidget)
             commands.addCommand(command_project, {
+              icon:cmsIcon,
               label: project_name.value,
               caption: project_name.value,
               execute: () => {
@@ -182,13 +165,13 @@ const extension: JupyterFrontEndPlugin<void> = {
               }
             });
             
-            palette.addItem({ command:command_project, category: 'SWAN Projects' });
+            //palette.addItem({ command:command_project, category: 'Project' });
             
             if (launcher) {
               // Add launcher
               launcher.add({
                 command: command_project,
-                category: "SWAN Projects"
+                category: "Projects"
               });
             }        
             
@@ -197,7 +180,7 @@ const extension: JupyterFrontEndPlugin<void> = {
       });
       }
     });
-
+/*
     // Add the command to the launcher
     if (launcher) {
       void manager.ready.then(() => {
@@ -221,7 +204,7 @@ const extension: JupyterFrontEndPlugin<void> = {
         });
       })
     }
-
+*/
 
     // Add the command to the launcher
     if (launcher) {
