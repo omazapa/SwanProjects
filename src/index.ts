@@ -132,7 +132,7 @@ const extension: JupyterFrontEndPlugin<void> = {
             // POST request
             const dataToSend = { SCRAM: value.value, CMSSW:cmssw_value.value, PROJECT_NAME:project_name.value };
             try {
-              requestAPI<any>('hello', {
+              requestAPI<any>('create', {
                 body: JSON.stringify(dataToSend),
                 method: 'POST'
               }).then(pvalue => {
@@ -140,7 +140,7 @@ const extension: JupyterFrontEndPlugin<void> = {
               });
             } catch (reason) {
               console.error(
-                `Error on POST /swan/hello ${dataToSend}.\n${reason}`
+                `Error on POST /swan/create ${dataToSend}.\n${reason}`
               );
             }
             const cwd =
