@@ -77,7 +77,8 @@ class CreateProjectHandler(APIHandler):
         CMSSW = input_data["CMSSW"]
         PROJECT_NAME = input_data["PROJECT_NAME"]
         #create_cmd="/home/ozapatam/Projects/swan/jupyter_swan/bin/create_kernel_lab.sh"+" "+SCRAM+" "+CMSSW
-        create_cmd="/home/ozapatam/Projects/swan/jupyter_swan/bin/create_project.sh "+PROJECT_NAME+" "+SCRAM+" "+CMSSW
+        create_cmd="swan_create_project "+PROJECT_NAME+" "+SCRAM+" "+CMSSW
+        print("Executing: "+create_cmd)
         os.system(create_cmd)
 
         #JSON_PATH='/home/ozapatam/Projects/swan/jupyter_swan/'+SWANP_DIR+'/'+PROJECT_NAME+'/.kernel.json'

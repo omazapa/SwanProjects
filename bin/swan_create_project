@@ -10,7 +10,7 @@ PROJECT_PATH="$HOME/$SWANP_DIR/$PROJECT_NAME"
 
 mkdir -p $PROJECT_PATH
 
-SCRIPT_PATH=/home/ozapatam/Projects/swan/jupyter_swan/bin
+#SCRIPT_PATH=/home/ozapatam/Projects/swan/jupyter_swan/bin
 KERNEL_DIR=$HOME/.local/share/jupyter/kernels/
 PY3KERNELNAME=$(echo $SCRAM"_"$CMSSW"_python3" | tr '[:upper:]' '[:lower:]')
 PY3KERNELDIR=$KERNEL_DIR/$PY3KERNELNAME
