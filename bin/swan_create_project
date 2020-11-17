@@ -22,7 +22,7 @@ echo "{
  \"language\": \"python\",
  \"argv\": [
   \"/bin/bash\",  
-  \"$SCRIPT_PATH/start_cmssw.sh\",
+  \"swan_start_cmssw\",
   \"$SCRAM\",
   \"$CMSSW\",
   \"python3\",
@@ -31,7 +31,7 @@ echo "{
   \"{connection_file}\"
  ]
 }" > $PY3KERNELDIR/kernel.json
-cp /home/ozapatam/Projects/swan/jupyter_swan/style/kernels/python/*.png $PY3KERNELDIR/
+cp /home/ozapatam/swan/jupyter_swan/style/kernels/python/*.png $PY3KERNELDIR/
 
 PY2KERNELNAME=$(echo $SCRAM"_"$CMSSW"_python2" | tr '[:upper:]' '[:lower:]')
 PY2KERNELDIR=$KERNEL_DIR/$PY2KERNELNAME
@@ -42,7 +42,7 @@ echo "{
  \"language\": \"python\",
  \"argv\": [
   \"/bin/bash\",  
-  \"$SCRIPT_PATH/start_cmssw.sh\",
+  \"swan_start_cmssw\",
   \"$SCRAM\",
   \"$CMSSW\",
   \"python2\",
@@ -51,7 +51,7 @@ echo "{
   \"{connection_file}\"
  ]
 }" > $PY2KERNELDIR/kernel.json
-cp /home/ozapatam/Projects/swan/jupyter_swan/style/kernels/python/*.png $PY2KERNELDIR/
+cp /home/ozapatam/swan/jupyter_swan/style/kernels/python/*.png $PY2KERNELDIR/
 
 
 cd $PROJECT_PATH

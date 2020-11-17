@@ -61,6 +61,7 @@ setup_args = dict(
     description="CERN SWAN JupyterLab extension with backend and frontend parts.",
     long_description= long_description,
     long_description_content_type="text/markdown",
+    scripts=['bin/swan_create_project', 'bin/swan_start_cmssw','bin/swan_start_ipykernel','bin/swan_create_kernel'],
     cmdclass= cmdclass,
     packages=setuptools.find_packages(),
     install_requires=[

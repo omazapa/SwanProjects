@@ -26,6 +26,7 @@ import {ProjectWidget} from './ProjectWidget'
 
 import {CreateProject} from './CreateProject'
 
+
 /**
  * The command IDs used by the server extension plugin.
  */
