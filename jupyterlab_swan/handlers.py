@@ -8,7 +8,7 @@ import tornado
 from tornado.web import StaticFileHandler
 
 
-class PathHandler(APIHandler):
+class ProjectInfoHandler(APIHandler):
     # The following decorator should be present on all verb methods (head, get, post,
     # patch, put, delete, options) to ensure only authorized user can request the
     # Jupyter server
@@ -95,9 +95,9 @@ def setup_handlers(web_app, url_path):
 
     # Prepend the base_url so that it works in a jupyterhub setting
     create_pattern = url_path_join(base_url, url_path, "create")
-    path_pattern = url_path_join(base_url, url_path, "path")
+    path_pattern = url_path_join(base_url, url_path, "project/info")
 
-    handlers = [(create_pattern, CreateProjectHandler),(path_pattern,PathHandler)]
+    handlers = [(create_pattern, CreateProjectHandler),(path_pattern,ProjectInfoHandler)]
     web_app.add_handlers(host_pattern, handlers)
 
     # Prepend the base_url so that it works in a jupyterhub setting
