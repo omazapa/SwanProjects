@@ -15,9 +15,7 @@ cd
 #requires to prepend the lib and bin paths
 export LD_LIBRARY_PATH=/cvmfs/cms.cern.ch/$SCRAM/cms/cmssw/$CMSSW/external/$SCRAM/lib/:$LD_LIBRARY_PATH
 export PATH=/cvmfs/cms.cern.ch/$SCRAM/cms/cmssw/$CMSSW/external/$SCRAM/bin/:$PATH
-which python2
 echo $@
 echo $PYTHON -m ipykernel_launcher $5 $6
 $PYTHON -m ipykernel_launcher $5 $6
-#python2 /home/ozapatam/Projects/swan/jupyter_swan/bin/start_ipykernel.py
 

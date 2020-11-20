@@ -1,0 +1,18 @@
+#/bin/bash
+
+PARAMETERS=($@)
+STACK=${PARAMETERS[0]}
+PLATFORM=${PARAMETERS[1]}
+unset PARAMETERS[0]
+unset PARAMETERS[1]
+COMMAND=${PARAMETERS[@]}
+
+if [[ $STACK == *"LCG"* ]]; then # if stack contains LCG
+    #example: swan_env LCG_96 x86_64-centos7-gcc8-opt which python
+    CVMFS_PATH="/cvmfs/sft.cern.ch/lcg/views/$STACK/$PLATFORM/setup.sh"
+    echo "Loading $STACK with plafortm $PLATFORM "
+    source $CVMFS_PATH
+fi
+
+$COMMAND
+
