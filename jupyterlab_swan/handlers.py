@@ -6,7 +6,7 @@ from notebook.utils import url_path_join
 
 import tornado
 from tornado.web import StaticFileHandler
-
+from swankernels.config import get_kernels
 
 class ProjectInfoHandler(APIHandler):
     # The following decorator should be present on all verb methods (head, get, post,
@@ -60,6 +60,21 @@ class ProjectInfoHandler(APIHandler):
         payload = {"is_project": is_project,"project_data":project_data}
         self.finish(json.dumps(payload))
 
+class KernelsInfoHandler(APIHandler):
+    # The following decorator should be present on all verb methods (head, get, post,
+    # patch, put, delete, options) to ensure only authorized user can request the
+    # Jupyter server
+
+    @tornado.web.authenticated
+    def get(self):
+        self.finish(json.dumps({"kernels": get_kernels()}))
+
+    @tornado.web.authenticated
+    def post(self):
+        payload = {"kernels": get_kernels()}
+        self.finish(json.dumps(payload))
+
+
 class CreateProjectHandler(APIHandler):
     # The following decorator should be present on all verb methods (head, get, post,
     # patch, put, delete, options) to ensure only authorized user can request the
@@ -95,9 +110,10 @@ def setup_handlers(web_app, url_path):
 
     # Prepend the base_url so that it works in a jupyterhub setting
     create_pattern = url_path_join(base_url, url_path, "create")
-    path_pattern = url_path_join(base_url, url_path, "project/info")
+    project_pattern = url_path_join(base_url, url_path, "project/info")
+    kernel_pattern = url_path_join(base_url, url_path, "kernels/info")
 
-    handlers = [(create_pattern, CreateProjectHandler),(path_pattern,ProjectInfoHandler)]
+    handlers = [(create_pattern, CreateProjectHandler),(project_pattern,ProjectInfoHandler),(kernel_pattern,KernelsInfoHandler)]
     web_app.add_handlers(host_pattern, handlers)
 
     # Prepend the base_url so that it works in a jupyterhub setting
