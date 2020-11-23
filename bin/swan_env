@@ -1,18 +1,38 @@
-#/bin/bash
+#!/bin/bash
 
 PARAMETERS=($@)
-STACK=${PARAMETERS[0]}
-PLATFORM=${PARAMETERS[1]}
+CVMFS_REPO=${PARAMETERS[0]}
+STACK=${PARAMETERS[1]}
+PLATFORM=${PARAMETERS[2]}
 unset PARAMETERS[0]
 unset PARAMETERS[1]
+unset PARAMETERS[2]
 COMMAND=${PARAMETERS[@]}
 
-if [[ $STACK == *"LCG"* ]]; then # if stack contains LCG
+echo "Loading $STACK with plafortm $PLATFORM "
+
+if [[ $CVMFS_REPO == "SFT" ]]; then 
     #example: swan_env LCG_96 x86_64-centos7-gcc8-opt which python
     CVMFS_PATH="/cvmfs/sft.cern.ch/lcg/views/$STACK/$PLATFORM/setup.sh"
     echo "Loading $STACK with plafortm $PLATFORM "
     source $CVMFS_PATH
 fi
 
+if [[ $CVMFS_REPO == "CMS" ]]; then
+    source /cvmfs/cms.cern.ch/cmsset_default.sh
+    CMS_BASEDIR=/cvmfs/cms.cern.ch
+    CMSSW=$STACK
+    SCRAM=$PLATFORM
+
+    export PATH=${CMS_BASEDIR}/common:$PATH
+    #by default I will load the environment in the cvmfs path in read only
+    cd /cvmfs/cms.cern.ch/$SCRAM/cms/cmssw/$CMSSW
+    eval `scramv1 runtime -sh`
+    #requires to prepend the lib and bin paths
+    export LD_LIBRARY_PATH=/cvmfs/cms.cern.ch/$SCRAM/cms/cmssw/$CMSSW/external/$SCRAM/lib/:$LD_LIBRARY_PATH
+    export PATH=/cvmfs/cms.cern.ch/$SCRAM/cms/cmssw/$CMSSW/external/$SCRAM/bin/:$PATH
+
+fi
+cd /tmp
 $COMMAND
 
