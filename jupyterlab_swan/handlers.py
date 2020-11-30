@@ -50,7 +50,12 @@ class ProjectInfoHandler(APIHandler):
 
     @tornado.web.authenticated
     def get(self):
-        self.finish(json.dumps({"data": "This is /swan/hello endpoint!"}))
+        os.environ['JUPYTER_PATH'] = "/home/ozapatam/SWAN_projects/Omar3/.local"
+
+
+        kernelspec.KernelSpecManager.set_project_path("/home/ozapatam/SWAN_projects/Omar3/")
+        k=kernelspec.KernelSpecManager()
+        print(k.get_all_specs())
 
     @tornado.web.authenticated
     def post(self):
@@ -58,13 +63,11 @@ class ProjectInfoHandler(APIHandler):
         input_data = self.get_json_body()
         cwd = input_data["CWD"]
         #KernelSpecApp.launch_instance("cwd")
-        os.environ['JUPYTER_PATH'] = "/home/ozapatam/SWAN_projects/Omar3/.local"
-
 
         kernelspec.KernelSpecManager.set_project_path("/home/ozapatam/SWAN_projects/Omar3/")
         k=kernelspec.KernelSpecManager()
+        #print(k.get_all_specs())
 
-        print(k.get_all_specs())
         #KernelSpecApp.clear_instance()
         #kapp=KernelSpecApp()
         #kapp.launch_instance()
@@ -187,7 +190,12 @@ def setup_handlers(web_app, url_path):
     kernelspec = url_path_join(base_url, "api", "kernelspecs")
     kernelspec_regex = url_path_join(base_url, "api", "kernelspecs%s" % kernel_name_regex)
     #http://localhost:8888/api/kernelspecs
-    handlers = [(create_pattern, CreateProjectHandler),(project_pattern,ProjectInfoHandler),(kernel_pattern,KernelsInfoHandler),(kernelspec,MainKernelSpecHandler),(kernelspec_regex,KernelSpecHandler)]
+    handlers = [(create_pattern, CreateProjectHandler)]
+    handlers.append((project_pattern,ProjectInfoHandler))
+    handlers.append((kernel_pattern,KernelsInfoHandler))
+    handlers.append((kernelspec,MainKernelSpecHandler))
+    handlers.append((kernelspec_regex,KernelSpecHandler))
+
     web_app.add_handlers(host_pattern, handlers)
 
     # Prepend the base_url so that it works in a jupyterhub setting
