@@ -69,7 +69,6 @@ class ProjectInfoHandler(APIHandler):
         os.environ['JUPYTER_PATH'] = os.environ['HOME'] + "/" + cwd + "/.local"
         APIHandler.ksm = kernelspec.KernelSpecManager()
         print(os.environ['JUPYTER_PATH'])
-        k=kernelspec.KernelSpecManager()
         #print(k.get_all_specs())
 
         project_path = self.isInsideProject(cwd)
@@ -81,7 +80,7 @@ class ProjectInfoHandler(APIHandler):
             project_data["name"] = project_path.split(os.path.sep)[-1]
             project_data["readme"] = self.getProjectReadme(project_path)
 
-        payload = {"is_project": is_project,"project_data":project_data,"kernels":k.get_all_specs()}
+        payload = {"is_project": is_project,"project_data":project_data,"kernels":APIHandler.ksm.get_all_specs()}
         self.finish(json.dumps(payload))
 
 class KernelsInfoHandler(APIHandler):
