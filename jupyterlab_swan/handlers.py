@@ -9,13 +9,15 @@ from notebook.utils import maybe_future, url_path_join, url_unescape
 import tornado
 from tornado.web import StaticFileHandler
 #from swankernels.config import get_kernels
-from swankernels.manager import SwanKernelSpecManager
+#from swankernels.manager import SwanKernelSpecManager
 import os
 
 from jupyter_client import kernelspec
-kernelspec.KernelSpecManager = SwanKernelSpecManager
+#kernelspec.KernelSpecManager = SwanKernelSpecManager
 from jupyter_client.kernelspecapp import KernelSpecApp  
 from notebook.services.kernelspecs.handlers import is_kernelspec_model, kernelspec_model
+
+APIHandler.ksm = kernelspec.KernelSpecManager()
 
 class ProjectInfoHandler(APIHandler):
     # The following decorator should be present on all verb methods (head, get, post,
@@ -50,28 +52,26 @@ class ProjectInfoHandler(APIHandler):
 
     @tornado.web.authenticated
     def get(self):
-        os.environ['JUPYTER_PATH'] = "/home/ozapatam/SWAN_projects/Omar3/.local"
+        pass
+        #os.environ['JUPYTER_PATH'] = "/home/ozapatam/SWAN_projects/Omar3/.local"
 
 
-        kernelspec.KernelSpecManager.set_project_path("/home/ozapatam/SWAN_projects/Omar3/")
-        k=kernelspec.KernelSpecManager()
-        print(k.get_all_specs())
+        #kernelspec.KernelSpecManager.set_project_path("/home/ozapatam/SWAN_projects/Omar3/")
+        #k=kernelspec.KernelSpecManager()
+        #print(k.get_all_specs())
 
     @tornado.web.authenticated
     def post(self):
         # input_data is a dictionnary with a key "name"
         input_data = self.get_json_body()
         cwd = input_data["CWD"]
-        #KernelSpecApp.launch_instance("cwd")
-
-        kernelspec.KernelSpecManager.set_project_path("/home/ozapatam/SWAN_projects/Omar3/")
+        
+        os.environ['JUPYTER_PATH'] = os.environ['HOME'] + "/" + cwd + "/.local"
+        APIHandler.ksm = kernelspec.KernelSpecManager()
+        print(os.environ['JUPYTER_PATH'])
         k=kernelspec.KernelSpecManager()
         #print(k.get_all_specs())
 
-        #KernelSpecApp.clear_instance()
-        #kapp=KernelSpecApp()
-        #kapp.launch_instance()
-        #KernelSpecApp.launch_instance()
         project_path = self.isInsideProject(cwd)
         is_project = True if project_path is not None else False
         project_data={}
@@ -132,16 +132,20 @@ class CreateProjectHandler(APIHandler):
 
 
 class MainKernelSpecHandler(APIHandler):
-
+    
     @tornado.web.authenticated
     @tornado.gen.coroutine
     def get(self):
-        ksm = kernelspec.KernelSpecManager()
+        #ksm = kernelspec.KernelSpecManager()
+        print("--------- Inside MKSH ---------")
+        print(self.ksm.get_all_specs())
+        #ksm = kernelspec.KernelSpecManager()
+        #print(ksm.get_all_specs())
         km = self.kernel_manager
         model = {}
         model['default'] = km.default_kernel_name
         model['kernelspecs'] = specs = {}
-        kspecs = yield maybe_future(ksm.get_all_specs())
+        kspecs = yield maybe_future(self.ksm.get_all_specs())
         for kernel_name, kernel_info in kspecs.items():
             try:
                 if is_kernelspec_model(kernel_info):
@@ -155,15 +159,24 @@ class MainKernelSpecHandler(APIHandler):
         self.set_header("Content-Type", 'application/json')
         self.finish(json.dumps(model))
 
-class KernelSpecHandler(APIHandler):
+    @tornado.web.authenticated
+    def post(self):
+        input_data = self.get_json_body()
+        input_data
+        self.cwd = input_data["CWD"]
+        print("POST MAINCWD "+self.cwd)
 
+class KernelSpecHandler(APIHandler):
+    
     @tornado.web.authenticated
     @tornado.gen.coroutine
     def get(self, kernel_name):
-        ksm = kernelspec.KernelSpecManager()
+        #ksm = kernelspec.KernelSpecManager()
+        print("--------- Inside KSH ---------")
+        print(self.ksm.get_all_specs())
         kernel_name = url_unescape(kernel_name)
         try:
-            spec = yield maybe_future(ksm.get_kernel_spec(kernel_name))
+            spec = yield maybe_future(self.ksm.get_kernel_spec(kernel_name))
         except KeyError as e:
             raise tornado.web.HTTPError(404, u'Kernel spec %s not found' % kernel_name) from e
         if is_kernelspec_model(spec):
@@ -172,6 +185,13 @@ class KernelSpecHandler(APIHandler):
             model = kernelspec_model(self, kernel_name, spec.to_dict(), spec.resource_dir)
         self.set_header("Content-Type", 'application/json')
         self.finish(json.dumps(model))
+
+    @tornado.web.authenticated
+    @tornado.gen.coroutine
+    def post(self):
+        input_data = self.get_json_body()
+        self.cwd = input_data["CWD"]
+        print("POST CWD "+self.cwd)
 
 
 # URL to handler mappings
