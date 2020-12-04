@@ -43,6 +43,24 @@ import { ILauncher} from '@jupyterlab/launcher';
 //import { toArray } from '@lumino/algorithm';
 //import { JSONObject } from '@lumino/coreutils';
 //import { Widget } from '@lumino/widgets';
+import { request } from './request';
+
+export function kernelsInfoRequest():any
+{
+  try {
+    return request<any>('swan/kernels/info', {
+      method: 'GET'
+    }).then(rvalue => {
+        console.log(rvalue);
+        return rvalue;
+    });
+  } catch (reason) {
+    console.error(
+      `Error on GET 'swan/kernels/info'.\n${reason}`
+    );
+  }
+}
+
 
 /**
  * Initialization data for the server-extension-example extension.

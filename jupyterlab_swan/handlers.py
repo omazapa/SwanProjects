@@ -83,13 +83,12 @@ class KernelsInfoHandler(APIHandler):
 
     @tornado.web.authenticated
     def get(self):
-        #self.finish(json.dumps({"kernels": get_kernels()}))
+        self.finish(json.dumps({"kernels": get_kernels()}))
         pass
 
     @tornado.web.authenticated
     def post(self):
-        #payload = {"kernels": get_kernels()}
-        #self.finish(json.dumps(payload))
+        self.finish(json.dumps({"kernels": get_kernels()}))
         pass
 
 
