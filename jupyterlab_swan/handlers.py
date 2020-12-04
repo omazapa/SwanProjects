@@ -8,7 +8,10 @@ from notebook.utils import maybe_future, url_path_join, url_unescape
 
 import tornado
 from tornado.web import StaticFileHandler
-#from swankernels.config import get_kernels
+from swankernels.config import get_kernels
+from swankernels.generator import create_kernel_from_template
+
+
 #from swankernels.manager import SwanKernelSpecManager
 import os
 
@@ -49,16 +52,6 @@ class ProjectInfoHandler(APIHandler):
                 return cwd_current
             cwd_current=cwd_current[:-(len(paths[len(paths)-i-1])+1)]
         return None
-
-    @tornado.web.authenticated
-    def get(self):
-        pass
-        #os.environ['JUPYTER_PATH'] = "/home/ozapatam/SWAN_projects/Omar3/.local"
-
-
-        #kernelspec.KernelSpecManager.set_project_path("/home/ozapatam/SWAN_projects/Omar3/")
-        #k=kernelspec.KernelSpecManager()
-        #print(k.get_all_specs())
 
     @tornado.web.authenticated
     def post(self):
@@ -112,21 +105,27 @@ class CreateProjectHandler(APIHandler):
     def post(self):
         # input_data is a dictionnary with a key "name"
         input_data = self.get_json_body()
-        #SWANP_DIR="SWAN_projects"
-        SCRAM = input_data["SCRAM"]
-        CMSSW = input_data["CMSSW"]
+        
+        REPO = input_data["REPO"]
+        PLATFORM = input_data["PLATFORM"] #SCRAM
+        STACK = input_data["STACK"] #CMSSW
+        KERNELS = input_data["KERNELS"]
         PROJECT_NAME = input_data["PROJECT_NAME"]
+
+        PROJECT_DIR=os.environ["HOME"]+"/SWAN_projects/"+PROJECT_NAME
+        for kernel in KERNELS:
+            create_kernel_from_template(REPO, STACK, PLATFORM, kernel, PROJECT_DIR+"/.local/kernels")
         #create_cmd="/home/ozapatam/Projects/swan/jupyter_swan/bin/create_kernel_lab.sh"+" "+SCRAM+" "+CMSSW
-        create_cmd="swan_create_project "+PROJECT_NAME+" "+SCRAM+" "+CMSSW
-        print("Executing: "+create_cmd)
-        os.system(create_cmd)
+        #create_cmd="swan_create_project "+PROJECT_NAME+" "+SCRAM+" "+CMSSW
+        #print("Executing: "+create_cmd)
+        #os.system(create_cmd)
 
         #JSON_PATH='/home/ozapatam/Projects/swan/jupyter_swan/'+SWANP_DIR+'/'+PROJECT_NAME+'/.kernel.json'
         #jfile=open(JSON_PATH)
         #kernel_content=jfile.read()
         #jfile.close()
 
-        data = {"greetings": "executed {}, kernel added".format(create_cmd)}
+        data = {"greetings": "executed create_kernel_from_template, kernels added: {}".format(KERNELS)}
         self.finish(json.dumps(data))
 
 
@@ -138,8 +137,6 @@ class MainKernelSpecHandler(APIHandler):
         #ksm = kernelspec.KernelSpecManager()
         print("--------- Inside MKSH ---------")
         print(self.ksm.get_all_specs())
-        #ksm = kernelspec.KernelSpecManager()
-        #print(ksm.get_all_specs())
         km = self.kernel_manager
         model = {}
         model['default'] = km.default_kernel_name
@@ -158,12 +155,6 @@ class MainKernelSpecHandler(APIHandler):
         self.set_header("Content-Type", 'application/json')
         self.finish(json.dumps(model))
 
-    @tornado.web.authenticated
-    def post(self):
-        input_data = self.get_json_body()
-        input_data
-        self.cwd = input_data["CWD"]
-        print("POST MAINCWD "+self.cwd)
 
 class KernelSpecHandler(APIHandler):
     
@@ -184,13 +175,6 @@ class KernelSpecHandler(APIHandler):
             model = kernelspec_model(self, kernel_name, spec.to_dict(), spec.resource_dir)
         self.set_header("Content-Type", 'application/json')
         self.finish(json.dumps(model))
-
-    @tornado.web.authenticated
-    @tornado.gen.coroutine
-    def post(self):
-        input_data = self.get_json_body()
-        self.cwd = input_data["CWD"]
-        print("POST CWD "+self.cwd)
 
 
 # URL to handler mappings
