@@ -20,7 +20,9 @@ from jupyter_client import kernelspec
 from jupyter_client.kernelspecapp import KernelSpecApp  
 from notebook.services.kernelspecs.handlers import is_kernelspec_model, kernelspec_model
 
-APIHandler.ksm = kernelspec.KernelSpecManager()
+ksm = kernelspec.KernelSpecManager()
+
+SYSTEM_JUPYTER_PATH = kernelspec.SYSTEM_JUPYTER_PATH
 
 class ProjectInfoHandler(APIHandler):
     # The following decorator should be present on all verb methods (head, get, post,
@@ -55,14 +57,18 @@ class ProjectInfoHandler(APIHandler):
 
     @tornado.web.authenticated
     def post(self):
+        global ksm
         # input_data is a dictionnary with a key "name"
         input_data = self.get_json_body()
         cwd = input_data["CWD"]
         
         os.environ['JUPYTER_PATH'] = os.environ['HOME'] + "/" + cwd + "/.local"
-        APIHandler.ksm = kernelspec.KernelSpecManager()
+        #kernelspec.SYSTEM_JUPYTER_PATH = SYSTEM_JUPYTER_PATH
+        #kernelspec.SYSTEM_JUPYTER_PATH.append(os.environ['JUPYTER_PATH'])
+        self.kernel_spec_manager.kernel_dirs = [os.environ['JUPYTER_PATH']+"/kernels"]
+        #ksm = kernelspec.KernelSpecManager()
         print(os.environ['JUPYTER_PATH'])
-        #print(k.get_all_specs())
+        print(self.kernel_spec_manager.get_all_specs())
 
         project_path = self.isInsideProject(cwd)
         is_project = True if project_path is not None else False
@@ -73,7 +79,7 @@ class ProjectInfoHandler(APIHandler):
             project_data["name"] = project_path.split(os.path.sep)[-1]
             project_data["readme"] = self.getProjectReadme(project_path)
 
-        payload = {"is_project": is_project,"project_data":project_data,"kernels":APIHandler.ksm.get_all_specs()}
+        payload = {"is_project": is_project,"project_data":project_data,"kernels":self.kernel_spec_manager.get_all_specs()}
         self.finish(json.dumps(payload))
 
 class KernelsInfoHandler(APIHandler):
@@ -129,18 +135,20 @@ class CreateProjectHandler(APIHandler):
 
 
 class MainKernelSpecHandler(APIHandler):
-    
+    #https://github.com/jupyter/notebook/blob/master/notebook/services/kernelspecs/handlers.py
     @tornado.web.authenticated
     @tornado.gen.coroutine
     def get(self):
+        #global ksm
         #ksm = kernelspec.KernelSpecManager()
         print("--------- Inside MKSH ---------")
-        print(self.ksm.get_all_specs())
+        ##print(ksm.get_all_specs())
+        ksm = self.kernel_spec_manager
         km = self.kernel_manager
         model = {}
         model['default'] = km.default_kernel_name
         model['kernelspecs'] = specs = {}
-        kspecs = yield maybe_future(self.ksm.get_all_specs())
+        kspecs = yield maybe_future(ksm.get_all_specs())
         for kernel_name, kernel_info in kspecs.items():
             try:
                 if is_kernelspec_model(kernel_info):
@@ -158,14 +166,14 @@ class MainKernelSpecHandler(APIHandler):
 class KernelSpecHandler(APIHandler):
     
     @tornado.web.authenticated
-    @tornado.gen.coroutine
     def get(self, kernel_name):
+        global ksm
         #ksm = kernelspec.KernelSpecManager()
         print("--------- Inside KSH ---------")
-        print(self.ksm.get_all_specs())
+        print(ksm.get_all_specs())
         kernel_name = url_unescape(kernel_name)
         try:
-            spec = yield maybe_future(self.ksm.get_kernel_spec(kernel_name))
+            spec = yield maybe_future(ksm.get_kernel_spec(kernel_name))
         except KeyError as e:
             raise tornado.web.HTTPError(404, u'Kernel spec %s not found' % kernel_name) from e
         if is_kernelspec_model(spec):
@@ -184,19 +192,21 @@ kernel_name_regex = r"(?P<kernel_name>[\w\.\-%]+)"
 def setup_handlers(web_app, url_path):
     host_pattern = ".*$"
     base_url = web_app.settings["base_url"]
-
+    print("URL_PATH="+url_path)
     # Prepend the base_url so that it works in a jupyterhub setting
     create_pattern = url_path_join(base_url, url_path, "create")
     project_pattern = url_path_join(base_url, url_path, "project/info")
     kernel_pattern = url_path_join(base_url, url_path, "kernels/info")
     kernelspec = url_path_join(base_url, "api", "kernelspecs")
-    kernelspec_regex = url_path_join(base_url, "api", "kernelspecs%s" % kernel_name_regex)
+    kernelspec_regex = url_path_join(base_url, "api", "kernelspecs/%s" % kernel_name_regex)
+    print("kernel specs  = "+str(kernelspec))
+    print("kernel specs regex = "+str(kernelspec_regex))
     #http://localhost:8888/api/kernelspecs
     handlers = [(create_pattern, CreateProjectHandler)]
     handlers.append((project_pattern,ProjectInfoHandler))
     handlers.append((kernel_pattern,KernelsInfoHandler))
-    handlers.append((kernelspec,MainKernelSpecHandler))
-    handlers.append((kernelspec_regex,KernelSpecHandler))
+    #handlers.append((kernelspec,MainKernelSpecHandler))
+    #handlers.append((kernelspec_regex,KernelSpecHandler))
 
     web_app.add_handlers(host_pattern, handlers)
 
