@@ -20,9 +20,6 @@ from jupyter_client import kernelspec
 from jupyter_client.kernelspecapp import KernelSpecApp  
 from notebook.services.kernelspecs.handlers import is_kernelspec_model, kernelspec_model
 
-ksm = kernelspec.KernelSpecManager()
-
-SYSTEM_JUPYTER_PATH = kernelspec.SYSTEM_JUPYTER_PATH
 
 class ProjectInfoHandler(APIHandler):
     # The following decorator should be present on all verb methods (head, get, post,
@@ -57,29 +54,29 @@ class ProjectInfoHandler(APIHandler):
 
     @tornado.web.authenticated
     def post(self):
-        global ksm
         # input_data is a dictionnary with a key "name"
         input_data = self.get_json_body()
-        cwd = input_data["CWD"]
-        
-        os.environ['JUPYTER_PATH'] = os.environ['HOME'] + "/" + cwd + "/.local"
-        #kernelspec.SYSTEM_JUPYTER_PATH = SYSTEM_JUPYTER_PATH
-        #kernelspec.SYSTEM_JUPYTER_PATH.append(os.environ['JUPYTER_PATH'])
-        self.kernel_spec_manager.kernel_dirs = [os.environ['JUPYTER_PATH']+"/kernels"]
-        #ksm = kernelspec.KernelSpecManager()
-        print(os.environ['JUPYTER_PATH'])
-        print(self.kernel_spec_manager.get_all_specs())
+        print("input_data = ",input_data)
+        is_project = input_data["is_project"]
+        path = input_data["path"]
 
-        project_path = self.isInsideProject(cwd)
-        is_project = True if project_path is not None else False
+        project = self.isInsideProject(path)
+        #is_project = True if project_path is not None else False
         project_data={}
         if is_project:
-            with open(project_path+os.path.sep+'.swanproject') as json_file:
+            os.environ['JUPYTER_PATH'] = os.environ['HOME'] + "/" + project + "/.local"
+            #kernelspec.SYSTEM_JUPYTER_PATH = SYSTEM_JUPYTER_PATH
+            #kernelspec.SYSTEM_JUPYTER_PATH.append(os.environ['JUPYTER_PATH'])
+            self.kernel_spec_manager.kernel_dirs = [os.environ['JUPYTER_PATH']+"/kernels"]
+            #ksm = kernelspec.KernelSpecManager()
+            print(os.environ['JUPYTER_PATH'])
+            print(self.kernel_spec_manager.get_all_specs())
+            with open(project+os.path.sep+'.swanproject') as json_file:
                 project_data = json.load(json_file)
-            project_data["name"] = project_path.split(os.path.sep)[-1]
-            project_data["readme"] = self.getProjectReadme(project_path)
+            project_data["name"] = project.split(os.path.sep)[-1]
+            project_data["readme"] = self.getProjectReadme(project)
 
-        payload = {"is_project": is_project,"project_data":project_data,"kernels":self.kernel_spec_manager.get_all_specs()}
+        payload = {"project_data":project_data,"kernels":self.kernel_spec_manager.get_all_specs()}
         self.finish(json.dumps(payload))
 
 class KernelsInfoHandler(APIHandler):
