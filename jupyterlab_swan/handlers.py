@@ -53,6 +53,26 @@ class ProjectInfoHandler(APIHandler):
         return None
 
     @tornado.web.authenticated
+    def get(self):
+        path = os.environ['HOME'] + "/" + self.get_arguments("path",True)[0]
+        print("PATH = "+str(path))
+        project = self.isInsideProject(path)
+        is_project = True if project is not None else False
+        project_data={}
+        if is_project:
+            kernels_path = os.environ['HOME'] + "/" + project + "/.local/kernels"
+            self.kernel_spec_manager.kernel_dirs = [kernels_path]
+            print(kernels_path)
+            print(self.kernel_spec_manager.get_all_specs())
+            with open(project+os.path.sep+'.swanproject') as json_file:
+                project_data = json.load(json_file)
+            project_data["name"] = project.split(os.path.sep)[-1]
+            project_data["readme"] = self.getProjectReadme(project)
+
+        payload = {'status':True}
+        self.finish(json.dumps(payload))
+
+    @tornado.web.authenticated
     def post(self):
         # input_data is a dictionnary with a key "name"
         input_data = self.get_json_body()
@@ -64,12 +84,12 @@ class ProjectInfoHandler(APIHandler):
         #is_project = True if project_path is not None else False
         project_data={}
         if is_project:
-            os.environ['JUPYTER_PATH'] = os.environ['HOME'] + "/" + project + "/.local"
+            #os.environ['JUPYTER_PATH'] = os.environ['HOME'] + "/" + project + "/.local"
             #kernelspec.SYSTEM_JUPYTER_PATH = SYSTEM_JUPYTER_PATH
             #kernelspec.SYSTEM_JUPYTER_PATH.append(os.environ['JUPYTER_PATH'])
-            self.kernel_spec_manager.kernel_dirs = [os.environ['JUPYTER_PATH']+"/kernels"]
-            #ksm = kernelspec.KernelSpecManager()
-            print(os.environ['JUPYTER_PATH'])
+            kernels_path = os.environ['HOME'] + "/" + project + "/.local/kernels"
+            self.kernel_spec_manager.kernel_dirs = [kernels_path]
+            print(kernels_path)
             print(self.kernel_spec_manager.get_all_specs())
             with open(project+os.path.sep+'.swanproject') as json_file:
                 project_data = json.load(json_file)
@@ -164,7 +184,6 @@ class KernelSpecHandler(APIHandler):
     
     @tornado.web.authenticated
     def get(self, kernel_name):
-        global ksm
         #ksm = kernelspec.KernelSpecManager()
         print("--------- Inside KSH ---------")
         print(ksm.get_all_specs())
