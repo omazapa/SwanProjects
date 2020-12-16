@@ -54,20 +54,16 @@ class ProjectInfoHandler(APIHandler):
 
     @tornado.web.authenticated
     def get(self):
-        path = os.environ['HOME'] + "/" + self.get_arguments("path",True)[0]
+        path = self.get_arguments("path")[0]
         print("PATH = "+str(path))
         project = self.isInsideProject(path)
         is_project = True if project is not None else False
-        project_data={}
+        print("project = "+str(project))
         if is_project:
             kernels_path = os.environ['HOME'] + "/" + project + "/.local/kernels"
             self.kernel_spec_manager.kernel_dirs = [kernels_path]
             print(kernels_path)
             print(self.kernel_spec_manager.get_all_specs())
-            with open(project+os.path.sep+'.swanproject') as json_file:
-                project_data = json.load(json_file)
-            project_data["name"] = project.split(os.path.sep)[-1]
-            project_data["readme"] = self.getProjectReadme(project)
 
         payload = {'status':True}
         self.finish(json.dumps(payload))
@@ -151,58 +147,8 @@ class CreateProjectHandler(APIHandler):
         self.finish(json.dumps(data))
 
 
-class MainKernelSpecHandler(APIHandler):
-    #https://github.com/jupyter/notebook/blob/master/notebook/services/kernelspecs/handlers.py
-    @tornado.web.authenticated
-    @tornado.gen.coroutine
-    def get(self):
-        #global ksm
-        #ksm = kernelspec.KernelSpecManager()
-        print("--------- Inside MKSH ---------")
-        ##print(ksm.get_all_specs())
-        ksm = self.kernel_spec_manager
-        km = self.kernel_manager
-        model = {}
-        model['default'] = km.default_kernel_name
-        model['kernelspecs'] = specs = {}
-        kspecs = yield maybe_future(ksm.get_all_specs())
-        for kernel_name, kernel_info in kspecs.items():
-            try:
-                if is_kernelspec_model(kernel_info):
-                    d = kernel_info
-                else:
-                    d = kernelspec_model(self, kernel_name, kernel_info['spec'], kernel_info['resource_dir'])
-            except Exception:
-                self.log.error("Failed to load kernel spec: '%s'", kernel_name, exc_info=True)
-                continue
-            specs[kernel_name] = d
-        self.set_header("Content-Type", 'application/json')
-        self.finish(json.dumps(model))
-
-
-class KernelSpecHandler(APIHandler):
-    
-    @tornado.web.authenticated
-    def get(self, kernel_name):
-        #ksm = kernelspec.KernelSpecManager()
-        print("--------- Inside KSH ---------")
-        print(ksm.get_all_specs())
-        kernel_name = url_unescape(kernel_name)
-        try:
-            spec = yield maybe_future(ksm.get_kernel_spec(kernel_name))
-        except KeyError as e:
-            raise tornado.web.HTTPError(404, u'Kernel spec %s not found' % kernel_name) from e
-        if is_kernelspec_model(spec):
-            model = spec
-        else:
-            model = kernelspec_model(self, kernel_name, spec.to_dict(), spec.resource_dir)
-        self.set_header("Content-Type", 'application/json')
-        self.finish(json.dumps(model))
-
 
 # URL to handler mappings
-
-kernel_name_regex = r"(?P<kernel_name>[\w\.\-%]+)"
 
 
 def setup_handlers(web_app, url_path):
@@ -213,16 +159,10 @@ def setup_handlers(web_app, url_path):
     create_pattern = url_path_join(base_url, url_path, "create")
     project_pattern = url_path_join(base_url, url_path, "project/info")
     kernel_pattern = url_path_join(base_url, url_path, "kernels/info")
-    kernelspec = url_path_join(base_url, "api", "kernelspecs")
-    kernelspec_regex = url_path_join(base_url, "api", "kernelspecs/%s" % kernel_name_regex)
-    print("kernel specs  = "+str(kernelspec))
-    print("kernel specs regex = "+str(kernelspec_regex))
     #http://localhost:8888/api/kernelspecs
     handlers = [(create_pattern, CreateProjectHandler)]
     handlers.append((project_pattern,ProjectInfoHandler))
     handlers.append((kernel_pattern,KernelsInfoHandler))
-    #handlers.append((kernelspec,MainKernelSpecHandler))
-    #handlers.append((kernelspec_regex,KernelSpecHandler))
 
     web_app.add_handlers(host_pattern, handlers)
 
