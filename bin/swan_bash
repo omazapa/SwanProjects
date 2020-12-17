@@ -1,0 +1,18 @@
+#!/bin/bash -i
+#Author Omar.Zapata@cern.h 2020
+
+if [[ $# -eq 0 ]] ; then
+    clear
+else
+    PROJECT=$1
+    PROJECT_PATH="$HOME/SWAN_projects/$PROJECT"
+    PROJECT_FILE="$PROJECT_PATH/.swanproject"
+    SOURCE=`jq '.source' $PROJECT_FILE`
+    STACK=`jq '.stack' $PROJECT_FILE`
+    PLATFORM=`jq '.platform' $PROJECT_FILE`
+    USER_SCRIPT=`jq '.user_script' $PROJECT_FILE`
+    
+    PS1_SWAN="$(PS1="($PROJECT) $PS1")" #`bash -c "echo \($PROJECT\) $PS1 "`
+    echo $PS1_SWAN
+    bash -c "swan_env $SOURCE $STACK $PLATFORM $USER_SCRIPT $PROJECT_PATH  bash --rcfile <(echo 'PS1=\"($PROJECT) $PS1 \"') "
+fi
