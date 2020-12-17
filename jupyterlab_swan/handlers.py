@@ -123,26 +123,28 @@ class CreateProjectHandler(APIHandler):
     def post(self):
         # input_data is a dictionnary with a key "name"
         input_data = self.get_json_body()
-        
-        REPO = input_data["REPO"]
+        print(input_data)
+        PROJECT_NAME = input_data["PROJECT_NAME"]
+        SOURCE = input_data["SOURCE"]
         PLATFORM = input_data["PLATFORM"] #SCRAM
         STACK = input_data["STACK"] #CMSSW
         KERNELS = input_data["KERNELS"]
-        PROJECT_NAME = input_data["PROJECT_NAME"]
+        USER_SCRIPT = input_data["USER_SCRIPT"]
 
         PROJECT_DIR=os.environ["HOME"]+"/SWAN_projects/"+PROJECT_NAME
+        KERNEL_NAMES=[]
         for kernel in KERNELS:
-            create_kernel_from_template(REPO, STACK, PLATFORM, kernel, PROJECT_DIR+"/.local/kernels")
-        #create_cmd="/home/ozapatam/Projects/swan/jupyter_swan/bin/create_kernel_lab.sh"+" "+SCRAM+" "+CMSSW
-        #create_cmd="swan_create_project "+PROJECT_NAME+" "+SCRAM+" "+CMSSW
-        #print("Executing: "+create_cmd)
-        #os.system(create_cmd)
-
-        #JSON_PATH='/home/ozapatam/Projects/swan/jupyter_swan/'+SWANP_DIR+'/'+PROJECT_NAME+'/.kernel.json'
-        #jfile=open(JSON_PATH)
-        #kernel_content=jfile.read()
-        #jfile.close()
-
+            kernel_name = "{}_{}_{}_{}".format(SOURCE, STACK, PLATFORM, kernel)
+            KERNEL_NAMES.append(kernel_name)
+            create_kernel_from_template(SOURCE, STACK, PLATFORM, kernel, PROJECT_DIR+"/.local/kernels")
+        
+        swan_project_file = PROJECT_DIR+os.path.sep+'.swanproject'
+        swan_project_content = {'source':SOURCE,'stack':STACK,'platform':PLATFORM,'kernels':KERNEL_NAMES,'user_script':USER_SCRIPT}
+        
+        with open(swan_project_file,'w') as f:
+            f.write(json.dumps(swan_project_content, indent=4, sort_keys=True))
+            f.close()
+        
         data = {"greetings": "executed create_kernel_from_template, kernels added: {}".format(KERNELS)}
         self.finish(json.dumps(data))
 
@@ -156,7 +158,7 @@ def setup_handlers(web_app, url_path):
     base_url = web_app.settings["base_url"]
     print("URL_PATH="+url_path)
     # Prepend the base_url so that it works in a jupyterhub setting
-    create_pattern = url_path_join(base_url, url_path, "create")
+    create_pattern = url_path_join(base_url, url_path, "project/create")
     project_pattern = url_path_join(base_url, url_path, "project/info")
     kernel_pattern = url_path_join(base_url, url_path, "kernels/info")
     #http://localhost:8888/api/kernelspecs

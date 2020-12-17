@@ -124,19 +124,19 @@ const extension: JupyterFrontEndPlugin<void> = {
         const project_name=result.value;
 
         const kernelsInfo = await kernelsInfoRequest() as JSONObject;
-        const cvmfsrepos = kernelsInfo['kernels'] as JSONObject;
-        const cvmfsrepos_keys = Object.keys(cvmfsrepos)
+        const sourcerepos = kernelsInfo['kernels'] as JSONObject;
+        const sourcerepos_keys = Object.keys(sourcerepos)
           
-        console.log("cvmfs = "+cvmfsrepos_keys);
+        console.log("source_repo = "+sourcerepos_keys);
         result = await  InputDialog.getItem({
-        title: 'CVMFS Repository',
-        items: cvmfsrepos_keys,
-        current: cvmfsrepos_keys[0]
+        title: 'Source Repository',
+        items: sourcerepos_keys,
+        current: sourcerepos_keys[0]
         })
         if (!result.button.accept) return
-        const cvmfs_repo=result.value;
+        const source_repo=result.value;
 
-        const options = cvmfsrepos[cvmfs_repo] as Array<JSONObject>;
+        const options = sourcerepos[source_repo] as Array<JSONObject>;
         
         let all_stacks:any = [];
         each(options, (item, index) => {            
@@ -152,12 +152,14 @@ const extension: JupyterFrontEndPlugin<void> = {
           if (!result.button.accept) return
           const stack=result.value;
           
-        let platforms:Array<string> = [];
-        each(options, (item, index) => {
+          let platforms:Array<string> = [];
+          let kernels:Array<string> = [];
+          each(options, (item, index) => {
           const stacks = options[index]['STACKS'] as Array<string>;
           if(stacks.includes(stack))
           {
             platforms =  options[index]['PLATFORMS'] as Array<string>;
+            kernels =  options[index]['KERNELS'] as Array<string>;
           }
         })
 
@@ -177,11 +179,25 @@ const extension: JupyterFrontEndPlugin<void> = {
           if (!result.button.accept) return
           const userscript=result.value;
           console.log("project_name = "+project_name)
-          console.log("cvmfs_repo = "+cvmfs_repo)
+          console.log("source_repo = "+source_repo)
           console.log("stack = "+stack)
           console.log("platform = "+platform)
+          console.log("kernels = "+kernels)
           console.log("userscript = "+userscript)
-
+          const dataToSend = { PROJECT_NAME: project_name, SOURCE:source_repo, STACK:stack,PLATFORM:platform, KERNELS:kernels,USER_SCRIPT:userscript};
+          try {
+            request<any>('swan/project/create', {
+              body: JSON.stringify(dataToSend),
+              method: 'POST'
+            }).then(pvalue => {
+                console.log(pvalue);
+            });
+          } catch (reason) {
+            console.error(
+              `Error on POST /swan/project/create ${dataToSend}.\n${reason}`
+            );
+          }
+          
           return
             /*
             // POST request
