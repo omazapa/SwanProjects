@@ -1,9 +1,8 @@
 #!/bin/bash -i
 #Author Omar.Zapata@cern.h 2020
 
-if [[ $# -eq 0 ]] ; then
-    clear
-else
+clear
+if [[ $# -gt 0 ]] ; then
     PROJECT=$1
     PROJECT_PATH="$HOME/SWAN_projects/$PROJECT"
     PROJECT_FILE="$PROJECT_PATH/.swanproject"

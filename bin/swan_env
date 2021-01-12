@@ -37,7 +37,7 @@ COMMAND=${PARAMETERS[@]}
 clear
 
 if [[ $SOURCE == "SFT" ]]; then 
-    #example: swan_env LCG_96 x86_64-centos7-gcc8-opt which python
+    #example: swan_env SFT LCG_96 x86_64-centos7-gcc8-opt "" $PWD  which python
     CVMFS_PATH="/cvmfs/sft.cern.ch/lcg/views/$STACK/$PLATFORM/setup.sh"
     echo "Loading $STACK with plafortm $PLATFORM "
     source $CVMFS_PATH
