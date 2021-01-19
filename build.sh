@@ -1,7 +1,8 @@
-#pip3 install jupyterlab_swan --user
+pip3 install jupyterlab_swan --user
 
 #pip3 install  . --user
 # Register server extension
+jupyter labextension disable @jupyterlab/launcher-extension
 jupyter serverextension enable --py jupyterlab_swan
 # Install dependencies
 jlpm

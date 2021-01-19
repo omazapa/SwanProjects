@@ -25,7 +25,7 @@ lab_path = pjoin(HERE, name, "jupyterlab_swan")
 
 # Representative files that should exist after a successful build
 jstargets = [
-    pjoin(HERE, "lib", "jlabextexample.js"),
+    pjoin(HERE, "lib"),
 ]
 
 package_data_spec = {
