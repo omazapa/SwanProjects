@@ -136,7 +136,7 @@ class CreateProjectHandler(APIHandler):
         for kernel in KERNELS:
             kernel_name = "{}_{}_{}_{}".format(SOURCE, STACK, PLATFORM, kernel)
             KERNEL_NAMES.append(kernel_name)
-            create_kernel_from_template(SOURCE, STACK, PLATFORM, kernel, PROJECT_DIR+"/.local/kernels")
+            create_kernel_from_template(SOURCE, STACK, PLATFORM, USER_SCRIPT, kernel, PROJECT_DIR+"/.local/kernels")
         
         swan_project_file = PROJECT_DIR+os.path.sep+'.swanproject'
         swan_project_content = {'source':SOURCE,'stack':STACK,'platform':PLATFORM,'kernels':KERNEL_NAMES,'user_script':USER_SCRIPT}
