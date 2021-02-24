@@ -1,7 +1,7 @@
 from jupyter_client.kernelspec import KernelSpecManager, KernelSpec, NoSuchKernel
 from jupyter_core.paths import jupyter_data_dir
 from traitlets import Unicode, Bool
-from utils import get_project_info, has_project_file
+from swanprojects.utils import get_project_info, has_project_file
 import subprocess
 import sys
 import os
@@ -11,6 +11,7 @@ class SwanKernelSpecManager(KernelSpecManager):
                          help="SWAN Project path")
     def __init__(self, **kwargs):
         super(SwanKernelSpecManager, self).__init__(**kwargs)
+        print("JupyterLab server extension SWAN Projects - KernelSpecManager is activated!")
 
     @staticmethod
     def set_project_path(project_path):
@@ -20,7 +21,7 @@ class SwanKernelSpecManager(KernelSpecManager):
     def get_env_kernels(self,project_path,home_kernels):
         project_info = get_project_info(self.set_project_path)
         if project_info == None:
-            return self.get_all_specs(home_kernels)
+            return self._get_all_specs(home_kernels)
         else:
             if not has_project_file(project_path):
                 print({'error':'Error, not valid project path, .swanfile not found.','project_path':project_path})
@@ -40,7 +41,8 @@ class SwanKernelSpecManager(KernelSpecManager):
             return data
 
     def set_project_kernel_path(self):
-        self.kernel_dirs = [self.project_path+"/.local/kernels"]
+        if self.project_path is not None:
+            self.kernel_dirs = [self.project_path+"/.local/kernels"]
         
     def find_kernel_specs(self, skip_base=True):
         """ Returns a dict mapping kernel names to resource directories.
@@ -60,7 +62,7 @@ class SwanKernelSpecManager(KernelSpecManager):
         self.set_project_kernel_path()
         return super(SwanKernelSpecManager, self).get_kernel_spec(kernel_name)
 
-    def _get_all_specs(self):
+    def get_all_specs(self):
         """ Returns a dict mapping kernel names to dictionaries with two
             entries: "resource_dir" and "spec". This was added to fill out
             the full public interface to KernelManagerSpec.
@@ -75,8 +77,8 @@ class SwanKernelSpecManager(KernelSpecManager):
                 self.log.warning("Error loading kernelspec %r", name, exc_info=True)
         return res
 
-    def get_all_specs(self,home_kernels):
-        kspecs = self._get_all_specs()
+    def _get_all_specs(self,home_kernels):
+        kspecs = self.get_all_specs()
         home_data_dir=jupyter_data_dir()
         stack_kspecs={}
         for spec in kspecs:

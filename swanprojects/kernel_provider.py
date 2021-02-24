@@ -7,7 +7,7 @@ except ImportError:
     KernelProviderBase = object
 
 from jupyter_client.manager import KernelManager
-from .km_manager import SwanKernelSpecManager
+from swanproject.ks_manager import SwanKernelSpecManager
 
 
 class SwanKernelProvider(KernelProviderBase):

@@ -1,9 +1,7 @@
 from ._version import __version__
 from .handlers import setup_handlers
-from .km_manager import SwanKernelSpecManager
-
 def _jupyter_server_extension_paths():
-    return [{"module": "swanporjects"}]
+    return [{"module": "swanprojects"}]
 
 
 def load_jupyter_server_extension(lab_app):

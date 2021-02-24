@@ -20,43 +20,18 @@ from jupyter_client import kernelspec
 from jupyter_client.kernelspecapp import KernelSpecApp  
 from notebook.services.kernelspecs.handlers import is_kernelspec_model, kernelspec_model
 
+from swanprojects.utils import is_inside_project, get_project_readme
 
 class ProjectInfoHandler(APIHandler):
     # The following decorator should be present on all verb methods (head, get, post,
     # patch, put, delete, options) to ensure only authorized user can request the
-    # Jupyter server
-
-    def hasProjectFile(self,path):
-        """
-        Method to check if .swanproject exists
-        path: path to check
-        """
-        return os.path.exists(path+os.path.sep+".swanproject")
-    
-    def getProjectReadme(self,project_path):
-        readme_path=project_path+os.path.sep+"README.md"
-        if os.path.exists(readme_path):
-            f = open(readme_path, "r")
-            text = f.read()
-            f.close()
-            return text
-        return ""
-
-    def isInsideProject(self,cwd):
-        home = os.path.expanduser("~")
-        paths =  cwd.split(os.path.sep)
-        cwd_current = cwd
-        for i in range(len(paths)):
-            if self.hasProjectFile(home+os.path.sep+cwd_current):
-                return cwd_current
-            cwd_current=cwd_current[:-(len(paths[len(paths)-i-1])+1)]
-        return None
+    # Jupyter server    
 
     @tornado.web.authenticated
     def get(self):
         path = self.get_arguments("path")[0]
         print("PATH = "+str(path))
-        project = self.isInsideProject(path)
+        project = is_inside_project(path)
         is_project = True if project is not None else False
         self.kernel_spec_manager.set_project_path(path)
         print("project = "+str(project))
@@ -78,9 +53,10 @@ class ProjectInfoHandler(APIHandler):
         is_project = input_data["is_project"]
         path = input_data["path"]
 
-        project = self.isInsideProject(path)
-        self.kernel_spec_manager.set_project_path(path)
-
+        project = is_inside_project(path)
+        self.kernel_spec_manager.set_project_path(project)
+        if project is not None:
+            print("Project = "+project)
         #is_project = True if project_path is not None else False
         project_data={}
         if is_project:
@@ -89,12 +65,12 @@ class ProjectInfoHandler(APIHandler):
             #kernelspec.SYSTEM_JUPYTER_PATH.append(os.environ['JUPYTER_PATH'])
             #kernels_path = os.environ['HOME'] + "/" + project + "/.local/kernels"
             #self.kernel_spec_manager.kernel_dirs = [kernels_path]
-            self.kernel_spec_manager.set_project_path(path)
+            #self.kernel_spec_manager.set_project_path(path)
             print(self.kernel_spec_manager.get_all_specs())
             with open(project+os.path.sep+'.swanproject') as json_file:
                 project_data = json.load(json_file)
             project_data["name"] = project.split(os.path.sep)[-1]
-            project_data["readme"] = self.getProjectReadme(project)
+            project_data["readme"] = get_project_readme(project)
 
         payload = {"project_data":project_data,"kernels":self.kernel_spec_manager.get_all_specs()}
         self.finish(json.dumps(payload))
