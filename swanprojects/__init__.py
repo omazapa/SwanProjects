@@ -1,9 +1,9 @@
 from ._version import __version__
 from .handlers import setup_handlers
-from .manager import SwanKernelSpecManager
+from .km_manager import SwanKernelSpecManager
 
 def _jupyter_server_extension_paths():
-    return [{"module": "jupyterlab_swan"}]
+    return [{"module": "swanporjects"}]
 
 
 def load_jupyter_server_extension(lab_app):
@@ -16,5 +16,5 @@ def load_jupyter_server_extension(lab_app):
     url_path = "swan"
     setup_handlers(lab_app.web_app, url_path)
     lab_app.log.info(
-        "Registered jupyterlab_swan extension at URL path /{}".format(url_path)
+        "Registered swanprojects extension at URL path /{}".format(url_path)
     )

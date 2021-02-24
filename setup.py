@@ -13,7 +13,7 @@ import setuptools
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 # The name of the project
-name="jupyterlab_swan"
+name="swanprojects"
 
 # Ensure a valid python version
 ensure_python(">=3.5")
@@ -21,7 +21,7 @@ ensure_python(">=3.5")
 # Get the version
 version = get_version(pjoin(name, "_version.py"))
 
-lab_path = pjoin(HERE, name, "jupyterlab_swan")
+lab_path = pjoin(HERE, name, "swanprojects")
 
 # Representative files that should exist after a successful build
 jstargets = [
@@ -37,7 +37,7 @@ package_data_spec = {
 data_files_spec = [
     ("share/jupyter/lab/extensions", lab_path, "*.tgz"),
     ("etc/jupyter/jupyter_notebook_config.d",
-     "jupyter-config", "jupyterlab_swan.json"),
+     "jupyter-config", "swanprojects.json"),
 ]
 
 cmdclass = create_cmdclass("jsdeps",
@@ -85,7 +85,7 @@ setup_args = dict(
     entry_points = {
     'jupyter_client.kernel_providers' : [
         # The name before the '=' should match the id attribute
-        'swan = jupyterlab_swan:SwanKernelProvider',
+        'swan = swanprojects:SwanKernelProvider',
     ]},
 )
 

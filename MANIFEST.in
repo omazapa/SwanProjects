@@ -2,12 +2,12 @@ include LICENSE
 include README.md
 include pyproject.toml
 
-include jupyter-config/jupyterlab_swan.json
+include jupyter-config/swanprojects.json
 
 include package.json
 include ts*.json
-include jupyter_swan/jupyterlab_swan/*.tgz
-graft jupyterlab_swan/static
+include jupyter_swan/swanprojects/*.tgz
+graft swanprojects/static
 
 # Javascript files
 graft src
