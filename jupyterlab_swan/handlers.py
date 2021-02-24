@@ -58,11 +58,13 @@ class ProjectInfoHandler(APIHandler):
         print("PATH = "+str(path))
         project = self.isInsideProject(path)
         is_project = True if project is not None else False
+        self.kernel_spec_manager.set_project_path(path)
         print("project = "+str(project))
         if is_project:
-            kernels_path = os.environ['HOME'] + "/" + project + "/.local/kernels"
-            self.kernel_spec_manager.kernel_dirs = [kernels_path]
-            print(kernels_path)
+            #kernels_path = os.environ['HOME'] + "/" + project + "/.local/kernels"
+            #self.kernel_spec_manager.kernel_dirs = [kernels_path]
+            #print(kernels_path)
+            self.kernel_spec_manager.set_project_path(path)
             print(self.kernel_spec_manager.get_all_specs())
 
         payload = {'status':True}
@@ -77,15 +79,17 @@ class ProjectInfoHandler(APIHandler):
         path = input_data["path"]
 
         project = self.isInsideProject(path)
+        self.kernel_spec_manager.set_project_path(path)
+
         #is_project = True if project_path is not None else False
         project_data={}
         if is_project:
             #os.environ['JUPYTER_PATH'] = os.environ['HOME'] + "/" + project + "/.local"
             #kernelspec.SYSTEM_JUPYTER_PATH = SYSTEM_JUPYTER_PATH
             #kernelspec.SYSTEM_JUPYTER_PATH.append(os.environ['JUPYTER_PATH'])
-            kernels_path = os.environ['HOME'] + "/" + project + "/.local/kernels"
-            self.kernel_spec_manager.kernel_dirs = [kernels_path]
-            print(kernels_path)
+            #kernels_path = os.environ['HOME'] + "/" + project + "/.local/kernels"
+            #self.kernel_spec_manager.kernel_dirs = [kernels_path]
+            self.kernel_spec_manager.set_project_path(path)
             print(self.kernel_spec_manager.get_all_specs())
             with open(project+os.path.sep+'.swanproject') as json_file:
                 project_data = json.load(json_file)

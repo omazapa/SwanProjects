@@ -1,5 +1,5 @@
 {
-  "name": "@swan/jupyter_swan",
+  "name": "@swan/SwanProjects",
   "version": "0.1.0",
   "description": "CERN SWAN JupyterLab extension with backend and frontend parts.",
   "keywords": [

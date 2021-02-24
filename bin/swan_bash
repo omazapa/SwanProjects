@@ -1,5 +1,5 @@
 #!/bin/bash -i
-#Author Omar.Zapata@cern.h 2021
+#Author Omar.Zapata@cern.ch 2021
 
 clear
 if [[ $# -gt 0 ]] ; then

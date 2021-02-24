@@ -34,19 +34,25 @@ done
 
 COMMAND=${PARAMETERS[@]}
 
+if [ "$SWAN_ENV_SILENCE" != "1" ]; then
 clear
+fi
 
 if [[ $SOURCE == "SFT" ]]; then 
     #example: swan_env SFT LCG_96 x86_64-centos7-gcc8-opt "" $PWD  which python
     CVMFS_PATH="/cvmfs/sft.cern.ch/lcg/views/$STACK/$PLATFORM/setup.sh"
-    echo "Loading $STACK with plafortm $PLATFORM "
+    if [ "$SWAN_ENV_SILENCE" != "1" ]; then
+        echo "Loading $STACK with plafortm $PLATFORM "
+    fi
     source $CVMFS_PATH
 fi
 
 if [[ $SOURCE == "CMS" ]]; then
     #example: swan_env CMS CMSSW_10_6_19 slc7_amd64_gcc820 ipython kernelspec list
     source /cvmfs/cms.cern.ch/cmsset_default.sh
-    echo "Loading $STACK with plafortm $PLATFORM "
+    if [ "$SWAN_ENV_SILENCE" != "1" ]; then
+        echo "Loading $STACK with plafortm $PLATFORM "
+    fi
     CMS_BASEDIR=/cvmfs/cms.cern.ch
     CMSSW=$STACK
     SCRAM=$PLATFORM

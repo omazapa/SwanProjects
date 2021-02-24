@@ -61,7 +61,7 @@ setup_args = dict(
     description="CERN SWAN JupyterLab extension with backend and frontend parts.",
     long_description= long_description,
     long_description_content_type="text/markdown",
-    scripts=['bin/swan_env','bin/swan_start_ipykernel','bin/swan_bash'],
+    scripts=['bin/swan_env','bin/swan_bash','bin/swan_kmspecs'],
     cmdclass= cmdclass,
     packages=setuptools.find_packages(),
     install_requires=[
@@ -82,6 +82,11 @@ setup_args = dict(
         "Programming Language :: Python :: 3.8",
         "Framework :: Jupyter",
     ],
+    entry_points = {
+    'jupyter_client.kernel_providers' : [
+        # The name before the '=' should match the id attribute
+        'swan = jupyterlab_swan:SwanKernelProvider',
+    ]},
 )
 
 
