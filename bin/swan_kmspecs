@@ -59,12 +59,52 @@ def get_env_specs(project_path,home_kernels):
         data=eval(data)
         return data
 
+def get_env_paths(project_path,home_kernels):
+    from jupyter_core.paths import jupyter_path
+    #from ipykernel.kernelspec import RESOURCES
+    kernels_blacklist_paths = [os.environ["HOME"]+os.sep+'.local/share/jupyter/kernels','/usr/local/share/jupyter/kernels','/usr/share/jupyter/kernels']
+    if project_path == None:
+        tmp_paths = jupyter_path('kernels')
+        #paths = [RESOURCES]
+        paths = []
+        for path in tmp_paths:
+            found=False
+            for bl_path in kernels_blacklist_paths:
+                if bl_path in path:
+                    found=True
+            if not found:
+                paths.append(path)
+        return paths
+    else:
+        if not has_project_file(project_path):
+            print({'error':'Error, not valid project path, .swanfile not found.','project_path':project_path}) 
+        project_info = get_project_info(project_path)
+
+        command =  ["/bin/bash","swan_env",project_info['source'],project_info['stack'],project_info['platform'],project_info['user_script'], ".","python "+__file__,"--jupyter_kernel_paths"]
+        if args.home_kernels:
+            command.append("--home_kernels")
+        env=os.environ
+        env["SWAN_ENV_SILENCE"] = "1"
+        proc = subprocess.Popen(command, stdout = subprocess.PIPE, env=env)
+        proc.wait()
+        data = proc.stdout.read().decode("utf-8")
+        proc.communicate()
+        data="".join(data).replace('\n','')
+        data=eval(data)
+        #data.append(RESOURCES)
+        return data
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Swan Enviroment Kernel Manager CMD options.')
     parser.add_argument('--home_kernels', action='store_true', help="Enable return kernels from home.")
     parser.add_argument('--project_path', type=str,default=None, help='Project directory path')
+    parser.add_argument('--jupyter_kernel_paths', action='store_true',default=None, help='Project directory path')
     args = parser.parse_args()
     project_path = args.project_path
     home_kernels = args.home_kernels
-    data = get_env_specs(project_path,home_kernels)
-    pprint.pprint(data,indent=4)
+    if args.jupyter_kernel_paths:
+        data = get_env_paths(project_path,home_kernels)
+        pprint.pprint(data)
+    else:
+        data = get_env_specs(project_path,home_kernels)
+        pprint.pprint(data,indent=4)

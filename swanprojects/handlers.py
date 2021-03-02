@@ -33,13 +33,14 @@ class ProjectInfoHandler(APIHandler):
         print("PATH = "+str(path))
         project = is_inside_project(path)
         is_project = True if project is not None else False
-        self.kernel_spec_manager.set_project_path(path)
+        self.kernel_spec_manager.set_project_path(project)
+        self.kernel_spec_manager.set_project_kernel_path()
         print("project = "+str(project))
         if is_project:
             #kernels_path = os.environ['HOME'] + "/" + project + "/.local/kernels"
             #self.kernel_spec_manager.kernel_dirs = [kernels_path]
             #print(kernels_path)
-            self.kernel_spec_manager.set_project_path(path)
+            #self.kernel_spec_manager.set_project_path(path)
             print(self.kernel_spec_manager.get_all_specs())
 
         payload = {'status':True}
@@ -55,6 +56,7 @@ class ProjectInfoHandler(APIHandler):
 
         project = is_inside_project(path)
         self.kernel_spec_manager.set_project_path(project)
+        self.kernel_spec_manager.set_project_kernel_path()
         if project is not None:
             print("Project = "+project)
         #is_project = True if project_path is not None else False
