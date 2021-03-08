@@ -1,5 +1,7 @@
-#!/home/ozapatam/anaconda3/envs/swan-term/bin/python
+#!/usr/bin/env
+from distutils.spawn import find_executable
 
+from shutil import rmtree 
 import subprocess
 import argparse
 import pprint
@@ -7,104 +9,132 @@ import json
 import sys
 import os
 
-def has_project_file(path):
-    """
-    Method to check if .swanproject exists
-    path: path to check
-    """
-    return os.path.exists(path+os.path.sep+".swanproject")
+def _generate_native_kernel(project_path,python_interpreter,python_version):
+    kernel_path = "{}/.local/share/jupyter/kernels/{}".format(project_path,python_version)
+    if os.path.exists(kernel_path):
+        print("Path: {} already exists, recreating it with a new kernel spec".format(kernel_path))
+        rmtree(kernel_path)
+    python_code='from ipykernel import kernelspec;kernelspec.write_kernel_spec(path="{}")'.format(kernel_path)
+    command =  [python_interpreter,"-c",python_code]
+    proc = subprocess.Popen(command, stdout = subprocess.PIPE)
+    proc.wait()
+    data = proc.stdout.read().decode("utf-8")
+    print(data)
+    proc.communicate()
+    if proc.returncode !=0 :
+        print("Error creating navite kernel for {} in project {}".format(python_version,project_path))
+    return proc.returncode
 
-def get_project_info(path):
-    if has_project_file(path):
-        swanfile = path+os.path.sep+".swanproject"
-        with open(swanfile) as json_file:
-            data = json.load(json_file)
-        return data
+def generate_native_kernel(project_path):
+    project_file = project_path+os.path.sep+".swanproject"
+    f = open(project_file,"r+")
+    project_data = f.read() 
+    if project_data.strip() == "":
+        project_data = {}
     else:
-        None
-
-def get_all_specs(home_kernels):
-    from jupyter_client.kernelspec import KernelSpecManager
-    from jupyter_core.paths import jupyter_data_dir
-    km=KernelSpecManager()
-    kspecs = km.get_all_specs()
-    home_data_dir=jupyter_data_dir()
-    stack_kspecs={}
-    for spec in kspecs:
-        if home_kernels:
-            stack_kspecs[spec]=kspecs[spec]
+        project_data = json.loads(project_data)
+    print(project_data)
+    f.seek(0)
+    python2 = find_executable("python2")
+    if python2 is not None:
+        print("python2 found = "+python2)
+        project_data["python2"]={"found":True,"path":python2}
+        rcode = _generate_native_kernel(project_path,python2,"python2")
+        if rcode == 0:
+            project_data["python2"]={"ipykernel":True}
         else:
-            if not home_data_dir in kspecs[spec]['resource_dir']:
-                stack_kspecs[spec]=kspecs[spec]
-    return stack_kspecs
-
-def get_env_specs(project_path,home_kernels):
-    if project_path == None:
-        return get_all_specs(home_kernels=args.home_kernels)
+            project_data["python2"]={"ipykernel":False}
     else:
-        if not has_project_file(project_path):
-            print({'error':'Error, not valid project path, .swanfile not found.','project_path':project_path}) 
-        project_info = get_project_info(project_path)
+            project_data["python2"]={"found":False}
+ 
+    python3 = find_executable("python3")
+    if python3 is not None:
+        print("python3 found = "+python3)
+        project_data["python3"]={"found":True,"path":python3}
+        rcode = _generate_native_kernel(project_path,python3,"python3")
+        if rcode == 0:
+            project_data["python3"]={"ipykernel":True}
+        else:
+            project_data["python3"]={"ipykernel":False}
+    else:
+        project_data["python3"]={"found":False}
+    
+    f.seek(0)
+    f.truncate()
+    json.dump(project_data,f,indent=4)
+    f.close()
 
-        command =  ["/bin/bash","swan_env",project_info['source'],project_info['stack'],project_info['platform'],project_info['user_script'], ".","python "+__file__]
-        if args.home_kernels:
-            command.append("--home_kernels")
-        env=os.environ
-        env["SWAN_ENV_SILENCE"] = "1"
-        proc = subprocess.Popen(command, stdout = subprocess.PIPE, env=env)
-        proc.wait()
-        data = proc.stdout.read().decode("utf-8")
-        proc.communicate()
-        data="".join(data).replace('\n','')
-        data=eval(data)
-        return data
-
-def get_env_paths(project_path,home_kernels):
+def save_kernel_paths(project_path):
     from jupyter_core.paths import jupyter_path
-    #from ipykernel.kernelspec import RESOURCES
     kernels_blacklist_paths = [os.environ["HOME"]+os.sep+'.local/share/jupyter/kernels','/usr/local/share/jupyter/kernels','/usr/share/jupyter/kernels']
-    if project_path == None:
-        tmp_paths = jupyter_path('kernels')
-        #paths = [RESOURCES]
-        paths = []
-        for path in tmp_paths:
-            found=False
-            for bl_path in kernels_blacklist_paths:
-                if bl_path in path:
-                    found=True
-            if not found:
-                paths.append(path)
-        return paths
-    else:
-        if not has_project_file(project_path):
-            print({'error':'Error, not valid project path, .swanfile not found.','project_path':project_path}) 
-        project_info = get_project_info(project_path)
+    tmp_paths = jupyter_path('kernels')
+    paths = []
+    for path in tmp_paths:
+        found=False
+        for bl_path in kernels_blacklist_paths:
+            if bl_path in path:
+                found=True
+        if not found:
+            paths.append(path)
+    project_file = project_path+os.path.sep+".swanproject"
+    
+    with open(project_file,"r+") as f:
+        project_data = f.read()
+        if project_data == "":
+            project_data = {}
+        else:
+            project_data = json.loads(project_data)
+        f.seek(0)
+        f.truncate()
+        if "kernel_paths" in list(project_data.keys()):
+            project_data["kernel_paths"] = project_data["kernel_paths"] + paths
+        else:
+            project_data["kernel_paths"] = paths
+        json.dump(project_data,f,indent=4)
 
-        command =  ["/bin/bash","swan_env",project_info['source'],project_info['stack'],project_info['platform'],project_info['user_script'], ".","python "+__file__,"--jupyter_kernel_paths"]
-        if args.home_kernels:
-            command.append("--home_kernels")
-        env=os.environ
-        env["SWAN_ENV_SILENCE"] = "1"
-        proc = subprocess.Popen(command, stdout = subprocess.PIPE, env=env)
-        proc.wait()
-        data = proc.stdout.read().decode("utf-8")
-        proc.communicate()
-        data="".join(data).replace('\n','')
-        data=eval(data)
-        #data.append(RESOURCES)
-        return data
+def generate_ksminfo(project_path):
+    generate_native_kernel(project_path)
+    save_kernel_paths(project_path)
+
+def swan_kmspecs(project_path,source,stack,platform,user_script):
+    command =  ["/bin/bash","swan_env",source,stack,platform,user_script, ".","python",__file__,"--generate_ksminfo","--project_path",project_path]
+    print(" ".join(command))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Swan Enviroment Kernel Manager CMD options.')
-    parser.add_argument('--home_kernels', action='store_true', help="Enable return kernels from home.")
-    parser.add_argument('--project_path', type=str,default=None, help='Project directory path')
-    parser.add_argument('--jupyter_kernel_paths', action='store_true',default=None, help='Project directory path')
-    args = parser.parse_args()
+    parser.add_argument('--project_path', type=str,required=True, help='Project directory path')
+    parser.add_argument('--source', type=str,default=None, help='Software source: SFT or CMS')
+    parser.add_argument('--stack', type=str,default=None, help='Project directory path')
+    parser.add_argument('--platform', type=str,default=None, help='Project directory path')
+    parser.add_argument('--user_script', type=str,default="", help='Project directory path')
+    parser.add_argument('--generate_ksminfo', action='store_true',default=None, help='Generates Kernel Spec Manager info')
+    args         = parser.parse_args()
     project_path = args.project_path
-    home_kernels = args.home_kernels
-    if args.jupyter_kernel_paths:
-        data = get_env_paths(project_path,home_kernels)
-        pprint.pprint(data)
+    source       = args.source
+    stack        = args.stack
+    platform     = args.platform
+    user_script  = args.user_script
+
+    if args.generate_ksminfo:
+        generate_ksminfo(project_path)
     else:
-        data = get_env_specs(project_path,home_kernels)
-        pprint.pprint(data,indent=4)
+        if source is None:
+            print("source parameter can not be None")
+            sys.exit(1)
+        if stack is None:
+            print("stack parameter can not be None")
+            sys.exit(1)
+        if platform is None:
+            print("platform parameter can not be None")
+            sys.exit(1)
+        if stack is None:
+            print("stack parameter can not be None")
+            sys.exit(1)
+        swan_kmspecs(project_path,source,stack,platform,user_script)
+    
+
+    #home_kernels = args.home_kernels
+    #if args.jupyter_kernel_paths:
+    #    data = get_env_settings(project_path,home_kernels)
+    #    pprint.pprint(data)
