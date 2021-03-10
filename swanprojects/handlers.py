@@ -9,7 +9,7 @@ from notebook.utils import maybe_future, url_path_join, url_unescape
 import tornado
 from tornado.web import StaticFileHandler
 from swankernels.config import get_kernels
-from swankernels.generator import create_kernel_from_template
+# from swankernels.generator import create_kernel_from_template
 
 
 #from swankernels.manager import SwanKernelSpecManager
@@ -20,30 +20,32 @@ from jupyter_client import kernelspec
 from jupyter_client.kernelspecapp import KernelSpecApp  
 from notebook.services.kernelspecs.handlers import is_kernelspec_model, kernelspec_model
 
-from swanprojects.utils import is_inside_project, get_project_readme
+from swanprojects.utils import project_path, get_project_readme
+
+import subprocess
 
 class ProjectInfoHandler(APIHandler):
     # The following decorator should be present on all verb methods (head, get, post,
     # patch, put, delete, options) to ensure only authorized user can request the
     # Jupyter server    
 
-    @tornado.web.authenticated
-    def get(self):
-        path = self.get_arguments("path")[0]
-        print("PATH = "+str(path))
-        project = is_inside_project(path)
-        is_project = True if project is not None else False
-        self.kernel_spec_manager.set_project_path(path)
-        print("project = "+str(project))
-        if is_project:
-            #kernels_path = os.environ['HOME'] + "/" + project + "/.local/kernels"
-            #self.kernel_spec_manager.kernel_dirs = [kernels_path]
-            #print(kernels_path)
-            self.kernel_spec_manager.set_project_path(path)
-            print(self.kernel_spec_manager.get_all_specs())
+    # @tornado.web.authenticated
+    # def get(self):
+    #     path = self.get_arguments("path")[0]
+    #     print("PATH = "+str(path))
+    #     project = project_path(path)
+    #     is_project = True if project is not None else False
+    #     print("project = "+str(project))
+    #     self.kernel_spec_manager.set_path(project)
+    #     if is_project:
+    #         #kernels_path = os.environ['HOME'] + "/" + project + "/.local/kernels"
+    #         #self.kernel_spec_manager.kernel_dirs = [kernels_path]
+    #         #print(kernels_path)
+    #         print(self.kernel_spec_manager.get_all_specs())
 
-        payload = {'status':True}
-        self.finish(json.dumps(payload))
+
+    #     payload = {'status':True}
+    #     self.finish(json.dumps(payload))
 
     @tornado.web.authenticated
     def post(self):
@@ -52,9 +54,9 @@ class ProjectInfoHandler(APIHandler):
         print("input_data = ",input_data)
         is_project = input_data["is_project"]
         path = input_data["path"]
-
-        project = is_inside_project(path)
-        self.kernel_spec_manager.set_project_path(project)
+        self.kernel_spec_manager.set_path(path)
+        
+        project = project_path(path)
         if project is not None:
             print("Project = "+project)
         #is_project = True if project_path is not None else False
@@ -112,18 +114,24 @@ class CreateProjectHandler(APIHandler):
         USER_SCRIPT = input_data["USER_SCRIPT"]
 
         PROJECT_DIR=os.environ["HOME"]+"/SWAN_projects/"+PROJECT_NAME
-        KERNEL_NAMES=[]
-        for kernel in KERNELS:
-            kernel_name = "{}_{}_{}_{}".format(SOURCE, STACK, PLATFORM, kernel)
-            KERNEL_NAMES.append(kernel_name)
-            create_kernel_from_template(SOURCE, STACK, PLATFORM, USER_SCRIPT, kernel, PROJECT_DIR+"/.local/kernels")
-        
+        os.makedirs(PROJECT_DIR)
         swan_project_file = PROJECT_DIR+os.path.sep+'.swanproject'
-        swan_project_content = {'source':SOURCE,'stack':STACK,'platform':PLATFORM,'kernels':KERNEL_NAMES,'user_script':USER_SCRIPT}
+        swan_project_content = {'source':SOURCE,'stack':STACK,'platform':PLATFORM,'user_script':USER_SCRIPT}
         
-        with open(swan_project_file,'w') as f:
+        with open(swan_project_file,'w+') as f:
             f.write(json.dumps(swan_project_content, indent=4, sort_keys=True))
             f.close()
+        
+        command =  ["swan_kmspecs","--source",SOURCE,"--stack",STACK,"--platform",PLATFORM,"--user_script",USER_SCRIPT,"--project_path",PROJECT_DIR]
+        print(" ".join(command))
+        proc = subprocess.Popen(command, stdout = subprocess.PIPE)
+        proc.wait()
+        data = proc.stdout.read().decode("utf-8")
+        print(data)
+        proc.communicate()
+        #if proc.returncode !=0 :
+            #print("Error creating project for {} in project {}".format(python_version,project_path))
+
         
         data = {"greetings": "executed create_kernel_from_template, kernels added: {}".format(KERNELS)}
         self.finish(json.dumps(data))

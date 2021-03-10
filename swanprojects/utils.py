@@ -17,7 +17,7 @@ def get_project_info(path):
     else:
         None
 
-def is_inside_project(cwd):
+def project_path(cwd):
     home = os.path.expanduser("~")
     paths =  cwd.split(os.path.sep)
     cwd_current = cwd

@@ -1,80 +1,76 @@
 from jupyter_client.kernelspec import KernelSpecManager, KernelSpec, NoSuchKernel
-from jupyter_core.paths import jupyter_data_dir
+from jupyter_core.paths import jupyter_data_dir, jupyter_path
+from swanprojects.utils import get_project_info, project_path
+from ipykernel.kernelspec import RESOURCES
 from traitlets import Unicode, Bool
-from swanprojects.utils import get_project_info, has_project_file
 import subprocess
+import shutil
+import json
 import sys
 import os
 
 class SwanKernelSpecManager(KernelSpecManager):
-    project_path = Unicode("", config=True, allow_none=True,
+    path = Unicode("", config=True, allow_none=True,
                          help="SWAN Project path")
-    home_kernels = Bool(False, config=True, allow_none=False,
-                         help="SWAN Project home kernels")
     def __init__(self, **kwargs):
         super(SwanKernelSpecManager, self).__init__(**kwargs)
         print("JupyterLab server extension SWAN Projects - KernelSpecManager is activated!")
+        self.project = None
 
-    @staticmethod
-    def set_project_path(project_path):
-        SwanKernelSpecManager.project_path = project_path
+    def save_native_spec(self,kernel_dir,python_path,display_name):
+        shutil.copytree(RESOURCES,kernel_dir,dirs_exist_ok=True)
+        #os.makedirs(kernel_dir,exist_ok=True)
+        spec = {"argv": [python_path,
+                        "-m",
+                        "ipykernel_launcher",
+                        "-f",
+                        "{connection_file}"
+                        ],
+                "display_name": display_name,
+                "language": "python"
+                }
+        kernel_file = kernel_dir+"/kernel.json"
+        f = open(kernel_file,"w+")
+        json.dump(spec,f,indent=4)
+        f.close()
 
-    @staticmethod
-    def set_home_kernels(home_kernels):
-        SwanKernelSpecManager.home_kernels = home_kernels
-
-    def wrap_kernels_specs(self,project_info,kspecs):
+    def set_path(self,path):
+        self.path = path
+        self.project = project_path(path)
+        if self.project is None:
+            self.kernel_dirs = []
+        else:
+            self.project_info = get_project_info(self.project)
+            self.kernel_dirs = self.project_info["kernel_dirs"]
+            local_kernels = self.project+"/.local/share/jupyter/kernels/"
+            for version in ["2","3"]:
+                python = "python"+version
+                if self.project_info[python]["found"] and self.project_info[python]["ipykernel"]:
+                    kerne_dir = local_kernels+python
+                    if not os.path.exists(kerne_dir):
+                        self.save_native_spec(kerne_dir,self.project_info[python]["path"],"Python "+version)
+            self.kernel_dirs.append(local_kernels)
+            print("KERNEL DIRS = ",self.kernel_dirs)
+    def wrap_kernel_specs(self,project_info,kspec):
         repo = project_info["source"]
         stack = project_info["stack"]
         platform = project_info["platform"]
         user_script = project_info["user_script"]
 
-        home_data_dir=jupyter_data_dir()
         argv = ["/bin/bash","swan_env",repo,stack,platform,user_script, "."]
 
-        stack_kspecs={}
-        for spec in kspecs:
-            kspecs[spec]['spec']['argv'] = argv + kspecs[spec]['spec']['argv']
-            if self.home_kernels:
-                stack_kspecs[spec]=kspecs[spec]
-            else:
-                if not home_data_dir in kspecs[spec]['resource_dir']:
-                    stack_kspecs[spec]=kspecs[spec]
-        return stack_kspecs
+        kspec.argv = argv + kspec.argv
+        return kspec 
 
+    def set_kernels_default_paths(self):
+        tmp_paths = jupyter_path('kernels')
 
-    def get_env_kernels(self):
-        if self.project_path is None:
-            return self._get_all_specs()
-        project_info = get_project_info(self.project_path)
-        if project_info == None:
-            return self._get_all_specs()
-        else:
-            if not has_project_file(self.project_path):
-                print({'error':'Error, not valid project path, .swanfile not found.','project_path':self.project_path})
-                return {}
-
-            command =  ["swan_kmspecs","--project_path",self.project_path]
-            if self.home_kernels:
-                command.append("--home_kernels")
-            env=os.environ
-            env["SWAN_ENV_SILENCE"] = "1"
-            proc = subprocess.Popen(command, stdout = subprocess.PIPE, env=env)
-            proc.wait()
-            data = proc.stdout.read().decode("utf-8")
-            proc.communicate()
-            data="".join(data).replace('\n','')
-            data=eval(data)
-            data = self.wrap_kernels_specs(project_info,data)
-            return data
-        
     def find_kernel_specs(self, skip_base=True):
         """ Returns a dict mapping kernel names to resource directories.
             The update process also adds the resource dir for the SWAN
             environments.
         """
         kspecs = super(SwanKernelSpecManager, self).find_kernel_specs()
-        print("ON find_kernel_specs = ",kspecs)
         return kspecs
 
     def get_kernel_spec(self, kernel_name):
@@ -83,11 +79,17 @@ class SwanKernelSpecManager(KernelSpecManager):
             accordingly with the detected envitonments.
         """
         kspec = super(SwanKernelSpecManager, self).get_kernel_spec(kernel_name)
-        print("ON get_kernel_spec = ",kspec)
-
+        if self.project is None:
+            return kspec
+        else:
+            kspec = self.wrap_kernel_specs(self.project_info,kspec)
+            print("-"*10)
+            print("ON get_kernel_spec = ",kspec.argv)
+            print("-"*10)
+            
         return kspec
 
-    def _get_all_specs(self):
+    def get_all_specs(self):
         """ Returns a dict mapping kernel names to dictionaries with two
             entries: "resource_dir" and "spec". This was added to fill out
             the full public interface to KernelManagerSpec.
@@ -100,17 +102,5 @@ class SwanKernelSpecManager(KernelSpecManager):
                              'spec': spec.to_dict()}
             except NoSuchKernel:
                 self.log.warning("Error loading kernelspec %r", name, exc_info=True)
+        print("ALL SPECS",res)
         return res
-
-    def get_all_specs(self):
-        kspecs = self.get_env_kernels()
-        home_data_dir=jupyter_data_dir()
-        
-        stack_kspecs={}
-        for spec in kspecs:
-            if self.home_kernels:
-                stack_kspecs[spec]=kspecs[spec]
-            else:
-                if not home_data_dir in kspecs[spec]['resource_dir']:
-                    stack_kspecs[spec]=kspecs[spec]
-        return stack_kspecs
