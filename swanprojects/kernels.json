@@ -1,0 +1,84 @@
+{
+  "SFT": [
+    {
+      "STACKS": [
+        "LCG_97a",
+        "LCG_97apython3"
+      ],
+      "PLATFORMS": [
+        "x86_64-centos7-gcc8-opt",
+        "x86_64-centos7-gcc9-opt"
+      ],
+      "KERNELS": [
+        "python",
+        "ir",
+        "octave",
+        "root"
+      ]
+    },
+    {
+      "STACKS": [
+        "LCG_96",
+        "LCG_96python3"
+      ],
+      "PLATFORMS": [
+        "x86_64-centos7-gcc8-opt"
+      ],
+      "KERNELS": [
+        "python",
+        "ir",
+        "octave",
+        "root"
+      ]
+    },
+    {
+      "STACKS": [
+        "LCG_95a",
+        "LCG_95apython3"
+      ],
+      "PLATFORMS": [
+        "x86_64-centos7-gcc7-opt"
+      ],
+      "KERNELS": [
+        "python",
+        "ir",
+        "octave",
+        "root"
+      ]
+    },
+    {
+      "STACKS": [
+        "LCG_95apython3_nxcals"
+      ],
+      "PLATFORMS": [
+        "x86_64-centos7-gcc7-opt"
+      ],
+      "KERNELS": [
+        "python",
+        "ir",
+        "octave",
+        "root",
+        "gophernotes"
+      ]
+    }
+  ],
+  "CMS": [
+    {
+      "PLATFORMS": [
+        "slc7_amd64_gcc820"
+      ],
+      "STACKS": [
+        "CMSSW_11_1_1",
+        "CMSSW_11_1_2",
+        "CMSSW_11_1_3",
+        "CMSSW_11_1_4",
+        "CMSSW_11_1_5"
+      ],
+      "KERNELS": [
+        "python2",
+        "python3",
+        "root"
+      ]
+    }
+  ]
+}

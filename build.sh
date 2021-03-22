@@ -1,8 +1,8 @@
-#pip3 install jupyterlab_swan --user
+#pip3 install swanprojects --user
 
 #pip3 install  . --user
 # Register server extension
-jupyter serverextension enable --py jupyterlab_swan
+jupyter serverextension enable --py swanprojects
 # Install dependencies
 jlpm
 # Build Typescript source

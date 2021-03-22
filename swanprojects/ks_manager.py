@@ -16,6 +16,7 @@ class SwanKernelSpecManager(KernelSpecManager):
         super(SwanKernelSpecManager, self).__init__(**kwargs)
         print("JupyterLab server extension SWAN Projects - KernelSpecManager is activated!")
         self.project = None
+        self.kernel_dirs = []
 
     def save_native_spec(self,kernel_dir,python_path,display_name):
         shutil.copytree(RESOURCES,kernel_dir,dirs_exist_ok=True)
@@ -61,9 +62,6 @@ class SwanKernelSpecManager(KernelSpecManager):
 
         kspec.argv = argv + kspec.argv
         return kspec 
-
-    def set_kernels_default_paths(self):
-        tmp_paths = jupyter_path('kernels')
 
     def find_kernel_specs(self, skip_base=True):
         """ Returns a dict mapping kernel names to resource directories.

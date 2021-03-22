@@ -16,7 +16,7 @@ import {ICommandPalette} from '@jupyterlab/apputils';
 //import {swanProjectIcon,cmsIcon} from './icons'
 import {swanProjectIcon} from './icons'
 
-import { InputDialog, Dialog } from '@jupyterlab/apputils';
+//import { InputDialog, Dialog } from '@jupyterlab/apputils';
 
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 
@@ -27,18 +27,17 @@ const PALETTE_CATEGORY = 'Project';
 
 //import {ProjectWidget} from './ProjectWidget'
 
-import {CreateProject} from './CreateProject'
-
-import { JSONObject} from '@lumino/coreutils';
+import {ProjectDialog} from './ProjectDialog'
+/*import { JSONObject} from '@lumino/coreutils';
 import {
   each
 } from '@lumino/algorithm';
-
+*/
 /**
  * The command IDs used by the server extension plugin.
  */
 namespace CommandIDs {
-  export const get_cmssw = 'swan:create-project';
+  export const project_dialog = 'swan:create-project';
   export const open_project = 'swan_launcher:create';
   export const create_project = 'swan:create-project-new';
   
@@ -51,6 +50,8 @@ import { ILauncher} from '@jupyterlab/launcher';
 //import { JSONObject } from '@lumino/coreutils';
 //import { Widget } from '@lumino/widgets';
 import { request } from './request';
+
+export {request};
 
 export function kernelsInfoRequest():any
 {
@@ -82,7 +83,6 @@ const extension: JupyterFrontEndPlugin<void> = {
     palette: ICommandPalette,
     launcher: ILauncher | null,
     labShell: ILabShell,
-    project: CreateProject,
     browserFactory: IFileBrowserFactory
   ) => {
     console.log('JupyterLab extension SWAN is activated!');
@@ -93,12 +93,12 @@ const extension: JupyterFrontEndPlugin<void> = {
     
 
   
-    const cmssw_command = CommandIDs.get_cmssw;
+    //const project_dialog_command = CommandIDs.project_dialog;
 /*    const cmsicon = new LabIcon({
       name: 'launcher:cmssw-icon',
       svgstr: cmsIconStr
     });
-    commands.addCommand(CommandIDs.create_project, {
+    commands.addCommand(CommandIDs.project_dialog, {
       label: args => (args['isPalette'] ? 'New Project' : 'New Project'),
       caption: 'New Project',
       icon: args => (args['isPalette'] ? null : cmsicon),
@@ -109,7 +109,19 @@ const extension: JupyterFrontEndPlugin<void> = {
       }
     });
 */
-    commands.addCommand(cmssw_command, {
+
+      commands.addCommand(CommandIDs.project_dialog, {
+      icon:swanProjectIcon,
+      label: 'New',
+      caption: 'New',
+      execute: async args => {
+        ProjectDialog.OpenModal({title: null}).then(()  => {
+          console.log("called Create Project")
+      })
+      }
+    }) 
+
+/*    commands.addCommand(CommandIDs.project_dialog, {
       icon:swanProjectIcon,
       label: 'New',
       caption: 'New',
@@ -199,55 +211,8 @@ const extension: JupyterFrontEndPlugin<void> = {
           }
           
           return
-            /*
-            // POST request
-            const dataToSend = { SCRAM: value.value, CMSSW:cmssw_value.value, PROJECT_NAME:project_name.value };
-            try {
-              requestAPI<any>('create', {
-                body: JSON.stringify(dataToSend),
-                method: 'POST'
-              }).then(pvalue => {
-                  console.log(pvalue);
-              });
-            } catch (reason) {
-              console.error(
-                `Error on POST /swan/create ${dataToSend}.\n${reason}`
-              );
-            }
-            const cwd =
-            (args['cwd'] as string) ||
-            (browserFactory ? browserFactory.defaultBrowser.model.path : '');
-            let content: ProjectWidget;
-            content = new ProjectWidget(app,cwd);
-            content.title.label = project_name.value;
-            content.title.caption = project_name.value;
-            console.log(content)
-            const command_project ='swan_project_'+project_name.value
-            ///actions to execute witih the env HERE!
-            console.log('selected item ' + value.value);
-            console.log(MainAreaWidget)
-            commands.addCommand(command_project, {
-              icon:cmsIcon,
-              label: project_name.value,
-              caption: project_name.value,
-              execute: () => {
-                const widget = new MainAreaWidget({ content });
-                shell.add(widget, 'main');
-              }
-            });
-            
-            //palette.addItem({ command:command_project, category: 'Project' });
-            
-            if (launcher) {
-              // Add launcher
-              launcher.add({
-                command: command_project,
-                category: "Projects"
-              });
-            }        
-            */
       }
-    });
+    });*/
 /*
     // Add the command to the launcher
     if (launcher) {
@@ -278,7 +243,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     if (launcher) {
       void manager.ready.then(() => {
         launcher.add({
-          command: cmssw_command,
+          command: CommandIDs.project_dialog,
           category: PALETTE_CATEGORY,
           rank: 1,
           kernelIconUrl: ""
@@ -289,7 +254,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     // Add the command to the palette
     if (palette) {
       palette.addItem({
-        command: cmssw_command,
+        command: CommandIDs.project_dialog,
         args: { isPalette: true},
         category: PALETTE_CATEGORY
       });

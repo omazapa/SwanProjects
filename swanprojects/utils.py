@@ -34,4 +34,5 @@ def get_project_readme(project_path):
         text = f.read()
         f.close()
         return text
-    return ""
+    else:
+        return None
