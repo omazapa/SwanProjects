@@ -66,17 +66,24 @@ export class ProjectWidget extends ReactWidget {
     console.log("Creating project")
   }
   render(): JSX.Element {
-    return <div className='jp-Input-Dialog' style={{ height: '100%', width: '100%', alignItems: 'left' }}>
-      <form onSubmit={this.handleSubmit} style={{ height: '100%', width: '100%' }}>
+    
+//    return <div className='jp-Input-Dialog' style={{ height: '100%', width: '100%', alignItems: 'left' }}>
+    return <span className='jp-Dialog-body' >
+          <form onSubmit={this.handleSubmit} style={{ height: '100%', width: '100%' }}>
        <table style={{ height: '100%', width: '100%' }}>
        <tr >
-          <td colSpan={3}>        
-          <label>
-          <swanProjectIcon.react tag="span" right="7px" top="5px" height="75px" width="75px" />
-
-          <input type="text" placeholder="Project Name" onChange={this.handleChange} />
-        </label>
+          <td style={{ width: '10%'}}>
+                    
+        {/* <label> */}
+          <swanProjectIcon.react tag="span" right="7px" top="5px"  />
+        {/* </label> */}
         </td>
+        <td colSpan={2}>
+        <div style={{ width: '90%', padding: "5px 5px 5px 10px", }}>
+          <input type="text" placeholder="Project Name" style={{ width: '80%', padding: "5px 5px 5px 10px", }} onChange={this.handleChange} />
+          </div>
+      </td>
+
       </tr>
       <tr>
         <td colSpan={3}>        
@@ -112,15 +119,22 @@ export class ProjectWidget extends ReactWidget {
                     </select>
                 </td>
             </tr>
-          <tr>
-            <td colSpan={2} style={{ alignItems: 'right' }}></td>
-              <input  style={{ alignItems: 'right' }} type="submit" value="Add" />
+            <tr>
+            {/* <div style="border-radius: 50%; padding: 5px; border: 1px solid;width:5px;height:5px;background-color: #c6c6c6; display: flex; justify-content: center; align-items: center;">?</div> */}
+            <td colSpan={3}>
+              <label> Bash Script <div style={{borderRadius: "50%", padding: "5px",border:"1px solid",width:"5px",height:"5px",backgroundColor: "#c6c6c6", display:" flex", justifyContent: "center", alignItems: "center"}}>?</div></label> <br/>
+              <div style={{ width: '90%', padding: "5px 5px 5px 10px", }}>
+              <input type="text" placeholder="Project Name" style={{ width: '90%', padding: "5px 5px 5px 10px", }} onChange={this.handleChange} />
+              </div>
+              
+            </td>              
+
             </tr>
         </table>
       </form>
 
       {/* <LCGStack visible={this.useStack['LCG'] as boolean}/> */}
       {/* <div><button onClick={this.createProject}>Create</button></div> */}
-    </div>;
+    </span>;
   }
 }

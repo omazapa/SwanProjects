@@ -3,6 +3,7 @@
 
 import { Dialog, showDialog } from '@jupyterlab/apputils';
 import {ProjectWidget} from "./ProjectWidget"
+import { PromiseDelegate } from '@lumino/coreutils';
 
 /**
  * Namespace for project dialogs
@@ -40,11 +41,18 @@ export namespace ProjectDialog {
   export function OpenModal(
     options: ISWANOptions
   ): Promise<Dialog.IResult<void>> {
+    var dialog = new ProjectWidget("");
     return showDialog({
       ...options,
-      body: new ProjectWidget(""),// CreateProjectDialog(options),
-      buttons: [],
+      body: dialog,//new ProjectWidget(""),// CreateProjectDialog(options),
+      // buttons: [],
+      buttons: [  Dialog.okButton({ label:"Add" })],
       focusNodeSelector: 'input'
+    }).then( value => {
+      console.log('editable item ' + value.value);
+      var promise = new PromiseDelegate<Dialog.IResult<any>>();
+    
+      return promise.promise;
     });
   }
 }
