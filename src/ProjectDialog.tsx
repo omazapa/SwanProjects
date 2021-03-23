@@ -3,7 +3,7 @@
 
 import { Dialog, showDialog } from '@jupyterlab/apputils';
 import {ProjectWidget} from "./ProjectWidget"
-import { PromiseDelegate } from '@lumino/coreutils';
+// import { PromiseDelegate } from '@lumino/coreutils';
 
 /**
  * Namespace for project dialogs
@@ -38,21 +38,34 @@ export namespace ProjectDialog {
    *
    * @returns A promise that resolves with whether the dialog was accepted
    */
-  export function OpenModal(
+  export async function OpenModal(
     options: ISWANOptions
   ): Promise<Dialog.IResult<void>> {
     var dialog = new ProjectWidget("");
-    return showDialog({
+    var modal = showDialog({
       ...options,
       body: dialog,//new ProjectWidget(""),// CreateProjectDialog(options),
       // buttons: [],
       buttons: [  Dialog.okButton({ label:"Add" })],
       focusNodeSelector: 'input'
-    }).then( value => {
-      console.log('editable item ' + value.value);
-      var promise = new PromiseDelegate<Dialog.IResult<any>>();
+    })
+    // }).then( value => {
+    //   console.log('editable item ' + value.value);
+    //   var promise = new PromiseDelegate<Dialog.IResult<any>>();
     
-      return promise.promise;
-    });
+    //   return promise.promise;
+    // });
+    // const result = await modal;
+
+    // if(result.button.accept){
+    //   var modal = showDialog({
+    //     ...options,
+    //     body: dialog,//new ProjectWidget(""),// CreateProjectDialog(options),
+    //     // buttons: [],
+    //     buttons: [  Dialog.okButton({ label:"Add" })],
+    //     focusNodeSelector: 'input'
+    //   })
+    // }
+   return modal as Promise<Dialog.IResult<void>>; 
   }
 }

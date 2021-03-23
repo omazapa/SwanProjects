@@ -2,11 +2,12 @@ import { ReactWidget } from "@jupyterlab/apputils";
 import * as React from "react";
 import { JSONObject } from '@lumino/coreutils';
 import { swanProjectIcon } from './icons'
-import {Card} from './Components'
+import {Card,HelpTooltip} from './Components'
 export interface IStackOptions {
   visible: boolean;
 }
 
+import Select from 'react-select'
 
 // const LCGStack = (options:IStackOptions): JSX.Element => {
 //   let stack_options=[{name:"97a",value:"LCG_97apython3"},{name:"97a Python 2",value:"LCG_97a"}];
@@ -35,12 +36,14 @@ export class ProjectWidget extends ReactWidget {
   framework_options: Array<any>;
   currentStack: string;
   useStack: JSONObject;
+  
   constructor(cwd: string) {
     super();
     this.addClass('jp-ReactWidget');
     this.framework_options = ['LCG', 'CMS', 'Atlas', 'Alice', 'LCHb']
     this.currentStack = this.framework_options[0];
     this.useStack = this.checkStack(this.currentStack);
+    
   }
   checkStack(stack: string): JSONObject {
     let stacksStatus = { 'LCG': false, 'CMS': false, 'Atlas': false, 'Alice': false, 'LCHb': false } as JSONObject;
@@ -66,7 +69,13 @@ export class ProjectWidget extends ReactWidget {
     console.log("Creating project")
   }
   render(): JSX.Element {
-    
+    var options = [
+      { value: 'chocolate', label: 'Chocolate' },
+      { value: 'chocolate1', label: 'Chocolate' },
+      { value: 'chocolate2', label: 'Chocolate' },
+      { value: 'strawberry', label: 'Strawberry' },
+      { value: 'vanilla', label: 'Vanilla' }
+    ];
 //    return <div className='jp-Input-Dialog' style={{ height: '100%', width: '100%', alignItems: 'left' }}>
     return <span className='jp-Dialog-body' >
           <form onSubmit={this.handleSubmit} style={{ height: '100%', width: '100%' }}>
@@ -78,15 +87,15 @@ export class ProjectWidget extends ReactWidget {
           <swanProjectIcon.react tag="span" right="7px" top="5px"  />
         {/* </label> */}
         </td>
-        <td colSpan={2}>
-        <div style={{ width: '90%', padding: "5px 5px 5px 10px", }}>
+        <td colSpan={3}>
+        <div style={{ width: '100%', padding: "5px 5px 5px 10px", }}>
           <input type="text" placeholder="Project Name" style={{ width: '80%', padding: "5px 5px 5px 10px", }} onChange={this.handleChange} />
           </div>
       </td>
 
       </tr>
       <tr>
-        <td colSpan={3}>        
+        <td colSpan={4}>        
         
         <div>
         <div style={{float:"left"}}>{Card("LCG",null)}</div>
@@ -100,30 +109,30 @@ export class ProjectWidget extends ReactWidget {
           
         }
           <tr>
-                <td>Release</td>
-                <td>Platform</td>
-            </tr>
-            <tr>
-                <td>
-                    <select value={"Test"}>
-                        <option value="Ford">Ford</option>
-                        <option value="Volvo">Volvo</option>
-                        <option value="Fiat">Fiat</option>
-                    </select>
+                <td colSpan={2}>
+                <div style={{display:"flex"}}>
+                <div> Release  </div>
+                <div> {HelpTooltip("bash_script","User Script")} </div>  
+                </div>
                 </td>
-                <td>
-                    <select value={"Test"}>
-                        <option value="Ford">Ford</option>
-                        <option value="Volvo">Volvo</option>
-                        <option value="Fiat">Fiat</option>
-                    </select>
+                <td colSpan={2}>Platform</td>
+            </tr>
+            <tr style={{width:"90%"}}>
+                <td colSpan={2} >
+                {/* https://react-select.com/advanced#portaling */}
+                  {<Select options={options} menuPortalTarget={document.body} menuPosition={'absolute'} styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  menuShouldScrollIntoView={false} />}
+                </td>
+                <td colSpan={2}>
+                  {<Select options={options} menuPortalTarget={document.body}  menuPosition={'fixed'} styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  menuShouldScrollIntoView={false}/>}
                 </td>
             </tr>
             <tr>
-            {/* <div style="border-radius: 50%; padding: 5px; border: 1px solid;width:5px;height:5px;background-color: #c6c6c6; display: flex; justify-content: center; align-items: center;">?</div> */}
-            <td colSpan={3}>
-              <label> Bash Script <div style={{borderRadius: "50%", padding: "5px",border:"1px solid",width:"5px",height:"5px",backgroundColor: "#c6c6c6", display:" flex", justifyContent: "center", alignItems: "center"}}>?</div></label> <br/>
-              <div style={{ width: '90%', padding: "5px 5px 5px 10px", }}>
+            <td colSpan={4}>
+              <div style={{display:"flex"}}>
+              <div> Bash Script  </div>
+              <div> {HelpTooltip("bash_script","User Script")} </div>  
+              </div> <br/>
+              <div style={{ width: '95%' }}>
               <input type="text" placeholder="Project Name" style={{ width: '90%', padding: "5px 5px 5px 10px", }} onChange={this.handleChange} />
               </div>
               
@@ -132,9 +141,6 @@ export class ProjectWidget extends ReactWidget {
             </tr>
         </table>
       </form>
-
-      {/* <LCGStack visible={this.useStack['LCG'] as boolean}/> */}
-      {/* <div><button onClick={this.createProject}>Create</button></div> */}
     </span>;
   }
 }
