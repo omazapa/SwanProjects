@@ -156,7 +156,7 @@ export function HelpTooltip(
   
     // Return the VDOM element.
     return (
-      <div
+      <div style={{height:"70px",width:"70px"}}
         className="jp-LauncherCard"
         title={title}
         onClick={onclick}
