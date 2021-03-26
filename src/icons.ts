@@ -8,8 +8,9 @@ import swanProjectsIconStr from "../style/project-diagram.svg";
 
 
 import cernboxIconStr from "../style/cernbox.svg";
-
-import cmsIconStr from "../style/CMS_logo.svg";
+import cmsIconStr from "../style/cms.svg";
+import condaIconStr from "../style/anaconda_logo_circle.svg";
+import sftIconStr from "../style/sft.svg";
 
 
 
@@ -46,4 +47,14 @@ export const cernboxIcon = new LabIcon({
 export const cmsIcon = new LabIcon({
   name: "jupyterlab_swan:cms",
   svgstr: cmsIconStr
+});
+
+export const condaIcon = new LabIcon({
+  name: "jupyterlab_swan:conda",
+  svgstr: condaIconStr
+});
+
+export const sftIcon = new LabIcon({
+  name: "jupyterlab_swan:sft",
+  svgstr: sftIconStr
 });

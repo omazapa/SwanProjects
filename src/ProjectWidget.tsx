@@ -1,11 +1,11 @@
 import { ReactWidget } from "@jupyterlab/apputils";
 import * as React from "react";
 import { JSONObject } from '@lumino/coreutils';
-import { swanProjectIcon } from './icons'
 import {Card,HelpTooltip} from './Components'
 export interface IStackOptions {
   visible: boolean;
 }
+import {swanProjectIcon,sftIcon,cmsIcon,condaIcon} from './icons'
 
 import Select from 'react-select'
 
@@ -32,18 +32,22 @@ export class ProjectWidget extends ReactWidget {
   /**
    * Constructs a new CounterWidget.
    */
-  cwd: string;
-  framework_options: Array<any>;
-  currentStack: string;
-  useStack: JSONObject;
+  project_title: string;
+  project_source: string; //LCG/CMSSW or Conda in the future 
+  project_stack: string;
+  project_platform: string;
+  project_user_script: string;
+  stacks_options: JSONObject;
   
-  constructor(cwd: string) {
+  constructor(project_title:string,project_source:string,project_stack:string,project_platform:string,project_user_script:string,stacks_options:JSONObject) {
     super();
     this.addClass('jp-ReactWidget');
-    this.framework_options = ['LCG', 'CMS', 'Atlas', 'Alice', 'LCHb']
-    this.currentStack = this.framework_options[0];
-    this.useStack = this.checkStack(this.currentStack);
-    
+    this.project_title = project_title;
+    this.project_source = project_source;
+    this.project_stack = project_stack;
+    this.project_platform = project_platform;
+    this.project_user_script = project_user_script;
+    this.stacks_options = stacks_options;
   }
   checkStack(stack: string): JSONObject {
     let stacksStatus = { 'LCG': false, 'CMS': false, 'Atlas': false, 'Alice': false, 'LCHb': false } as JSONObject;
@@ -76,9 +80,8 @@ export class ProjectWidget extends ReactWidget {
       { value: 'strawberry', label: 'Strawberry' },
       { value: 'vanilla', label: 'Vanilla' }
     ];
-//    return <div className='jp-Input-Dialog' style={{ height: '100%', width: '100%', alignItems: 'left' }}>
-    return <span className='jp-Dialog-body' >
-       <table style={{ height: '100%', width: '95%' }}>
+    return <span className='jp-Dialog-body' style={{ minHeight: '300px',minWidth: '420px'}}>
+       <table style={{height: '100%', width: '98%' }}>
        <tbody>
        <tr >
           <td>                    
@@ -93,13 +96,13 @@ export class ProjectWidget extends ReactWidget {
       </tr>
       <tr>
         <td colSpan={1}>        
-        <div style={{float:"left"}}>{Card("LCG",null)}</div>
+        <div style={{float:"left"}}>{Card("LCG",sftIcon,null)}</div>
         </td>
         <td colSpan={1}>
-          <div style={{float:"left"}}>{Card("CMSSW",null)}</div>        
+          <div style={{float:"left"}}>{Card("CMSSW",cmsIcon,null)}</div>        
           </td> 
         <td colSpan={1}>
-        <div style={{float:"left"}}>{Card("Conda",null)}</div>          
+        <div style={{float:"left"}}>{Card("Conda",condaIcon,null)}</div>          
           </td> 
         <td colSpan={1}>
           
@@ -110,7 +113,10 @@ export class ProjectWidget extends ReactWidget {
                 <td colSpan={2}>
                 <div style={{display:"flex"}}>
                 <div> Release  </div>
-                <div> {HelpTooltip("bash_script","User Script")} </div>  
+                <div> {HelpTooltip("release","Software stack: LCG/CMSSW release <br/> \
+                                              that will be used to configure your environment.<br/> \
+                                              From your project, you will have available <br/>\
+                                              all the software packages included in the LCG/CMSSW release that you selected.")} </div>  
                 </div>
                 </td>
                 <td colSpan={2}>Platform</td>
@@ -118,10 +124,10 @@ export class ProjectWidget extends ReactWidget {
             <tr style={{width:"100%"}}>
                 <td colSpan={2} style={{width:"50%"}}>
                 {/* https://react-select.com/advanced#portaling */}
-                  {<Select options={options} menuPortalTarget={document.body} menuPosition={'absolute'} styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  menuShouldScrollIntoView={false} />}
+                  {<Select isSearchable={false} options={options} menuPortalTarget={document.body} menuPosition={'absolute'} styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  menuShouldScrollIntoView={false} />}
                 </td>
                 <td colSpan={2} style={{width:"50%"}}>
-                  {<Select options={options} menuPortalTarget={document.body}  menuPosition={'fixed'} styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  menuShouldScrollIntoView={false}/>}
+                  {<Select isSearchable={false} options={options} menuPortalTarget={document.body}  menuPosition={'absolute'} styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  menuShouldScrollIntoView={false}/>}
                 </td>
             </tr>
             <tr>
@@ -131,7 +137,7 @@ export class ProjectWidget extends ReactWidget {
               <div> {HelpTooltip("bash_script","User Script")} </div>  
               </div> <br/>
               <div style={{ width: '100%' }}>
-              <input type="text" placeholder="Project Name" style={{ width: '100%', padding: "5px 0px 5px 0px", }} onChange={this.handleChange} />
+              <input type="text" placeholder="Bash User Script" style={{ width: '100%', padding: "5px 0px 5px 0px", }} onChange={this.handleChange} />
               </div>
               
             </td>              

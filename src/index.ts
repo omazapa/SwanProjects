@@ -88,16 +88,11 @@ const extension: JupyterFrontEndPlugin<void> = {
     console.log('JupyterLab extension SWAN is activated!');
     const manager = app.serviceManager;
     //const { commands, shell } = app;
-    const { commands } = app;
-    
-    
+    const { commands } = app;    
 
   
     //const project_dialog_command = CommandIDs.project_dialog;
-/*    const cmsicon = new LabIcon({
-      name: 'launcher:cmssw-icon',
-      svgstr: cmsIconStr
-    });
+/*
     commands.addCommand(CommandIDs.project_dialog, {
       label: args => (args['isPalette'] ? 'New Project' : 'New Project'),
       caption: 'New Project',
