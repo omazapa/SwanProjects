@@ -3,6 +3,7 @@
 
 import { Dialog, showDialog } from '@jupyterlab/apputils';
 import {ProjectWidget} from "./ProjectWidget"
+import { JSONObject } from '@lumino/coreutils';
 
 /**
  * Namespace for project dialogs
@@ -25,9 +26,15 @@ export namespace ProjectDialog {
    */
   export interface ISWANOptions extends IOptions {
     /**
-     * Default value
+     * Default
      */
-    project_path?: string;
+    //project_path?: string;
+    project_name?: string;
+    project_source?: string;
+    project_stack?: string;
+    project_platform?: string;
+    project_user_script?: string;
+    stacks_options?: JSONObject;
   }
     
   /**
@@ -40,7 +47,8 @@ export namespace ProjectDialog {
   export async function OpenModal(
     options: ISWANOptions
   ): Promise<Dialog.IResult<void>> {
-    var dialog = new ProjectWidget("","","","","",{});
+
+    var dialog = new ProjectWidget(options);
     var modal = showDialog({
       ...options,
       body: dialog,

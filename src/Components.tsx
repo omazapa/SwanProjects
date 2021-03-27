@@ -33,16 +33,15 @@ export function HelpTooltip(
  export function Card(
     label: string,
     icon:LabIcon,
-    updateCallback: () => void
+    updateCallback: (stack:string) => void
   ): React.ReactElement<any> {
     // Get some properties of the command
-    const title = "Test";
-  
+    const title = label;
     // Build the onclick handler.
     const onclick = () => {
       // If an item has already been launched,
       // don't try to launch another.
-        updateCallback();
+        updateCallback(label);
     };
   
     // With tabindex working, you can now pick a kernel by tabbing around and
@@ -52,11 +51,11 @@ export function HelpTooltip(
         onclick();
       }
     };
-  
     // Return the VDOM element.
     return (
       <div style={{height:"75px",width:"75px"}}
         className="jp-LauncherCard"
+        id={label}
         title={title}
         onClick={onclick}
         onKeyPress={onkeypress}

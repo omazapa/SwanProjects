@@ -56,7 +56,7 @@ export {request};
 export function kernelsInfoRequest():any
 {
   try {
-    return request<any>('swan/kernels/info', {
+    return request<any>('swan/stacks/info', {
       method: 'GET'
     }).then(rvalue => {
         console.log(rvalue);
@@ -64,7 +64,7 @@ export function kernelsInfoRequest():any
     });
   } catch (reason) {
     console.error(
-      `Error on GET 'swan/kernels/info'.\n${reason}`
+      `Error on GET 'swan/stacks/info'.\n${reason}`
     );
   }
 }
@@ -110,7 +110,8 @@ const extension: JupyterFrontEndPlugin<void> = {
       label: 'New',
       caption: 'New',
       execute: async args => {
-        ProjectDialog.OpenModal({title: null}).then(()  => {
+        var stacks = await kernelsInfoRequest();
+        ProjectDialog.OpenModal({project_name:"",project_source:"",project_stack:"",project_platform:"",project_user_script:"",stacks_options:stacks["stacks"]}).then(()  => {
           console.log("called Create Project")
       })
       }

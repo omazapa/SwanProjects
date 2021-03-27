@@ -7,23 +7,9 @@ export interface IStackOptions {
 }
 import {swanProjectIcon,sftIcon,cmsIcon,condaIcon} from './icons'
 
+import {ProjectDialog} from "./ProjectDialog"
+
 import Select from 'react-select'
-
-// const LCGStack = (options:IStackOptions): JSX.Element => {
-//   let stack_options=[{name:"97a",value:"LCG_97apython3"},{name:"97a Python 2",value:"LCG_97a"}];
-//   //let platform_options=[{name:"Centos 7 (gcc8)",value:"x86_64-centos7-gcc8-opt"}];
-//   return (
-//     <div style={{display: options.visible ? '' : 'none' }}>
-//     <div>
-//     <label htmlFor="swan_project_type_list">Stack</label> 
-//               <select name="swan_project_type_list" >{stack_options.map(key => {     
-//                 return <option id={key.value}  value={key.value}>{key.name}</option>
-//               })}</select></div>
-
-//     </div>
-//   );
-// };
-
 
 /**
  * A Counter Lumino Widget that wraps a CounterComponent.
@@ -32,35 +18,53 @@ export class ProjectWidget extends ReactWidget {
   /**
    * Constructs a new CounterWidget.
    */
-  project_title: string;
-  project_source: string; //LCG/CMSSW or Conda in the future 
-  project_stack: string;
-  project_platform: string;
-  project_user_script: string;
-  stacks_options: JSONObject;
-  
-  constructor(project_title:string,project_source:string,project_stack:string,project_platform:string,project_user_script:string,stacks_options:JSONObject) {
+  project_options: ProjectDialog.ISWANOptions;
+  releases: JSONObject[];
+  platforms: JSONObject[];
+  constructor(options:ProjectDialog.ISWANOptions) {
     super();
     this.addClass('jp-ReactWidget');
-    this.project_title = project_title;
-    this.project_source = project_source;
-    this.project_stack = project_stack;
-    this.project_platform = project_platform;
-    this.project_user_script = project_user_script;
-    this.stacks_options = stacks_options;
-  }
-  checkStack(stack: string): JSONObject {
-    let stacksStatus = { 'LCG': false, 'CMS': false, 'Atlas': false, 'Alice': false, 'LCHb': false } as JSONObject;
-    if (Object.keys(stacksStatus).includes(stack)) {
-      stacksStatus[stack] = true;
-      this.update();
-    } else {
-      //how to handle error?
+    this.project_options = options;
+    if(this.project_options.project_source  === undefined || this.project_options.project_source  === "")
+    {
+      this.project_options.project_source = "LCG"
     }
-    return stacksStatus
+    
+    this.selectSource = this.selectSource.bind(this);
+    this.selectSource(this.project_options.project_source);
   }
-  changeFramework(option: string): void {
-    console.log("OPTION", option)
+  selectSource(source: string): void {
+    console.log(source);
+    this.project_options.project_source = source;
+    console.log(this.project_options);
+
+    //check is source on staks else error
+    var releases = Object.keys(this.project_options.stacks_options[this.project_options.project_source]) as string[];
+    this.releases = [];
+    releases.forEach(release => { this.releases.push({value: release, label: release})});
+
+    this.project_options.project_stack    
+    this.project_options.project_stack = releases[0];
+    
+    var stack_values = this.project_options.stacks_options[this.project_options.project_source] as JSONObject;
+    
+    console.log(stack_values);
+
+    //check is stack on keys, else error
+    var platforms = stack_values[this.project_options.project_stack] as string[];
+
+    console.log(platforms);
+
+    this.platforms = [];
+    platforms.forEach(platform => {this.platforms.push({value: platform, label: platform})});
+    this.project_options.project_platform = platforms[0];
+    console.log(this.releases);
+    console.log(this.platforms);
+
+    this.update()
+  }
+  changeRelease(option: string): void {
+    
   }
   handleSubmit(event: any) {
     alert('A name was submitted: ' + event);
@@ -73,13 +77,7 @@ export class ProjectWidget extends ReactWidget {
     console.log("Creating project")
   }
   render(): JSX.Element {
-    var options = [
-      { value: 'chocolate', label: 'Chocolate' },
-      { value: 'chocolate1', label: 'Chocolate' },
-      { value: 'chocolate2', label: 'Chocolate' },
-      { value: 'strawberry', label: 'Strawberry' },
-      { value: 'vanilla', label: 'Vanilla' }
-    ];
+    
     return <span className='jp-Dialog-body' style={{ minHeight: '300px',minWidth: '420px'}}>
        <table style={{height: '100%', width: '98%' }}>
        <tbody>
@@ -96,13 +94,13 @@ export class ProjectWidget extends ReactWidget {
       </tr>
       <tr>
         <td colSpan={1}>        
-        <div style={{float:"left"}}>{Card("LCG",sftIcon,null)}</div>
+        <div style={{float:"left"}}>{Card("LCG",sftIcon,this.selectSource)}</div>
         </td>
         <td colSpan={1}>
-          <div style={{float:"left"}}>{Card("CMSSW",cmsIcon,null)}</div>        
+          <div style={{float:"left"}}>{Card("CMSSW",cmsIcon,this.selectSource)}</div>        
           </td> 
         <td colSpan={1}>
-        <div style={{float:"left"}}>{Card("Conda",condaIcon,null)}</div>          
+        <div style={{float:"left"}}>{Card("Conda",condaIcon,this.selectSource)}</div>          
           </td> 
         <td colSpan={1}>
           
@@ -116,7 +114,8 @@ export class ProjectWidget extends ReactWidget {
                 <div> {HelpTooltip("release","Software stack: LCG/CMSSW release <br/> \
                                               that will be used to configure your environment.<br/> \
                                               From your project, you will have available <br/>\
-                                              all the software packages included in the LCG/CMSSW release that you selected.")} </div>  
+                                              all the software packages included in the LCG/CMSSW <br/>\
+                                              release that you selected.")} </div>  
                 </div>
                 </td>
                 <td colSpan={2}>Platform</td>
@@ -124,10 +123,27 @@ export class ProjectWidget extends ReactWidget {
             <tr style={{width:"100%"}}>
                 <td colSpan={2} style={{width:"50%"}}>
                 {/* https://react-select.com/advanced#portaling */}
-                  {<Select isSearchable={false} options={options} menuPortalTarget={document.body} menuPosition={'absolute'} styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  menuShouldScrollIntoView={false} />}
+                  {<Select 
+                    isSearchable={false} 
+                    options={this.releases as any} 
+                    menuPortalTarget={document.body} 
+                    menuPosition={'absolute'} 
+                    styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  
+                    menuShouldScrollIntoView={false}
+                    defaultValue={{value:this.project_options.project_stack,label:this.project_options.project_stack}}
+                    />}
                 </td>
                 <td colSpan={2} style={{width:"50%"}}>
-                  {<Select isSearchable={false} options={options} menuPortalTarget={document.body}  menuPosition={'absolute'} styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  menuShouldScrollIntoView={false}/>}
+                  {<Select 
+                    isSearchable={false} 
+                    options={this.platforms as any} 
+                    menuPortalTarget={document.body}  
+                    menuPosition={'absolute'} 
+                    styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  
+                    menuShouldScrollIntoView={false}
+                    defaultValue={{value:this.project_options.project_platform,label:this.project_options.project_platform}}
+                    
+                    />}
                 </td>
             </tr>
             <tr>
