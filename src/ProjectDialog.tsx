@@ -4,7 +4,7 @@
 import { Dialog, showDialog } from '@jupyterlab/apputils';
 import {ProjectWidget} from "./ProjectWidget"
 import { JSONObject } from '@lumino/coreutils';
-
+import { Widget } from '@lumino/widgets';
 /**
  * Namespace for project dialogs
  */
@@ -49,6 +49,7 @@ export namespace ProjectDialog {
   ): Promise<Dialog.IResult<void>> {
 
     var dialog = new ProjectWidget(options);
+    Widget.attach(dialog, document.body);
     var modal = showDialog({
       ...options,
       body: dialog,
