@@ -19,7 +19,7 @@ export class ProjectWidget extends ReactWidget {
   /**
    * Constructs a new CounterWidget.
    */
-  project_options: ProjectDialog.ISWANOptions;
+  options: ProjectDialog.ISWANOptions;
   releases: JSONObject[];
   platforms: JSONObject[];
   clicked:boolean;
@@ -28,78 +28,78 @@ export class ProjectWidget extends ReactWidget {
     this.clicked = false;
     this.addClass('jp-ReactWidget');
     this.setOptions(options);
-    this.selectSource = this.selectSource.bind(this);
-    this.changeStack = this.changeStack.bind(this);
+    this.selectStack = this.selectStack.bind(this);
+    this.changeRelease = this.changeRelease.bind(this);
     this.changeName = this.changeName.bind(this);
     this.changeUserScript = this.changeUserScript.bind(this);
     this.changeClicked = this.changeClicked.bind(this);
   }
   getOptions():ProjectDialog.ISWANOptions
   {
-    return this.project_options;
+    return this.options;
   }
   setOptions(options:ProjectDialog.ISWANOptions)
   {
-    this.project_options = options;
-    if(this.project_options.project_source  === undefined || this.project_options.project_source  === "")
+    this.options = options;
+    if(this.options.stack  === undefined || this.options.stack  === "")
     {
-      this.project_options.project_source = "LCG"
+      this.options.stack = "LCG"
     }
-    this.selectSource(this.project_options.project_source);
+    this.selectStack(this.options.stack);
     this.update();
   }
 
-  selectSource(source: string): void {
+  selectStack(source: string): void {
     console.log(source);
-    this.project_options.project_source = source;
-    console.log(this.project_options);
+    this.options.stack = source;
+    console.log(this.options);
 
     //check is source on staks else error
-    var releases = Object.keys(this.project_options.stacks_options[this.project_options.project_source]) as string[];
+    var releases = Object.keys(this.options.stacks_options[this.options.stack]) as string[];
     this.releases = [];
     releases.forEach(release => { this.releases.push({value: release, label: release})});
 
-    this.project_options.project_stack = releases[0];
+    this.options.release = releases[0];
     
-    var stack_values = this.project_options.stacks_options[this.project_options.project_source] as JSONObject;
+    var stack_values = this.options.stacks_options[this.options.stack] as JSONObject;
     
     console.log(stack_values);
 
     //check is stack on keys, else error
-    var platforms = stack_values[this.project_options.project_stack] as string[];
+    var platforms = stack_values[this.options.release] as string[];
 
     console.log(platforms);
 
     this.platforms = [];
     platforms.forEach(platform => {this.platforms.push({value: platform, label: platform})});
-    this.project_options.project_platform = platforms[0];
-    console.log(this.project_options.project_platform);
-    console.log(this.project_options.project_stack);
+    this.options.platform = platforms[0];
+    console.log(this.options.platform);
+    console.log(this.options.release);
 
     this.update();
     // this._signal.emit();
   }
-  changeStack(event: any): void {
-    this.project_options.project_stack = event.value; 
-    var stack_values = this.project_options.stacks_options[this.project_options.project_source] as JSONObject;
+  changeRelease(event: any): void {
+    this.options.release = event.value; 
+    var stack_values = this.options.stacks_options[this.options.stack] as JSONObject;
     //check is stack on keys, else error
-    var platforms = stack_values[this.project_options.project_stack] as string[];
+    var platforms = stack_values[this.options.release] as string[];
     this.platforms = [];
     platforms.forEach(platform => {this.platforms.push({value: platform, label: platform})});
-    this.project_options.project_platform = platforms[0];
+    this.options.platform = platforms[0];
     this.update();
 
   }
 
   changeName(event:any)
   {
-    this.project_options.project_name = event.target.value;
+    this.options.name = event.target.value;
     this.update();
   }
 
   changeUserScript(event:any)
   {
-    this.project_options.project_user_script = event.target.value;
+    this.options.user_script = event.target.value;
     this.update();
   }
   changeClicked()
@@ -118,20 +118,20 @@ export class ProjectWidget extends ReactWidget {
         </td>
         <td colSpan={3}>
         <div style={{ width: '100%', padding: "5px 5px 5px 0px", }}>
-          <input type="text" value={this.project_options.project_name} placeholder="Project Name" style={{ width: '100%', padding: "5px 0px 5px 0px", }} onChange={this.changeName} />
+          <input type="text" value={this.options.name} placeholder="Project Name" style={{ width: '100%', padding: "5px 0px 5px 0px", }} onChange={this.changeName} />
           </div>
       </td>
 
       </tr>
       <tr>
         <td colSpan={1}>        
-        <div style={{float:"left"}}>{Card("LCG",sftIcon,this.selectSource)}</div>
+        <div style={{float:"left"}}>{Card("LCG",sftIcon,this.selectStack)}</div>
         </td>
         <td colSpan={1}>
-          <div style={{float:"left"}}>{Card("CMSSW",cmsIcon,this.selectSource)}</div>        
+          <div style={{float:"left"}}>{Card("CMSSW",cmsIcon,this.selectStack)}</div>        
           </td> 
         <td colSpan={1}>
-        <div style={{float:"left"}}>{Card("Conda",condaIcon,this.selectSource)}</div>          
+        <div style={{float:"left"}}>{Card("Conda",condaIcon,this.selectStack)}</div>          
           </td> 
         <td colSpan={1}>
           
@@ -161,9 +161,9 @@ export class ProjectWidget extends ReactWidget {
                     menuPosition={'absolute'} 
                     styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  
                     menuShouldScrollIntoView={false}
-                    defaultValue={{value:this.project_options.project_stack,label:this.project_options.project_stack}}
-                    value={{value:this.project_options.project_stack,label:this.project_options.project_stack}}
-                    onChange={this.changeStack}
+                    defaultValue={{value:this.options.release,label:this.options.release}}
+                    value={{value:this.options.release,label:this.options.release}}
+                    onChange={this.changeRelease}
                     />
                 </td>
                 <td colSpan={2} style={{width:"50%"}}>
@@ -174,8 +174,8 @@ export class ProjectWidget extends ReactWidget {
                     menuPosition={'absolute'} 
                     styles={{ menuPortal: base => ({ ...base, zIndex: 999999 }) }}  
                     menuShouldScrollIntoView={false}
-                    defaultValue={{value:this.project_options.project_platform,label:this.project_options.project_platform}}
-                    value={{value:this.project_options.project_platform,label:this.project_options.project_platform}}
+                    defaultValue={{value:this.options.platform,label:this.options.platform}}
+                    value={{value:this.options.platform,label:this.options.platform}}
                     
                     />}
                 </td>
@@ -187,7 +187,7 @@ export class ProjectWidget extends ReactWidget {
               <div> {HelpTooltip("bash_script","User Script")} </div>  
               </div> <br/>
               <div style={{ width: '100%' }}>
-              <input type="text" placeholder="Bash User Script" value={this.project_options.project_user_script} style={{ width: '100%', padding: "5px 0px 5px 0px", }}  onChange={this.changeUserScript}/>
+              <input type="text" placeholder="Bash User Script" value={this.options.user_script} style={{ width: '100%', padding: "5px 0px 5px 0px", }}  onChange={this.changeUserScript}/>
               </div>
               
             </td>              

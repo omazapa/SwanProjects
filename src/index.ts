@@ -111,7 +111,7 @@ const extension: JupyterFrontEndPlugin<void> = {
       caption: 'New',
       execute: async args => {
         var stacks = await kernelsInfoRequest();
-        ProjectDialog.OpenModal({project_name:"",project_source:"",project_stack:"",project_platform:"",project_user_script:"",stacks_options:stacks["stacks"]},true);
+        ProjectDialog.OpenModal({name:"",stack:"",release:"",platform:"",user_script:"",stacks_options:stacks["stacks"]},true);
       //   .then(()  => {
       //     console.log("called Create Project")
       // })

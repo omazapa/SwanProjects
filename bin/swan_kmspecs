@@ -100,21 +100,21 @@ def swan_kmspecs(project_path,source,stack,platform,user_script):
     print(data)
     proc.communicate()
     if proc.returncode !=0 :
-        print("Error creating navite kernel for {} in project {}".format(python_version,project_path))
+        print("Error creating navite kernel for project {}".format(project_path))
 
     return proc.returncode
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Swan Enviroment Kernel Manager CMD options.')
     parser.add_argument('--project_path', type=str,required=True, help='Project directory path')
-    parser.add_argument('--source', type=str,default=None, help='Software source: SFT or CMS')
-    parser.add_argument('--stack', type=str,default=None, help='Project directory path')
+    parser.add_argument('--stack', type=str,default=None, help='Software source: SFT or CMS')
+    parser.add_argument('--release', type=str,default=None, help='Stack release ex: LCG_99')
     parser.add_argument('--platform', type=str,default=None, help='Project directory path')
     parser.add_argument('--user_script', type=str,default="", help='Project directory path')
     parser.add_argument('--generate_ksminfo', action='store_true',default=None, help='Generates Kernel Spec Manager info')
     args         = parser.parse_args()
     project_path = args.project_path
-    source       = args.source
+    release       = args.release
     stack        = args.stack
     platform     = args.platform
     user_script  = args.user_script
@@ -122,8 +122,8 @@ if __name__ == '__main__':
     if args.generate_ksminfo:
         generate_ksminfo(project_path)
     else:
-        if source is None:
-            print("source parameter can not be None")
+        if release is None:
+            print("release parameter can not be None")
             sys.exit(1)
         if stack is None:
             print("stack parameter can not be None")
@@ -134,5 +134,5 @@ if __name__ == '__main__':
         if stack is None:
             print("stack parameter can not be None")
             sys.exit(1)
-        rcode = swan_kmspecs(project_path,source,stack,platform,user_script)
+        rcode = swan_kmspecs(project_path,stack,release,platform,user_script)
         sys.exit(rcode)

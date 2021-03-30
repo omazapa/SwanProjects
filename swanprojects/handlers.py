@@ -55,23 +55,22 @@ class CreateProjectHandler(APIHandler):
         # input_data is a dictionnary with a key "name"
         input_data = self.get_json_body()
         print(input_data)
-        PROJECT_NAME = input_data["PROJECT_NAME"]
-        SOURCE = input_data["SOURCE"]
-        PLATFORM = input_data["PLATFORM"] #SCRAM
-        STACK = input_data["STACK"] #CMSSW
-        KERNELS = input_data["KERNELS"]
-        USER_SCRIPT = input_data["USER_SCRIPT"]
+        name = input_data["name"]
+        stack = input_data["stack"] ##CMSSW/LCG
+        platform = input_data["platform"] #SCRAM
+        release = input_data["release"] #CMSSW
+        user_script = input_data["user_script"]
 
-        PROJECT_DIR=os.environ["HOME"]+"/SWAN_projects/"+PROJECT_NAME
-        os.makedirs(PROJECT_DIR)
-        swan_project_file = PROJECT_DIR+os.path.sep+'.swanproject'
-        swan_project_content = {'source':SOURCE,'stack':STACK,'platform':PLATFORM,'user_script':USER_SCRIPT}
+        project_dir=os.environ["HOME"]+"/SWAN_projects/"+name
+        os.makedirs(project_dir)
+        swan_project_file = project_dir+os.path.sep+'.swanproject'
+        swan_project_content = {'stack':stack,'release':release,'platform':platform,'user_script':user_script}
         
         with open(swan_project_file,'w+') as f:
             f.write(json.dumps(swan_project_content, indent=4, sort_keys=True))
             f.close()
         
-        command =  ["swan_kmspecs","--source",SOURCE,"--stack",STACK,"--platform",PLATFORM,"--user_script",USER_SCRIPT,"--project_path",PROJECT_DIR]
+        command =  ["swan_kmspecs","--stack",stack,"--release",release,"--platform",platform,"--user_script",user_script,"--project_path",project_dir]
         print(" ".join(command))
         proc = subprocess.Popen(command, stdout = subprocess.PIPE)
         proc.wait()
@@ -80,7 +79,7 @@ class CreateProjectHandler(APIHandler):
         proc.communicate()
 
         
-        data = {"greetings": "executed create_kernel_from_template, kernels added: {}".format(KERNELS)}
+        data = {"msg": "created project: {}".format(name)}
         self.finish(json.dumps(data))
 
 
