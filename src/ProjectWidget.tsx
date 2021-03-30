@@ -12,7 +12,6 @@ import {ProjectDialog} from "./ProjectDialog"
 
 import Select from 'react-select'
 
-
 /**
  * A Counter Lumino Widget that wraps a CounterComponent.
  */
@@ -23,19 +22,33 @@ export class ProjectWidget extends ReactWidget {
   project_options: ProjectDialog.ISWANOptions;
   releases: JSONObject[];
   platforms: JSONObject[];
+  clicked:boolean;
   constructor(options:ProjectDialog.ISWANOptions) {
     super();
+    this.clicked = false;
     this.addClass('jp-ReactWidget');
-
+    this.setOptions(options);
+    this.selectSource = this.selectSource.bind(this);
+    this.changeStack = this.changeStack.bind(this);
+    this.changeName = this.changeName.bind(this);
+    this.changeUserScript = this.changeUserScript.bind(this);
+    this.changeClicked = this.changeClicked.bind(this);
+  }
+  getOptions():ProjectDialog.ISWANOptions
+  {
+    return this.project_options;
+  }
+  setOptions(options:ProjectDialog.ISWANOptions)
+  {
     this.project_options = options;
     if(this.project_options.project_source  === undefined || this.project_options.project_source  === "")
     {
       this.project_options.project_source = "LCG"
     }
-    this.selectSource = this.selectSource.bind(this);
-    this.changeStack = this.changeStack.bind(this);
     this.selectSource(this.project_options.project_source);
+    this.update();
   }
+
   selectSource(source: string): void {
     console.log(source);
     this.project_options.project_source = source;
@@ -78,6 +91,22 @@ export class ProjectWidget extends ReactWidget {
 
   }
 
+  changeName(event:any)
+  {
+    this.project_options.project_name = event.target.value;
+    this.update();
+  }
+
+  changeUserScript(event:any)
+  {
+    this.project_options.project_user_script = event.target.value;
+    this.update();
+  }
+  changeClicked()
+  {
+    this.clicked=true;
+    this.parent.parent.close();
+  }
   render(): JSX.Element {
    
     return <span className='jp-Dialog-body' style={{ minHeight: '300px',minWidth: '420px'}}>
@@ -89,7 +118,7 @@ export class ProjectWidget extends ReactWidget {
         </td>
         <td colSpan={3}>
         <div style={{ width: '100%', padding: "5px 5px 5px 0px", }}>
-          <input type="text" placeholder="Project Name" style={{ width: '100%', padding: "5px 0px 5px 0px", }} onChange={this.handleChange} />
+          <input type="text" value={this.project_options.project_name} placeholder="Project Name" style={{ width: '100%', padding: "5px 0px 5px 0px", }} onChange={this.changeName} />
           </div>
       </td>
 
@@ -125,8 +154,6 @@ export class ProjectWidget extends ReactWidget {
             <tr style={{width:"100%"}}>
                 {/* https://react-select.com/advanced#portaling */}
                 <td colSpan={2} style={{width:"50%"}}>
-                {/* <UseSignal signal={this._signal} > */}
-                  {/* {() =>   */}
                   <Select 
                     isSearchable={false} 
                     options={this.releases as any} 
@@ -138,8 +165,6 @@ export class ProjectWidget extends ReactWidget {
                     value={{value:this.project_options.project_stack,label:this.project_options.project_stack}}
                     onChange={this.changeStack}
                     />
-                    {/* } */}
-                {/* </UseSignal> */}
                 </td>
                 <td colSpan={2} style={{width:"50%"}}>
                   {<Select 
@@ -162,12 +187,19 @@ export class ProjectWidget extends ReactWidget {
               <div> {HelpTooltip("bash_script","User Script")} </div>  
               </div> <br/>
               <div style={{ width: '100%' }}>
-              <input type="text" placeholder="Bash User Script" style={{ width: '100%', padding: "5px 0px 5px 0px", }} />
+              <input type="text" placeholder="Bash User Script" value={this.project_options.project_user_script} style={{ width: '100%', padding: "5px 0px 5px 0px", }}  onChange={this.changeUserScript}/>
               </div>
               
             </td>              
 
             </tr>
+            <tr>
+            <td colSpan={4}>
+            <div style={{float:"right"}}>
+              <button type="button" className="jp-mod-styled" onClick={this.changeClicked}>Add</button>
+            </div>
+            </td>
+           </tr>
           </tbody>
         </table>
     </span>;
