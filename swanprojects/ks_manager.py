@@ -53,12 +53,12 @@ class SwanKernelSpecManager(KernelSpecManager):
             self.kernel_dirs.append(local_kernels)
             print("KERNEL DIRS = ",self.kernel_dirs)
     def wrap_kernel_specs(self,project_info,kspec):
-        repo = project_info["source"]
         stack = project_info["stack"]
+        release = project_info["release"]
         platform = project_info["platform"]
         user_script = project_info["user_script"]
 
-        argv = ["/bin/bash","swan_env",repo,stack,platform,user_script, "."]
+        argv = ["/bin/bash","swan_env",stack,release,platform,user_script, "."]
 
         kspec.argv = argv + kspec.argv
         return kspec 
