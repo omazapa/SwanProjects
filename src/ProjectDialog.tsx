@@ -6,6 +6,7 @@ import { ProjectWidget } from "./ProjectWidget"
 import { JSONObject } from '@lumino/coreutils';
 import { Widget } from '@lumino/widgets';
 import { request } from './request';
+import {Spinner} from '@jupyterlab/apputils';
 
 /**
  * Namespace for project dialogs
@@ -55,16 +56,19 @@ function contentRequest(cwd: string): any {
 
 
 function createProjectRequest(options: ISWANOptions): any {
-  //const dataToSend = { name: options.name, stack: options.stack, STACK: stack, PLATFORM: platform, KERNELS: kernels, USER_SCRIPT: userscript };
-  var data = JSON.stringify(options)
-  console.log("Sending");
-  console.log(data);
+  const dataToSend = { name: options.name, 
+                       stack: options.stack, 
+                       release: options.release, 
+                       platform: options.platform, 
+                       user_script:options.user_script };
   try {
-    request<any>('swan/project/create', {
-      body: data,
+    return request<any>('swan/project/create', {
+      body: JSON.stringify(dataToSend),
       method: 'POST'
-    }).then(pvalue => {
-      console.log(pvalue);
+    }).then(rvalue => {
+      console.log("-create-post");
+      console.log(rvalue);
+      return rvalue;
     });
   } catch (reason) {
     console.error(
@@ -72,6 +76,29 @@ function createProjectRequest(options: ISWANOptions): any {
     );
   }
 }
+
+function editProjectRequest(old_name:string,options:ISWANOptions):any
+{
+  const dataToSend = {"old_name":old_name,
+                      "name":options.name,
+                      'stack':options.stack,
+                      'release':options.release,
+                      'platform':options.platform,
+                      'user_script':options.user_script
+                     };
+  try {
+    return request<any>('swan/project/edit', {
+      body: JSON.stringify(dataToSend),
+      method: 'POST'
+    }).then(rvalue => {
+      return rvalue;
+    });
+  } catch (reason) {
+    console.error(
+      `Error on POST 'swan/project/edit'+ ${dataToSend}.\n${reason}`
+    );
+  }
+}    
 
 
 
@@ -87,13 +114,27 @@ function createProjectRequest(options: ISWANOptions): any {
     options: ISWANOptions,
     create: boolean
   ): Promise<Dialog.IResult<void>> {
-
+    var _spinner = new Spinner();
+    var old_name = options.name;
     var dialog = new ProjectWidget(options);
+    function startSpinner()
+    {
+      var node = document.getElementById("jp-main-dock-panel");
+      node.appendChild(_spinner.node);
+      node.focus();
+      _spinner.activate();
+      _spinner.show();
+      _spinner.node.focus();
+    }
+  
+    function stopSpinner()
+    {
+      _spinner.hide();
+    }
+  
     Widget.attach(dialog, document.body);
     var valid = false;
     do {
-      console.log("1-OPTIONS  = ");
-      console.log(options);
       dialog.clicked = false;
       var modal = showDialog({
         ...options,
@@ -104,21 +145,39 @@ function createProjectRequest(options: ISWANOptions): any {
       await modal.then(async () => { })
       if (dialog.clicked) {
         options = dialog.getOptions();
-        console.log("OPTIONS  = ");
-        console.log(options);
-        if (options.name.trim() != "")//check is project already exists
-        {
-          var content = await contentRequest("SWAN_projects/" + options.name).catch((response: Response, message: any) => {
-          console.log("404 checking project name, means project doesn't exists and it is a valid name.");
-          })
-          if (content == undefined) {
-            valid = true
-          } else {
-            await showErrorMessage("Invalid project name", "Project already exists.");
-            valid = false;
+          if (options.name.trim() != "")//check is project already exists
+          {
+            if(create)
+            {
+              var content = await contentRequest("SWAN_projects/" + options.name).catch((response: Response, message: any) => {
+              console.log("404 checking project name, means project doesn't exists and it is a valid name.");
+              })
+                if (content == undefined) {
+                  valid = true
+                } else {
+                  await showErrorMessage("Invalid project name", "Project already exists.");
+                  valid = false;
+                }  
+            }else{
+              if(old_name!=options.name)
+              {
+                var content = await contentRequest("SWAN_projects/" + options.name).catch((response: Response, message: any) => {
+                  console.log("404 checking project name, means project doesn't exists and it is a valid name.");
+                  })
+                    if (content == undefined) {
+                      valid = true
+                    } else {
+                      await showErrorMessage("Invalid project name", "Project already exists.");
+                      valid = false;
+                    }    
+              }else{
+                valid=true;
+              }
+            }
           }
-        } else {
-          await showErrorMessage("Invalid project name", "Select a valid project name.");
+
+        if(options.name.trim() == ""){
+          await showErrorMessage("Invalid project name", "Select a valid (non-empty) project name.");
           valid = false;
         }
       } else {
@@ -127,9 +186,18 @@ function createProjectRequest(options: ISWANOptions): any {
 
     }
     while (!valid);
-    if (create && dialog.clicked) {
-      await createProjectRequest(options);
+    if(dialog.clicked)
+    {
+      startSpinner();        
+      if (create) {
+        await createProjectRequest(options);
+      }else{
+        await editProjectRequest(old_name,options);
+      }
+      stopSpinner();
     }
+
+
     return modal as Promise<Dialog.IResult<void>>;
   }
 }
