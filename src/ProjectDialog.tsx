@@ -113,7 +113,7 @@ function editProjectRequest(old_name:string,options:ISWANOptions):any
   export async function OpenModal(
     options: ISWANOptions,
     create: boolean
-  ): Promise<Dialog.IResult<void>> {
+  ): Promise<any> {
     var _spinner = new Spinner();
     var old_name = options.name;
     var dialog = new ProjectWidget(options);
@@ -186,18 +186,18 @@ function editProjectRequest(old_name:string,options:ISWANOptions):any
 
     }
     while (!valid);
+    var result = null;
     if(dialog.clicked)
     {
       startSpinner();        
       if (create) {
-        await createProjectRequest(options);
+        result = await createProjectRequest(options);
       }else{
-        await editProjectRequest(old_name,options);
+        result = await editProjectRequest(old_name,options);
       }
       stopSpinner();
     }
-
-
-    return modal as Promise<Dialog.IResult<void>>;
+    //return modal as Promise<Dialog.IResult<void>>;
+    return result;
   }
 }
