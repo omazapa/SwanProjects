@@ -4,10 +4,10 @@
 import { Dialog, showErrorMessage, showDialog } from '@jupyterlab/apputils';
 import { ProjectWidget } from "./ProjectWidget"
 import { JSONObject } from '@lumino/coreutils';
-import { Widget } from '@lumino/widgets';
+//import { Widget } from '@lumino/widgets';
 import { request } from './request';
 import {Spinner} from '@jupyterlab/apputils';
-
+import { CommandRegistry } from '@lumino/commands';
 /**
  * Namespace for project dialogs
  */
@@ -112,7 +112,8 @@ function editProjectRequest(old_name:string,options:ISWANOptions):any
    */
   export async function OpenModal(
     options: ISWANOptions,
-    create: boolean
+    create: boolean,
+    commands: CommandRegistry 
   ): Promise<any> {
     var _spinner = new Spinner();
     var old_name = options.name;
@@ -132,7 +133,7 @@ function editProjectRequest(old_name:string,options:ISWANOptions):any
       _spinner.hide();
     }
   
-    Widget.attach(dialog, document.body);
+    //Widget.attach(dialog, document.body);
     var valid = false;
     do {
       dialog.clicked = false;
@@ -186,14 +187,28 @@ function editProjectRequest(old_name:string,options:ISWANOptions):any
 
     }
     while (!valid);
-    var result = null;
+    var result:any = null;
     if(dialog.clicked)
     {
       startSpinner();        
       if (create) {
         result = await createProjectRequest(options);
       }else{
-        result = await editProjectRequest(old_name,options);
+        result = editProjectRequest(old_name,options).then((value:any)=>{
+          
+          console.log("Project EDITED ===========");
+          console.log(value);
+          return commands.execute('filebrowser:go-to-path',{
+               path:value["project_dir"],
+               showBrowser:true
+          })
+        });
+        await result;
+        // console.log(await contentRequest(result["project_dir"]));
+        
+        // console.log("Project EDITED ===========");
+        // console.log(await contentRequest(result["project_dir"]));
+        // console.log("Project EDITED END ===========");
       }
       stopSpinner();
     }

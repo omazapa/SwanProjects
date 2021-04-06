@@ -99,7 +99,8 @@ const extension: JupyterFrontEndPlugin<void> = {
                                platform:"",
                                user_script:"",
                                stacks_options:stacks["stacks"]},
-                               true);
+                               true,
+                               commands);
     }
   }) 
 
@@ -116,11 +117,12 @@ const extension: JupyterFrontEndPlugin<void> = {
                                platform:args.platform as string,
                                user_script:args.user_script as string,
                                stacks_options:stacks["stacks"]},
-                               false);
-      console.log("EDIT result");
-      console.log(result);
-      await browserFactory.defaultBrowser.model.cd(result["project_dir"])
-      //await browserFactory.defaultBrowser.model.refresh();
+                               false,
+                               commands);
+      // console.log("EDIT result");
+      // console.log(result);
+      // await browserFactory.defaultBrowser.model.cd(result["project_dir"])
+      // //await browserFactory.defaultBrowser.model.refresh();
       return result;
     }
   }) 
