@@ -34,6 +34,7 @@ export class ProjectWidget extends ReactWidget {
     this.changeUserScript = this.changeUserScript.bind(this);
     this.changeClicked = this.changeClicked.bind(this);
   }
+
   getOptions():ProjectDialog.ISWANOptions
   {
     return this.options;
@@ -94,13 +95,11 @@ export class ProjectWidget extends ReactWidget {
   changeName(event:any)
   {
     this.options.name = event.target.value;
-    this.update();
   }
 
   changeUserScript(event:any)
   {
     this.options.user_script = event.target.value;
-    this.update();
   }
   changeClicked()
   {
@@ -118,7 +117,11 @@ export class ProjectWidget extends ReactWidget {
         </td>
         <td colSpan={3}>
         <div style={{ width: '100%', padding: "5px 5px 5px 0px", }}>
-          <input type="text" value={this.options.name} placeholder="Project Name" style={{ width: '100%', padding: "5px 0px 5px 0px", }} onChange={this.changeName} />
+          <input type="text" 
+                 defaultValue={this.options.name} 
+                 placeholder="Project Name" 
+                 style={{ width: '100%', padding: "5px 0px 5px 0px", }} 
+                 onChange={this.changeName} />
           </div>
       </td>
 
@@ -187,7 +190,12 @@ export class ProjectWidget extends ReactWidget {
               <div> {HelpTooltip("bash_script","User Script")} </div>  
               </div> <br/>
               <div style={{ width: '100%' }}>
-              <input type="text" placeholder="Bash User Script" value={this.options.user_script} style={{ width: '100%', padding: "5px 0px 5px 0px", }}  onChange={this.changeUserScript}/>
+              <input className="user_script" type="text" 
+                     placeholder="Bash User Script" 
+                     style={{ width: '100%', padding: "5px 0px 5px 0px", }}  
+                     onChange={this.changeUserScript}
+                     defaultValue={this.options.user_script}
+                     />
               </div>
               
             </td>              
