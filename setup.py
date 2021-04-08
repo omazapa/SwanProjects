@@ -25,7 +25,7 @@ lab_path = pjoin(HERE, name, "swanprojects")
 
 # Representative files that should exist after a successful build
 jstargets = [
-    pjoin(HERE, "lib", "jlabextexample.js"),
+    pjoin(HERE, "lib"),
 ]
 
 package_data_spec = {
@@ -56,9 +56,9 @@ with open("README.md", "r") as fh:
 setup_args = dict(
     name=name,
     version=version,
-    url="https://github.com/omazapa/jupyter_swan",
-    author="Omar Zapata",
-    description="CERN SWAN JupyterLab extension with backend and frontend parts.",
+    url="https://github.com/swan-cern/jupyter-extensions",
+    author="SWAN Team",
+    description="SWAN backend and lab extension for projects.",
     long_description= long_description,
     long_description_content_type="text/markdown",
     scripts=['bin/swan_env','bin/swan_bash','bin/swan_kmspecs'],
@@ -71,7 +71,7 @@ setup_args = dict(
     include_package_data=True,
     license="BSD-3-Clause",
     platforms="Linux, Mac OS X, Windows",
-    keywords=["Jupyter", "JupyterLab"],
+    keywords=["Jupyter", "JupyterLab", "Notebooks", "SWAN", "CERN"],
     classifiers=[
         "License :: OSI Approved :: BSD License",
         "Programming Language :: Python",
@@ -82,11 +82,6 @@ setup_args = dict(
         "Programming Language :: Python :: 3.8",
         "Framework :: Jupyter",
     ],
-    entry_points = {
-    'jupyter_client.kernel_providers' : [
-        # The name before the '=' should match the id attribute
-        'swan = swanprojects:SwanKernelProvider',
-    ]},
 )
 
 

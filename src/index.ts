@@ -1,25 +1,22 @@
 import {
   ILabShell,
   JupyterFrontEnd,
-  JupyterFrontEndPlugin
+  JupyterFrontEndPlugin,
 } from '@jupyterlab/application';
 
 //import { MainAreaWidget,ICommandPalette} from '@jupyterlab/apputils';
-import {ICommandPalette} from '@jupyterlab/apputils';
+import { ICommandPalette } from '@jupyterlab/apputils';
 //import { PageConfig } from '@jupyterlab/coreutils';
-
 
 //import { requestAPI } from './jlabextexample';
 
-
 //import { LabIcon } from '@jupyterlab/ui-components';
 //import {swanProjectIcon,cmsIcon} from './icons'
-import {swanProjectIcon} from './icons'
+import { swanProjectIcon } from './icons';
 
 //import { InputDialog, Dialog } from '@jupyterlab/apputils';
 
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
-
 
 //import ProjectLauncher from './launcher'
 
@@ -27,7 +24,7 @@ const PALETTE_CATEGORY = 'Project';
 
 //import {ProjectWidget} from './ProjectWidget'
 
-import {ProjectDialog} from './ProjectDialog'
+import { ProjectDialog } from './ProjectDialog';
 /*import { JSONObject} from '@lumino/coreutils';
 import {
   each
@@ -38,10 +35,10 @@ import {
  */
 namespace CommandIDs {
   export const project_dialog = 'swan:create-project-dialog';
-  export const project_dialog_edit = 'swan:edit-project-dialog';  
+  export const project_dialog_edit = 'swan:edit-project-dialog';
 }
 
-import { ILauncher} from '@jupyterlab/launcher';
+import { ILauncher } from '@jupyterlab/launcher';
 //import { launcherIcon } from '@jupyterlab/ui-components';
 
 //import { toArray } from '@lumino/algorithm';
@@ -49,24 +46,23 @@ import { ILauncher} from '@jupyterlab/launcher';
 //import { Widget } from '@lumino/widgets';
 import { request } from './request';
 
-export {request};
+export { request };
 
-export function kernelsInfoRequest():any
-{
+/**
+ *
+ */
+export function kernelsInfoRequest(): any {
   try {
     return request<any>('swan/stacks/info', {
-      method: 'GET'
-    }).then(rvalue => {
-        console.log(rvalue);
-        return rvalue;
+      method: 'GET',
+    }).then((rvalue) => {
+      console.log(rvalue);
+      return rvalue;
     });
   } catch (reason) {
-    console.error(
-      `Error on GET 'swan/stacks/info'.\n${reason}`
-    );
+    console.error(`Error on GET 'swan/stacks/info'.\n${reason}`);
   }
 }
-
 
 /**
  * Initialization data for the server-extension-example extension.
@@ -88,54 +84,62 @@ const extension: JupyterFrontEndPlugin<void> = {
     //const { commands, shell } = app;
     const { commands } = app;
     commands.addCommand(CommandIDs.project_dialog, {
-    icon:swanProjectIcon,
-    label: 'New',
-    caption: 'New',
-    execute: async args => {
-      var stacks = await kernelsInfoRequest();
-      ProjectDialog.OpenModal({name:"",
-                               stack:"",
-                               release:"",
-                               platform:"",
-                               user_script:"",
-                               stacks_options:stacks["stacks"]},
-                               true,
-                               commands);
-    }
-  }) 
+      icon: swanProjectIcon,
+      label: 'New',
+      caption: 'New',
+      execute: async (args) => {
+        const stacks = await kernelsInfoRequest();
+        ProjectDialog.OpenModal(
+          {
+            name: '',
+            stack: '',
+            release: '',
+            platform: '',
+            user_script: '',
+            stacks_options: stacks['stacks'],
+          },
+          true,
+          commands
+        );
+      },
+    });
 
-  commands.addCommand(CommandIDs.project_dialog_edit, {
-    icon:swanProjectIcon,
-    label: 'Edit',
-    caption: 'Edit',
-    execute: async args => {
-      console.log(args)
-      var stacks = await kernelsInfoRequest();
-      var result = await  ProjectDialog.OpenModal({name:args.name as string,
-                               stack:args.stack as string,
-                               release:args.release as string,
-                               platform:args.platform as string,
-                               user_script:args.user_script as string,
-                               stacks_options:stacks["stacks"]},
-                               false,
-                               commands);
-      // console.log("EDIT result");
-      // console.log(result);
-      // await browserFactory.defaultBrowser.model.cd(result["project_dir"])
-      // //await browserFactory.defaultBrowser.model.refresh();
-      return result;
-    }
-  }) 
+    commands.addCommand(CommandIDs.project_dialog_edit, {
+      icon: swanProjectIcon,
+      label: 'Edit',
+      caption: 'Edit',
+      execute: async (args) => {
+        console.log(args);
+        const stacks = await kernelsInfoRequest();
+        const result = await ProjectDialog.OpenModal(
+          {
+            name: args.name as string,
+            stack: args.stack as string,
+            release: args.release as string,
+            platform: args.platform as string,
+            user_script: args.user_script as string,
+            stacks_options: stacks['stacks'],
+          },
+          false,
+          commands
+        );
+        // console.log("EDIT result");
+        // console.log(result);
+        // await browserFactory.defaultBrowser.model.cd(result["project_dir"])
+        // //await browserFactory.defaultBrowser.model.refresh();
+        return result;
+      },
+    });
 
     // Add the command to the launcher
     if (launcher) {
       // await manager.ready.then(() => {
-        launcher.add({
-          command: CommandIDs.project_dialog,
-          category: PALETTE_CATEGORY,
-          rank: 1,
-          kernelIconUrl: ""
-        });
+      launcher.add({
+        command: CommandIDs.project_dialog,
+        category: PALETTE_CATEGORY,
+        rank: 1,
+        kernelIconUrl: '',
+      });
       // })
     }
 
@@ -143,20 +147,17 @@ const extension: JupyterFrontEndPlugin<void> = {
     if (palette) {
       palette.addItem({
         command: CommandIDs.project_dialog,
-        args: { isPalette: true},
-        category: PALETTE_CATEGORY
+        args: { isPalette: true },
+        category: PALETTE_CATEGORY,
       });
     }
 
     // Add the command to the menu
     //if (menu) {
-      //menu.fileMenu.newMenu.addGroup([{ command }], 30);
+    //menu.fileMenu.newMenu.addGroup([{ command }], 30);
     //}
     //}
-
-
-  }
+  },
 };
-
 
 export default extension;

@@ -1,3 +1,4 @@
+# Author: Omar.Zapata@cern.ch 2021
 from jupyter_client.kernelspec import KernelSpecManager, KernelSpec, NoSuchKernel
 from jupyter_core.paths import jupyter_data_dir, jupyter_path
 from swanprojects.utils import get_project_info, project_path
