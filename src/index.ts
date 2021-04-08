@@ -83,7 +83,7 @@ const extension: JupyterFrontEndPlugin<void> = {
     labShell: ILabShell,
     browserFactory: IFileBrowserFactory
   ) => {
-    console.log('JupyterLab extension SWAN is activated!');
+    console.log("SWAN Projects Activated");
     // const manager = app.serviceManager;
     //const { commands, shell } = app;
     const { commands } = app;

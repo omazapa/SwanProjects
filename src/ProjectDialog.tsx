@@ -194,15 +194,35 @@ function editProjectRequest(old_name:string,options:ISWANOptions):any
       if (create) {
         result = await createProjectRequest(options);
       }else{
-        result = editProjectRequest(old_name,options).then((value:any)=>{
+        if(old_name != options.name)
+        {
+          result = commands.execute('filebrowser:go-to-path',{
+            path:"/SWAN_projects",
+            showBrowser:true
+              }).then(()=>{
+                return editProjectRequest(old_name,options).then((value:any)=>{
           
-          console.log("Project EDITED ===========");
-          console.log(value);
-          return commands.execute('filebrowser:go-to-path',{
-               path:value["project_dir"],
-               showBrowser:true
-          })
-        });
+                  console.log("Project EDITED ===========");
+                  console.log(value);
+                  return commands.execute('filebrowser:go-to-path',{
+                       path:value["project_dir"],
+                       showBrowser:true
+                  })
+      
+              })
+            })
+
+        }else{
+          result = editProjectRequest(old_name,options).then((value:any)=>{
+          
+            console.log("Project EDITED ===========");
+            console.log(value);
+            return commands.execute('filebrowser:go-to-path',{
+                 path:value["project_dir"],
+                 showBrowser:true
+            })
+          });  
+        }
         await result;
         // console.log(await contentRequest(result["project_dir"]));
         

@@ -80,7 +80,7 @@ class CreateProjectHandler(APIHandler):
         proc.communicate()
 
         
-        data = {"msg": "created project: {}".format(name)}
+        data = {"project_dir":"SWAN_projects/"+name,"msg": "created project: {}".format(name)}
         self.finish(json.dumps(data))
 
 class EditProjectHandler(APIHandler):
