@@ -14,6 +14,14 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'jsdoc'],
   rules: {
+    'prettier/prettier': [
+      'warn',
+      {
+        singleQuote: true,
+        semi: false,
+        trailingComma: 'none'
+      }
+    ],
     '@typescript-eslint/interface-name-prefix': [
       'error',
       { prefixWithI: 'always' }

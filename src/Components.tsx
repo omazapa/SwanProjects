@@ -1,10 +1,11 @@
-import { classes, LabIcon } from '@jupyterlab/ui-components';
-import * as React from 'react';
-import ReactTooltip from "react-tooltip";
+import { classes, LabIcon } from '@jupyterlab/ui-components'
+import * as React from 'react'
+import ReactTooltip from 'react-tooltip'
 
 /**
- * @param id
- * @param message
+ * @param id Id for the html element
+ * @param message Message to display in the tooltip
+ * @returns React Element
  */
 export function HelpTooltip(
   id: string,
@@ -22,7 +23,7 @@ export function HelpTooltip(
           backgroundColor: '#d5d5d5',
           display: ' flex',
           justifyContent: 'center',
-          alignItems: 'center',
+          alignItems: 'center'
         }}
       >
         <a data-for={id} data-tip={message}>
@@ -36,19 +37,15 @@ export function HelpTooltip(
         />
       </div>
     </div>
-  );
+  )
 }
 
 /**
  * A pure tsx component for a launcher card.
  *
- * @param kernel - whether the item takes uses a kernel.
- * @param item - the launcher item to render.
- * @param launcher - the Launcher instance to which this is added.
- * @param label
- * @param icon
- * @param updateCallback
- * @param launcherCallback - a callback to call after an item has been launched.
+ * @param label - Text for the Card
+ * @param icon - Icon for the Card
+ * @param updateCallback - Callback to update stacks on other components
  * @returns a vdom `VirtualElement` for the launcher card.
  */
 export function Card(
@@ -57,21 +54,21 @@ export function Card(
   updateCallback: (stack: string) => void
 ): React.ReactElement<any> {
   // Get some properties of the command
-  const title = label;
+  const title = label
   // Build the onclick handler.
-  const onclick = () => {
+  const onclick = (): void => {
     // If an item has already been launched,
     // don't try to launch another.
-    updateCallback(label);
-  };
+    updateCallback(label)
+  }
 
   // With tabindex working, you can now pick a kernel by tabbing around and
   // pressing Enter.
-  const onkeypress = (event: React.KeyboardEvent) => {
+  const onkeypress = (event: React.KeyboardEvent): void => {
     if (event.key === 'Enter') {
-      onclick();
+      onclick()
     }
-  };
+  }
   // Return the VDOM element.
   return (
     <div
@@ -96,5 +93,5 @@ export function Card(
         <p>{label}</p>
       </div>
     </div>
-  );
+  )
 }

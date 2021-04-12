@@ -1,16 +1,16 @@
 // import { ReactWidget, UseSignal } from '@jupyterlab/apputils';
-import { ReactWidget } from '@jupyterlab/apputils';
-import * as React from "react";
-import { JSONObject } from '@lumino/coreutils';
-import { Card, HelpTooltip } from './Components';
+import { ReactWidget } from '@jupyterlab/apputils'
+import * as React from 'react'
+import { JSONObject } from '@lumino/coreutils'
+import { Card, HelpTooltip } from './Components'
 export interface IStackOptions {
   visible: boolean;
 }
-import { swanProjectIcon, sftIcon, cmsIcon, condaIcon } from './icons';
+import { swanProjectIcon, sftIcon, cmsIcon, condaIcon } from './icons'
 
-import { ProjectDialog } from './ProjectDialog';
+import { ProjectDialog } from './ProjectDialog'
 
-import Select from 'react-select';
+import Select from 'react-select'
 
 /**
  * A Counter Lumino Widget that wraps a CounterComponent.
@@ -19,97 +19,97 @@ export class ProjectWidget extends ReactWidget {
   /**
    * Constructs a new CounterWidget.
    */
-  options: ProjectDialog.ISWANOptions;
-  releases: JSONObject[];
-  platforms: JSONObject[];
-  clicked: boolean;
+  options: ProjectDialog.ISWANOptions
+  releases: JSONObject[]
+  platforms: JSONObject[]
+  clicked: boolean
   constructor(options: ProjectDialog.ISWANOptions) {
-    super();
-    this.clicked = false;
-    this.addClass('jp-ReactWidget');
-    this.setOptions(options);
-    this.selectStack = this.selectStack.bind(this);
-    this.changeRelease = this.changeRelease.bind(this);
-    this.changeName = this.changeName.bind(this);
-    this.changeUserScript = this.changeUserScript.bind(this);
-    this.changeClicked = this.changeClicked.bind(this);
+    super()
+    this.clicked = false
+    this.addClass('jp-ReactWidget')
+    this.setOptions(options)
+    this.selectStack = this.selectStack.bind(this)
+    this.changeRelease = this.changeRelease.bind(this)
+    this.changeName = this.changeName.bind(this)
+    this.changeUserScript = this.changeUserScript.bind(this)
+    this.changeClicked = this.changeClicked.bind(this)
   }
 
   getOptions(): ProjectDialog.ISWANOptions {
-    return this.options;
+    return this.options
   }
   setOptions(options: ProjectDialog.ISWANOptions) {
-    this.options = options;
+    this.options = options
     if (this.options.stack === undefined || this.options.stack === '') {
-      this.options.stack = "LCG";
+      this.options.stack = 'LCG'
     }
-    this.selectStack(this.options.stack);
-    this.update();
+    this.selectStack(this.options.stack)
+    this.update()
   }
 
   selectStack(source: string): void {
-    console.log(source);
-    this.options.stack = source;
-    console.log(this.options);
+    console.log(source)
+    this.options.stack = source
+    console.log(this.options)
 
     //check is source on staks else error
     const releases = Object.keys(
       this.options.stacks_options[this.options.stack]
-    ) as string[];
-    this.releases = [];
+    ) as string[]
+    this.releases = []
     releases.forEach((release) => {
-      this.releases.push({ value: release, label: release });
-    });
+      this.releases.push({ value: release, label: release })
+    })
 
-    this.options.release = releases[0];
+    this.options.release = releases[0]
 
     const stack_values = this.options.stacks_options[
       this.options.stack
-    ] as JSONObject;
+    ] as JSONObject
 
-    console.log(stack_values);
+    console.log(stack_values)
 
     //check is stack on keys, else error
-    const platforms = stack_values[this.options.release] as string[];
+    const platforms = stack_values[this.options.release] as string[]
 
-    console.log(platforms);
+    console.log(platforms)
 
-    this.platforms = [];
+    this.platforms = []
     platforms.forEach((platform) => {
-      this.platforms.push({ value: platform, label: platform });
-    });
-    this.options.platform = platforms[0];
-    console.log(this.options.platform);
-    console.log(this.options.release);
+      this.platforms.push({ value: platform, label: platform })
+    })
+    this.options.platform = platforms[0]
+    console.log(this.options.platform)
+    console.log(this.options.release)
 
-    this.update();
+    this.update()
     // this._signal.emit();
   }
   changeRelease(event: any): void {
-    this.options.release = event.value;
+    this.options.release = event.value
     const stack_values = this.options.stacks_options[
       this.options.stack
-    ] as JSONObject;
+    ] as JSONObject
     //check is stack on keys, else error
-    const platforms = stack_values[this.options.release] as string[];
-    this.platforms = [];
+    const platforms = stack_values[this.options.release] as string[]
+    this.platforms = []
     platforms.forEach((platform) => {
-      this.platforms.push({ value: platform, label: platform });
-    });
-    this.options.platform = platforms[0];
-    this.update();
+      this.platforms.push({ value: platform, label: platform })
+    })
+    this.options.platform = platforms[0]
+    this.update()
   }
 
   changeName(event: any) {
-    this.options.name = event.target.value;
+    this.options.name = event.target.value
   }
 
   changeUserScript(event: any) {
-    this.options.user_script = event.target.value;
+    this.options.user_script = event.target.value
   }
   changeClicked() {
-    this.clicked = true;
-    this.parent.parent.close();
+    this.clicked = true
+    this.parent.parent.close()
   }
   render(): JSX.Element {
     return (
@@ -186,16 +186,16 @@ export class ProjectWidget extends ReactWidget {
                   menuPortalTarget={document.body}
                   menuPosition={'absolute'}
                   styles={{
-                    menuPortal: (base) => ({ ...base, zIndex: 999999 }),
+                    menuPortal: (base) => ({ ...base, zIndex: 999999 })
                   }}
                   menuShouldScrollIntoView={false}
                   defaultValue={{
                     value: this.options.release,
-                    label: this.options.release,
+                    label: this.options.release
                   }}
                   value={{
                     value: this.options.release,
-                    label: this.options.release,
+                    label: this.options.release
                   }}
                   onChange={this.changeRelease}
                 />
@@ -208,16 +208,16 @@ export class ProjectWidget extends ReactWidget {
                     menuPortalTarget={document.body}
                     menuPosition={'absolute'}
                     styles={{
-                      menuPortal: (base) => ({ ...base, zIndex: 999999 }),
+                      menuPortal: (base) => ({ ...base, zIndex: 999999 })
                     }}
                     menuShouldScrollIntoView={false}
                     defaultValue={{
                       value: this.options.platform,
-                      label: this.options.platform,
+                      label: this.options.platform
                     }}
                     value={{
                       value: this.options.platform,
-                      label: this.options.platform,
+                      label: this.options.platform
                     }}
                   />
                 }
@@ -258,6 +258,6 @@ export class ProjectWidget extends ReactWidget {
           </tbody>
         </table>
       </span>
-    );
+    )
   }
 }

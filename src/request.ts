@@ -1,6 +1,6 @@
-import { URLExt } from '@jupyterlab/coreutils';
+import { URLExt } from '@jupyterlab/coreutils'
 
-import { ServerConnection } from '@jupyterlab/services';
+import { ServerConnection } from '@jupyterlab/services'
 
 /**
  * Call the API extension
@@ -14,21 +14,21 @@ export async function request<T>(
   init: RequestInit = {}
 ): Promise<T> {
   // Make request to Jupyter API
-  const settings = ServerConnection.makeSettings();
-  const requestUrl = URLExt.join(settings.baseUrl, '', endPoint);
+  const settings = ServerConnection.makeSettings()
+  const requestUrl = URLExt.join(settings.baseUrl, '', endPoint)
 
-  let response: Response;
+  let response: Response
   try {
-    response = await ServerConnection.makeRequest(requestUrl, init, settings);
+    response = await ServerConnection.makeRequest(requestUrl, init, settings)
   } catch (error) {
-    throw new ServerConnection.NetworkError(error);
+    throw new ServerConnection.NetworkError(error)
   }
 
-  const data = await response.json();
+  const data = await response.json()
 
   if (!response.ok) {
-    throw new ServerConnection.ResponseError(response, data.message);
+    throw new ServerConnection.ResponseError(response, data.message)
   }
 
-  return data;
+  return data
 }
