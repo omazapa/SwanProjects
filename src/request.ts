@@ -4,7 +4,7 @@ import { ServerConnection } from '@jupyterlab/services';
 import { ProjectDialog } from './ProjectDialog';
 
 /**
- * Call the API extension
+ * Call the API extension, base function to implement the other requests
  *
  * @param endPoint API REST end point for the extension
  * @param init Initial values for the request
@@ -35,6 +35,8 @@ export async function request<T>(
 }
 
 /**
+ * Request to get contents from a path
+ *
  * @param cwd path get information from jupyter api
  * @returns json object with the information of the path or json object with the information of the error.
  */
@@ -42,8 +44,6 @@ export function contentRequest(cwd: string): any {
   try {
     return request<any>('api/contents/' + cwd, {
       method: 'GET'
-    }).then(rvalue => {
-      return rvalue;
     });
   } catch (reason) {
     const msg = `Error on GET 'api/contents'+ ${cwd}.\n${reason}`;
@@ -53,7 +53,10 @@ export function contentRequest(cwd: string): any {
 }
 
 /**
- * @param options
+ * Request to create a project
+ *
+ * @param options parameters to send to the backend, like: name, stack, release etc..
+ * @returns  json object with the keys 'project_dir' and 'msg' or json object with the information of the error.
  */
 export function createProjectRequest(options: ProjectDialog.ISWANOptions): any {
   const dataToSend = {
@@ -61,48 +64,62 @@ export function createProjectRequest(options: ProjectDialog.ISWANOptions): any {
     stack: options.stack,
     release: options.release,
     platform: options.platform,
-    user_script: options.user_script
+    user_script: options.user_script // eslint-disable-line @typescript-eslint/camelcase
   };
   try {
     return request<any>('swan/project/create', {
       body: JSON.stringify(dataToSend),
       method: 'POST'
-    }).then(rvalue => {
-      console.log('-create-post');
-      console.log(rvalue);
-      return rvalue;
     });
   } catch (reason) {
-    console.error(`Error on POST /swan/project/create ${options}.\n${reason}`);
+    const msg = `Error on POST /swan/project/create ${options}.\n${reason}`;
+    console.error(msg);
+    return { status: 'error', reason: reason, param: options, msg: msg };
   }
 }
 
 /**
- * @param old_name
- * @param options
+ * Request to edit project
+ *
+ * @param old_name previous name of the project
+ * @param options new project parameters to send to the backend, like: name, stack, release etc..
+ * @returns json object with the keys 'project_dir' and 'msg' or json object with the information of the error.
  */
 export function editProjectRequest(
-  old_name: string,
+  old_name: string, // eslint-disable-line @typescript-eslint/camelcase
   options: ProjectDialog.ISWANOptions
 ): any {
   const dataToSend = {
-    old_name: old_name,
+    old_name: old_name, // eslint-disable-line @typescript-eslint/camelcase
     name: options.name,
     stack: options.stack,
     release: options.release,
     platform: options.platform,
-    user_script: options.user_script
+    user_script: options.user_script // eslint-disable-line @typescript-eslint/camelcase
   };
   try {
     return request<any>('swan/project/edit', {
       body: JSON.stringify(dataToSend),
       method: 'POST'
-    }).then(rvalue => {
-      return rvalue;
     });
   } catch (reason) {
     console.error(
       `Error on POST 'swan/project/edit'+ ${dataToSend}.\n${reason}`
     );
+  }
+}
+
+/**
+ * Request to get the information for the software stacks
+ *
+ * @returns json with the software stack names, releases, platform, etc..
+ */
+export function kernelsInfoRequest(): any {
+  try {
+    return request<any>('swan/stacks/info', {
+      method: 'GET'
+    });
+  } catch (reason) {
+    console.error(`Error on GET 'swan/stacks/info'.\n${reason}`);
   }
 }

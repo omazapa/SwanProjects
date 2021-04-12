@@ -1,4 +1,3 @@
-// import { ReactWidget, UseSignal } from '@jupyterlab/apputils';
 import { ReactWidget } from '@jupyterlab/apputils';
 import * as React from 'react';
 import { JSONObject } from '@lumino/coreutils';
@@ -17,7 +16,7 @@ import Select from 'react-select';
  */
 export class ProjectWidget extends ReactWidget {
   /**
-   * Constructs a new CounterWidget.
+   * Constructs a new ProjectWidget.
    */
   options: ProjectDialog.ISWANOptions;
   releases: JSONObject[];
@@ -38,7 +37,7 @@ export class ProjectWidget extends ReactWidget {
   getOptions(): ProjectDialog.ISWANOptions {
     return this.options;
   }
-  setOptions(options: ProjectDialog.ISWANOptions) {
+  setOptions(options: ProjectDialog.ISWANOptions): void {
     this.options = options;
     if (this.options.stack === undefined || this.options.stack === '') {
       this.options.stack = 'LCG';
@@ -48,9 +47,7 @@ export class ProjectWidget extends ReactWidget {
   }
 
   selectStack(source: string): void {
-    console.log(source);
     this.options.stack = source;
-    console.log(this.options);
 
     //check is source on staks else error
     const releases = Object.keys(
@@ -63,35 +60,28 @@ export class ProjectWidget extends ReactWidget {
 
     this.options.release = releases[0];
 
-    const stack_values = this.options.stacks_options[
+    const stackValues = this.options.stacks_options[
       this.options.stack
     ] as JSONObject;
 
-    console.log(stack_values);
-
     //check is stack on keys, else error
-    const platforms = stack_values[this.options.release] as string[];
-
-    console.log(platforms);
+    const platforms = stackValues[this.options.release] as string[];
 
     this.platforms = [];
     platforms.forEach(platform => {
       this.platforms.push({ value: platform, label: platform });
     });
     this.options.platform = platforms[0];
-    console.log(this.options.platform);
-    console.log(this.options.release);
 
     this.update();
-    // this._signal.emit();
   }
   changeRelease(event: any): void {
     this.options.release = event.value;
-    const stack_values = this.options.stacks_options[
+    const stackValues = this.options.stacks_options[
       this.options.stack
     ] as JSONObject;
     //check is stack on keys, else error
-    const platforms = stack_values[this.options.release] as string[];
+    const platforms = stackValues[this.options.release] as string[];
     this.platforms = [];
     platforms.forEach(platform => {
       this.platforms.push({ value: platform, label: platform });
@@ -100,14 +90,14 @@ export class ProjectWidget extends ReactWidget {
     this.update();
   }
 
-  changeName(event: any) {
+  changeName(event: any): void {
     this.options.name = event.target.value;
   }
 
-  changeUserScript(event: any) {
-    this.options.user_script = event.target.value;
+  changeUserScript(event: any): void {
+    this.options.user_script = event.target.value; // eslint-disable-line @typescript-eslint/camelcase
   }
-  changeClicked() {
+  changeClicked(): void {
     this.clicked = true;
     this.parent.parent.close();
   }
@@ -186,7 +176,10 @@ export class ProjectWidget extends ReactWidget {
                   menuPortalTarget={document.body}
                   menuPosition={'absolute'}
                   styles={{
-                    menuPortal: base => ({ ...base, zIndex: 999999 })
+                    menuPortal: (base: any): any => ({
+                      ...base,
+                      zIndex: 999999
+                    })
                   }}
                   menuShouldScrollIntoView={false}
                   defaultValue={{
@@ -208,7 +201,10 @@ export class ProjectWidget extends ReactWidget {
                     menuPortalTarget={document.body}
                     menuPosition={'absolute'}
                     styles={{
-                      menuPortal: base => ({ ...base, zIndex: 999999 })
+                      menuPortal: (base: any): any => ({
+                        ...base,
+                        zIndex: 999999
+                      })
                     }}
                     menuShouldScrollIntoView={false}
                     defaultValue={{
@@ -232,7 +228,7 @@ export class ProjectWidget extends ReactWidget {
                 <br />
                 <div style={{ width: '100%' }}>
                   <input
-                    className="user_script"
+                    className="userScript"
                     type="text"
                     placeholder="Bash User Script"
                     style={{ width: '100%', padding: '5px 0px 5px 0px' }}

@@ -33,7 +33,7 @@ export function HelpTooltip(
           html={true}
           id={id}
           multiline={true}
-          getContent={dataTip => `${dataTip}`}
+          getContent={(dataTip): string => `${dataTip}`}
         />
       </div>
     </div>

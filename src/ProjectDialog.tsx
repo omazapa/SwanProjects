@@ -49,6 +49,7 @@ export namespace ProjectDialog {
    * @param commands - CommandRegistry object
    * @returns A promise that resolves with whether the dialog was accepted
    */
+  // eslint-disable-next-line  no-inner-declarations
   export async function OpenModal(
     options: ISWANOptions,
     create: boolean,
@@ -60,7 +61,7 @@ export namespace ProjectDialog {
     /**
      *
      */
-    function startSpinner() {
+    function startSpinner(): void {
       const node = document.getElementById('jp-main-dock-panel');
       node.appendChild(_spinner.node);
       node.focus();
@@ -72,7 +73,7 @@ export namespace ProjectDialog {
     /**
      *
      */
-    function stopSpinner() {
+    function stopSpinner(): void {
       _spinner.hide();
     }
 
@@ -86,20 +87,20 @@ export namespace ProjectDialog {
         buttons: [],
         focusNodeSelector: 'input'
       });
-      await modal.then(async () => {});
+      await modal;
       if (dialog.clicked) {
         options = dialog.getOptions();
         if (options.name.trim() !== '') {
           //check is project already exists
           if (create) {
-            var content = await contentRequest(
+            const content = await contentRequest(
               'SWAN_projects/' + options.name
             ).catch((response: Response, message: any): void => {
               console.log(
                 "404 checking project name, means project doesn't exists and it is a valid name."
               );
             });
-            if (content == undefined) {
+            if (content === undefined) {
               valid = true;
             } else {
               await showErrorMessage(
@@ -109,15 +110,15 @@ export namespace ProjectDialog {
               valid = false;
             }
           } else {
-            if (oldName != options.name) {
-              var content = await contentRequest(
+            if (oldName !== options.name) {
+              const content = await contentRequest(
                 'SWAN_projects/' + options.name
               ).catch((response: Response, message: any) => {
                 console.log(
                   "404 checking project name, means project doesn't exists and it is a valid name."
                 );
               });
-              if (content == undefined) {
+              if (content === undefined) {
                 valid = true;
               } else {
                 await showErrorMessage(
@@ -132,7 +133,7 @@ export namespace ProjectDialog {
           }
         }
 
-        if (options.name.trim() == '') {
+        if (options.name.trim() === '') {
           await showErrorMessage(
             'Invalid project name',
             'Select a valid (non-empty) project name.'
@@ -147,9 +148,15 @@ export namespace ProjectDialog {
     if (dialog.clicked) {
       startSpinner();
       if (create) {
-        result = await createProjectRequest(options);
+        result = await createProjectRequest(options).then((value: any) => {
+          commands.execute('filebrowser:go-to-path', {
+            path: value['project_dir'],
+            showBrowser: true
+          });
+          return value;
+        });
       } else {
-        if (oldName != options.name) {
+        if (oldName !== options.name) {
           result = commands
             .execute('filebrowser:go-to-path', {
               path: '/SWAN_projects',
@@ -157,8 +164,6 @@ export namespace ProjectDialog {
             })
             .then(() => {
               return editProjectRequest(oldName, options).then((value: any) => {
-                console.log('Project EDITED ===========');
-                console.log(value);
                 return commands.execute('filebrowser:go-to-path', {
                   path: value['project_dir'],
                   showBrowser: true
@@ -167,8 +172,6 @@ export namespace ProjectDialog {
             });
         } else {
           result = editProjectRequest(oldName, options).then((value: any) => {
-            console.log('Project EDITED ===========');
-            console.log(value);
             return commands.execute('filebrowser:go-to-path', {
               path: value['project_dir'],
               showBrowser: true
@@ -176,15 +179,9 @@ export namespace ProjectDialog {
           });
         }
         await result;
-        // console.log(await contentRequest(result["project_dir"]));
-
-        // console.log("Project EDITED ===========");
-        // console.log(await contentRequest(result["project_dir"]));
-        // console.log("Project EDITED END ===========");
       }
       stopSpinner();
     }
-    //return modal as Promise<Dialog.IResult<void>>;
     return result;
   }
 }
