@@ -14,20 +14,13 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'jsdoc'],
   rules: {
-    'prettier/prettier': [
-      'warn',
-      {
-        singleQuote: true,
-        semi: false,
-        trailingComma: 'none'
-      }
-    ],
     '@typescript-eslint/interface-name-prefix': [
       'error',
       { prefixWithI: 'always' }
     ],
     '@typescript-eslint/no-unused-vars': ['warn', { args: 'none' }],
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/camelcase': 'warn',
     '@typescript-eslint/no-namespace': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/quotes': [

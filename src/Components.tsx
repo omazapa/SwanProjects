@@ -1,6 +1,6 @@
-import { classes, LabIcon } from '@jupyterlab/ui-components'
-import * as React from 'react'
-import ReactTooltip from 'react-tooltip'
+import { classes, LabIcon } from '@jupyterlab/ui-components';
+import * as React from 'react';
+import ReactTooltip from 'react-tooltip';
 
 /**
  * @param id Id for the html element
@@ -33,11 +33,11 @@ export function HelpTooltip(
           html={true}
           id={id}
           multiline={true}
-          getContent={(dataTip) => `${dataTip}`}
+          getContent={dataTip => `${dataTip}`}
         />
       </div>
     </div>
-  )
+  );
 }
 
 /**
@@ -54,21 +54,21 @@ export function Card(
   updateCallback: (stack: string) => void
 ): React.ReactElement<any> {
   // Get some properties of the command
-  const title = label
+  const title = label;
   // Build the onclick handler.
   const onclick = (): void => {
     // If an item has already been launched,
     // don't try to launch another.
-    updateCallback(label)
-  }
+    updateCallback(label);
+  };
 
   // With tabindex working, you can now pick a kernel by tabbing around and
   // pressing Enter.
   const onkeypress = (event: React.KeyboardEvent): void => {
     if (event.key === 'Enter') {
-      onclick()
+      onclick();
     }
-  }
+  };
   // Return the VDOM element.
   return (
     <div
@@ -93,5 +93,5 @@ export function Card(
         <p>{label}</p>
       </div>
     </div>
-  )
+  );
 }
