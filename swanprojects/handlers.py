@@ -1,3 +1,5 @@
+# Copyright (c) SWAN Development Team.
+# Author: Omar.Zapata@cern.ch 2021
 import os
 import json
 
@@ -20,11 +22,14 @@ class ProjectInfoHandler(APIHandler):
     @tornado.web.authenticated
     def post(self):
         """
-        Post request is for the SwanLauncher/SwanFileBrowser and returns project information required for the launcher 
+        Post request for the SwanLauncher/SwanFileBrowser,
+        this endpoint returns project information such as stack, release, platform etc..
+        if the path is not inside the project return and empty project data.
+
+        At th same time this endpoint allows to set the kernel spec manager path, 
+        to load and unload the kernels according to the project information.
         """
-        # input_data is a dictionnary with a key "name"
         input_data = self.get_json_body()
-        print("input_data = ",input_data)
         path = input_data["path"]
         project = project_path(path)
         self.kernel_spec_manager.set_path(path)
@@ -42,20 +47,22 @@ class ProjectInfoHandler(APIHandler):
 class StacksInfoHandler(APIHandler):
     @tornado.web.authenticated
     def get(self):
+        """
+        This endpoint is required for the project dialog, it's returning the information save on stacks.json
+        """
         self.finish(json.dumps({"stacks": get_software_stacks()}))
         pass
 
 
 class CreateProjectHandler(APIHandler):
-    # The following decorator should be present on all verb methods (head, get, post,
-    # patch, put, delete, options) to ensure only authorized user can request the
-    # Jupyter server
-
     @tornado.web.authenticated
     def post(self):
-        # input_data is a dictionnary with a key "name"
+        """
+        Endpoint to create a project, receive project information such as name, stack, platform, release, user_script.
+        The project is created at $HOME/SWAN_projects/project_name and a hidden json ".swanproject" file with the information
+        project is set inside the project folder.
+        """
         input_data = self.get_json_body()
-        print(input_data)
         name = input_data["name"]
         stack = input_data["stack"] ##CMSSW/LCG
         platform = input_data["platform"] #SCRAM
@@ -72,11 +79,9 @@ class CreateProjectHandler(APIHandler):
             f.close()
         
         command =  ["swan_kmspecs","--stack",stack,"--release",release,"--platform",platform,"--user_script",user_script,"--project_path",project_dir]
-        print(" ".join(command))
         proc = subprocess.Popen(command, stdout = subprocess.PIPE)
         proc.wait()
         data = proc.stdout.read().decode("utf-8")
-        print(data)
         proc.communicate()
 
         
@@ -84,13 +89,14 @@ class CreateProjectHandler(APIHandler):
         self.finish(json.dumps(data))
 
 class EditProjectHandler(APIHandler):
-    # The following decorator should be present on all verb methods (head, get, post,
-    # patch, put, delete, options) to ensure only authorized user can request the
-    # Jupyter server
 
     @tornado.web.authenticated
     def post(self):
-        # input_data is a dictionnary with a key "name"
+        """
+        This endpoint allows to edit project information, such as name, stack, platform etc..
+        The project can be renamed from $HOME/SWAN_projects/old_name to $HOME/SWAN_projects/name
+        and metadata in the .swanproject is updated.
+        """
         input_data = self.get_json_body()
         print(input_data)
         old_name = input_data["old_name"] 
@@ -129,7 +135,7 @@ class EditProjectHandler(APIHandler):
         proc.communicate()
 
         
-        data = {"project_dir":"SWAN_projects/"+name,"msg": "project edited: {}".format(name)}
+        data = {"project_dir":"SWAN_projects/"+name,"msg": "edited project: {}".format(name)}
         self.finish(json.dumps(data))
 
 
@@ -137,13 +143,12 @@ class EditProjectHandler(APIHandler):
 def setup_handlers(web_app, url_path):
     host_pattern = ".*$"
     base_url = web_app.settings["base_url"]
-    print("URL_PATH="+url_path)
+
     # Prepend the base_url so that it works in a jupyterhub setting
     create_pattern = url_path_join(base_url, url_path, "project/create")
     edit_pattern = url_path_join(base_url, url_path, "project/edit")
     project_pattern = url_path_join(base_url, url_path, "project/info")
     kernel_pattern = url_path_join(base_url, url_path, "stacks/info")
-    #http://localhost:8888/api/kernelspecs
     handlers = [(create_pattern, CreateProjectHandler)]
     handlers.append((edit_pattern,EditProjectHandler))
     handlers.append((project_pattern,ProjectInfoHandler))
@@ -154,7 +159,7 @@ def setup_handlers(web_app, url_path):
     # Prepend the base_url so that it works in a jupyterhub setting
     doc_url = url_path_join(base_url, url_path, "static")
     doc_dir = os.getenv(
-        "JLAB_SERVER_EXAMPLE_STATIC_DIR",
+        "SWAN_JLAB_SERVER_STATIC_DIR",
         os.path.join(os.path.dirname(__file__), "static"),
     )
     handlers = [("{}/(.*)".format(doc_url), StaticFileHandler, {"path": doc_dir})]

@@ -2,16 +2,21 @@
 #Author Omar.Zapata@cern.ch 2021
 
 clear
+if ! [ -x "$(command -v jq)" ]; then
+  echo 'Error: jq is not installed.' >&2
+  sleep 60
+  exit 1
+fi
 if [[ $# -gt 0 ]] ; then
     PROJECT=$1
     PROJECT_PATH="$HOME/SWAN_projects/$PROJECT"
     PROJECT_FILE="$PROJECT_PATH/.swanproject"
-    SOURCE=`jq '.source' $PROJECT_FILE`
     STACK=`jq '.stack' $PROJECT_FILE`
+    RELEASE=`jq '.release' $PROJECT_FILE`
     PLATFORM=`jq '.platform' $PROJECT_FILE`
     USER_SCRIPT=`jq '.user_script' $PROJECT_FILE`
     
     PS1_SWAN="$(PS1="($PROJECT) $PS1")" #`bash -c "echo \($PROJECT\) $PS1 "`
     echo $PS1_SWAN
-    bash -c "swan_env $SOURCE $STACK $PLATFORM $USER_SCRIPT $PROJECT_PATH  bash --rcfile <(echo 'PS1=\"($PROJECT) $PS1 \"') "
+    bash -c "swan_env $STACK $RELEASE $PLATFORM $USER_SCRIPT $PROJECT_PATH  bash --rcfile <(echo 'PS1=\"($PROJECT) $PS1 \"') "
 fi

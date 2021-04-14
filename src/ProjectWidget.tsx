@@ -1,3 +1,5 @@
+// Copyright (c) SWAN Development Team.
+// Author: Omar.Zapata@cern.ch 2021
 import { ReactWidget } from '@jupyterlab/apputils';
 import * as React from 'react';
 import { JSONObject } from '@lumino/coreutils';
@@ -107,7 +109,7 @@ export class ProjectWidget extends ReactWidget {
         className="jp-Dialog-body"
         style={{ minHeight: '300px', minWidth: '420px' }}
       >
-        <table style={{ height: '100%', width: '98%' }}>
+        <table style={{ height: '100%', width: '95%' }}>
           <tbody>
             <tr>
               <td>
@@ -221,11 +223,11 @@ export class ProjectWidget extends ReactWidget {
             </tr>
             <tr>
               <td colSpan={4}>
+                <br />
                 <div style={{ display: 'flex' }}>
                   <div> Bash Script </div>
                   <div> {HelpTooltip('bash_script', 'User Script')} </div>
                 </div>{' '}
-                <br />
                 <div style={{ width: '100%' }}>
                   <input
                     className="userScript"
