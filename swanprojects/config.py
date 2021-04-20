@@ -9,3 +9,8 @@ def get_software_stacks():
     with open(stack_json) as f:
         stacks=json.loads(f.read())
     return stacks
+
+def get_kernel_resorces_path():
+    resources_path =  get_path()+"/kernelmanager/resources"
+    return resources_path
+

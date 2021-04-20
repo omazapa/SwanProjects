@@ -2,8 +2,9 @@
 from jupyter_client.kernelspec import KernelSpecManager, KernelSpec, NoSuchKernel
 from jupyter_core.paths import jupyter_data_dir, jupyter_path
 from swanprojects.utils import get_project_info, project_path
-from ipykernel.kernelspec import RESOURCES
 from traitlets import Unicode, Bool
+from swanprojects.config import get_kernel_resorces_path
+
 import subprocess
 import shutil
 import json
@@ -20,7 +21,8 @@ class SwanKernelSpecManager(KernelSpecManager):
         self.kernel_dirs = []
 
     def save_native_spec(self,kernel_dir,python_path,display_name):
-        shutil.copytree(RESOURCES,kernel_dir,dirs_exist_ok=True)
+        print(get_kernel_resorces_path())
+        shutil.copytree(get_kernel_resorces_path(),kernel_dir,dirs_exist_ok=True)
         #os.makedirs(kernel_dir,exist_ok=True)
         spec = {"argv": [python_path,
                         "-m",

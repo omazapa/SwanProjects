@@ -4,6 +4,7 @@ include pyproject.toml
 
 include jupyter-config/swanprojects.json
 
+include swanprojects/kernelmanager/resources/*
 include package.json
 include ts*.json
 include jupyter_swan/swanprojects/*.tgz
