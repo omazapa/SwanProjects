@@ -22,7 +22,7 @@ class SwanKernelSpecManager(KernelSpecManager):
 
     def save_native_spec(self,kernel_dir,python_path,display_name):
         print(get_kernel_resorces_path())
-        shutil.copytree(get_kernel_resorces_path(),kernel_dir,dirs_exist_ok=True)
+        shutil.copytree(get_kernel_resorces_path(),kernel_dir)
         #os.makedirs(kernel_dir,exist_ok=True)
         spec = {"argv": [python_path,
                         "-m",
