@@ -112,7 +112,7 @@ export class ProjectWidget extends ReactWidget {
         <table style={{ height: '100%', width: '95%' }}>
           <tbody>
             <tr>
-              <td>
+              <td align="center">
                 <swanProjectIcon.react
                   tag="span"
                   width="50px"
@@ -126,7 +126,11 @@ export class ProjectWidget extends ReactWidget {
                     type="text"
                     defaultValue={this.options.name}
                     placeholder="Project Name"
-                    style={{ width: '100%', padding: '5px 0px 5px 0px' }}
+                    style={{
+                      width: '100%',
+                      padding: '5px 0px 5px 0px',
+                      textIndent: '10px'
+                    }}
                     onChange={this.changeName}
                   />
                 </div>
@@ -152,6 +156,7 @@ export class ProjectWidget extends ReactWidget {
             </tr>
             <tr>
               <td colSpan={2}>
+                <br />
                 <div style={{ display: 'flex' }}>
                   <div> Release </div>
                   <div>
@@ -167,7 +172,10 @@ export class ProjectWidget extends ReactWidget {
                   </div>
                 </div>
               </td>
-              <td colSpan={2}>Platform</td>
+              <td colSpan={2}>
+                <br />
+                Platform
+              </td>
             </tr>
             <tr style={{ width: '100%' }}>
               {/* https://react-select.com/advanced#portaling */}
@@ -233,7 +241,11 @@ export class ProjectWidget extends ReactWidget {
                     className="userScript"
                     type="text"
                     placeholder="Bash User Script"
-                    style={{ width: '100%', padding: '5px 0px 5px 0px' }}
+                    style={{
+                      width: '100%',
+                      padding: '5px 0px 5px 0px',
+                      textIndent: '10px'
+                    }}
                     onChange={this.changeUserScript}
                     defaultValue={this.options.user_script}
                   />
@@ -243,6 +255,7 @@ export class ProjectWidget extends ReactWidget {
             <tr>
               <td colSpan={4}>
                 <div style={{ float: 'right' }}>
+                  <br />
                   <button
                     type="button"
                     className="jp-mod-styled"

@@ -17,9 +17,8 @@ export function HelpTooltip(
         style={{
           borderRadius: '50%',
           padding: '5px',
-          border: '1px solid',
-          width: '5px',
-          height: '5px',
+          width: '6px',
+          height: '6px',
           backgroundColor: '#d5d5d5',
           display: ' flex',
           justifyContent: 'center',
