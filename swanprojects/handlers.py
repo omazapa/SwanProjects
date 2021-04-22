@@ -98,7 +98,6 @@ class EditProjectHandler(APIHandler):
         and metadata in the .swanproject is updated.
         """
         input_data = self.get_json_body()
-        print(input_data)
         old_name = input_data["old_name"] 
         name = input_data["name"]
         stack = input_data["stack"] ##CMSSW/LCG
@@ -127,11 +126,11 @@ class EditProjectHandler(APIHandler):
             f.close()
         
         command =  ["swan_kmspecs","--stack",stack,"--release",release,"--platform",platform,"--user_script",user_script,"--project_path",project_dir]
-        print(" ".join(command))
+        #print(" ".join(command))
         proc = subprocess.Popen(command, stdout = subprocess.PIPE)
         proc.wait()
-        data = proc.stdout.read().decode("utf-8")
-        print(data)
+        output = proc.stdout.read().decode("utf-8")
+        #print(output)
         proc.communicate()
 
         

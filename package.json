@@ -7,12 +7,12 @@
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "https://github.com/omazapa/jupyter_swan",
+  "homepage": "https://github.com/swan-cern/jupyter-extensions",
   "bugs": {
-    "url": "https://github.com/omazapa/jupyter_swan/issues"
+    "url": "https://github.com/swan-cern/jupyter-extensions/issues"
   },
-  "license": "BSD-3-Clause",
-  "author": "Omar Zapata",
+  "license": "AGPL-3.0",
+  "author": "SWAN Admins",
   "files": [
     "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
     "style/**/*.{css,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
@@ -22,7 +22,7 @@
   "style": "style/index.css",
   "repository": {
     "type": "git",
-    "url": "https://github.com/omazapa/jupyter_swan.git"
+    "url": "https://github.com/swan-cern/jupyter-extensions.git"
   },
   "scripts": {
     "build": "jlpm run build:lib",

@@ -71,7 +71,6 @@ const extension: JupyterFrontEndPlugin<void> = {
       label: 'Edit',
       caption: 'Edit',
       execute: async args => {
-        console.log(args);
         const stacks = await kernelsInfoRequest();
         const result = await ProjectDialog.OpenModal(
           {

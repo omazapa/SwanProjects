@@ -16,14 +16,12 @@ class SwanKernelSpecManager(KernelSpecManager):
                          help="SWAN Project path")
     def __init__(self, **kwargs):
         super(SwanKernelSpecManager, self).__init__(**kwargs)
-        print("JupyterLab server extension SWAN Projects - KernelSpecManager is activated!")
+        print("JupyterLab swankernelspecmanager is activated!")
         self.project = None
         self.kernel_dirs = []
 
     def save_native_spec(self,kernel_dir,python_path,display_name):
-        print(get_kernel_resorces_path())
         shutil.copytree(get_kernel_resorces_path(),kernel_dir)
-        #os.makedirs(kernel_dir,exist_ok=True)
         spec = {"argv": [python_path,
                         "-m",
                         "ipykernel_launcher",
@@ -103,5 +101,4 @@ class SwanKernelSpecManager(KernelSpecManager):
                              'spec': spec.to_dict()}
             except NoSuchKernel:
                 self.log.warning("Error loading kernelspec %r", name, exc_info=True)
-        print("ALL SPECS",res)
         return res
