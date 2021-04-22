@@ -1,22 +1,20 @@
 # Copyright (c) SWAN Development Team.
 # Author: Omar.Zapata@cern.ch 2021
-import os
-import json
 
 from notebook.base.handlers import APIHandler
 from notebook.utils import url_path_join
-
-from notebook.utils import maybe_future, url_path_join, url_unescape
 
 import tornado
 from tornado.web import StaticFileHandler
 from swanprojects.config import get_software_stacks
 import os
+import json
 import shutil
 
 from swanprojects.utils import project_path, get_project_info, get_project_readme
 
 import subprocess
+
 
 class ProjectInfoHandler(APIHandler):
     @tornado.web.authenticated
@@ -26,23 +24,24 @@ class ProjectInfoHandler(APIHandler):
         this endpoint returns project information such as stack, release, platform etc..
         if the path is not inside the project return and empty project data.
 
-        At th same time this endpoint allows to set the kernel spec manager path, 
+        At th same time this endpoint allows to set the kernel spec manager path,
         to load and unload the kernels according to the project information.
         """
         input_data = self.get_json_body()
         path = input_data["path"]
         project = project_path(path)
         self.kernel_spec_manager.set_path(path)
-        project_data={}
+        project_data = {}
         if project is not None:
             project_data = get_project_info(project)
-            
+
             project_data["name"] = project.split(os.path.sep)[-1]
             readme = get_project_readme(project)
             if readme is not None:
                 project_data["readme"] = readme
-        payload = {"project_data":project_data}
+        payload = {"project_data": project_data}
         self.finish(json.dumps(payload))
+
 
 class StacksInfoHandler(APIHandler):
     @tornado.web.authenticated
@@ -64,29 +63,32 @@ class CreateProjectHandler(APIHandler):
         """
         input_data = self.get_json_body()
         name = input_data["name"]
-        stack = input_data["stack"] ##CMSSW/LCG
-        platform = input_data["platform"] #SCRAM
-        release = input_data["release"] #CMSSW
+        stack = input_data["stack"]  # CMSSW/LCG
+        platform = input_data["platform"]  # SCRAM
+        release = input_data["release"]  # CMSSW
         user_script = input_data["user_script"]
 
-        project_dir=os.environ["HOME"]+"/SWAN_projects/"+name
+        project_dir = os.environ["HOME"] + "/SWAN_projects/" + name
         os.makedirs(project_dir)
-        swan_project_file = project_dir+os.path.sep+'.swanproject'
-        swan_project_content = {'stack':stack,'release':release,'platform':platform,'user_script':user_script}
-        
-        with open(swan_project_file,'w+') as f:
+        swan_project_file = project_dir + os.path.sep + '.swanproject'
+        swan_project_content = {'stack': stack, 'release': release,
+                                'platform': platform, 'user_script': user_script}
+
+        with open(swan_project_file, 'w+') as f:
             f.write(json.dumps(swan_project_content, indent=4, sort_keys=True))
             f.close()
-        
-        command =  ["swan_kmspecs","--stack",stack,"--release",release,"--platform",platform,"--user_script",user_script,"--project_path",project_dir]
-        proc = subprocess.Popen(command, stdout = subprocess.PIPE)
+
+        command = ["swan_kmspecs", "--stack", stack, "--release", release, "--platform",
+                   platform, "--user_script", user_script, "--project_path", project_dir]
+        proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         proc.wait()
         data = proc.stdout.read().decode("utf-8")
         proc.communicate()
 
-        
-        data = {"project_dir":"SWAN_projects/"+name,"msg": "created project: {}".format(name)}
+        data = {"project_dir": "SWAN_projects/" + name,
+                "msg": "created project: {}".format(name)}
         self.finish(json.dumps(data))
+
 
 class EditProjectHandler(APIHandler):
 
@@ -98,43 +100,45 @@ class EditProjectHandler(APIHandler):
         and metadata in the .swanproject is updated.
         """
         input_data = self.get_json_body()
-        old_name = input_data["old_name"] 
+        old_name = input_data["old_name"]
         name = input_data["name"]
-        stack = input_data["stack"] ##CMSSW/LCG
-        platform = input_data["platform"] #SCRAM
-        release = input_data["release"] #CMSSW
+        stack = input_data["stack"]  # CMSSW/LCG
+        platform = input_data["platform"]  # SCRAM
+        release = input_data["release"]  # CMSSW
         user_script = input_data["user_script"]
 
-        project_dir=os.environ["HOME"]+"/SWAN_projects/"+name
-        if old_name !=name:
-            old_project_dir=os.environ["HOME"]+"/SWAN_projects/"+old_name
-            os.rename(old_project_dir,project_dir)
+        project_dir = os.environ["HOME"] + "/SWAN_projects/" + name
+        if old_name != name:
+            old_project_dir = os.environ["HOME"] + "/SWAN_projects/" + old_name
+            os.rename(old_project_dir, project_dir)
 
-        swan_project_file = project_dir+os.path.sep+'.swanproject'
-        swan_project_content = {'stack':stack,'release':release,'platform':platform,'user_script':user_script}
-        kernel_dir = project_dir+"/.local/share/jupyter/kernels"
+        swan_project_file = project_dir + os.path.sep + '.swanproject'
+        swan_project_content = {'stack': stack, 'release': release,
+                                'platform': platform, 'user_script': user_script}
+        kernel_dir = project_dir + "/.local/share/jupyter/kernels"
 
-        #removing old native kernels for python only(this is generated by us)
-        if os.path.exists(kernel_dir+"/python2"):
-            shutil.rmtree(kernel_dir+"/python2")
+        # removing old native kernels for python only(this is generated by us)
+        if os.path.exists(kernel_dir + "/python2"):
+            shutil.rmtree(kernel_dir + "/python2")
 
-        if os.path.exists(kernel_dir+"/python3"):
-            shutil.rmtree(kernel_dir+"/python3")
+        if os.path.exists(kernel_dir + "/python3"):
+            shutil.rmtree(kernel_dir + "/python3")
 
-        with open(swan_project_file,'w+') as f:
+        with open(swan_project_file, 'w+') as f:
             f.write(json.dumps(swan_project_content, indent=4, sort_keys=True))
             f.close()
-        
-        command =  ["swan_kmspecs","--stack",stack,"--release",release,"--platform",platform,"--user_script",user_script,"--project_path",project_dir]
-        #print(" ".join(command))
-        proc = subprocess.Popen(command, stdout = subprocess.PIPE)
+
+        command = ["swan_kmspecs", "--stack", stack, "--release", release, "--platform",
+                   platform, "--user_script", user_script, "--project_path", project_dir]
+        print(" ".join(command))
+        proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         proc.wait()
         output = proc.stdout.read().decode("utf-8")
-        #print(output)
+        print(output)
         proc.communicate()
 
-        
-        data = {"project_dir":"SWAN_projects/"+name,"msg": "edited project: {}".format(name)}
+        data = {"project_dir": "SWAN_projects/" + name,
+                "msg": "edited project: {}".format(name)}
         self.finish(json.dumps(data))
 
 
@@ -149,9 +153,9 @@ def setup_handlers(web_app, url_path):
     project_pattern = url_path_join(base_url, url_path, "project/info")
     kernel_pattern = url_path_join(base_url, url_path, "stacks/info")
     handlers = [(create_pattern, CreateProjectHandler)]
-    handlers.append((edit_pattern,EditProjectHandler))
-    handlers.append((project_pattern,ProjectInfoHandler))
-    handlers.append((kernel_pattern,StacksInfoHandler))
+    handlers.append((edit_pattern, EditProjectHandler))
+    handlers.append((project_pattern, ProjectInfoHandler))
+    handlers.append((kernel_pattern, StacksInfoHandler))
 
     web_app.add_handlers(host_pattern, handlers)
 
@@ -161,5 +165,6 @@ def setup_handlers(web_app, url_path):
         "SWAN_JLAB_SERVER_STATIC_DIR",
         os.path.join(os.path.dirname(__file__), "static"),
     )
-    handlers = [("{}/(.*)".format(doc_url), StaticFileHandler, {"path": doc_dir})]
+    handlers = [("{}/(.*)".format(doc_url),
+                 StaticFileHandler, {"path": doc_dir})]
     web_app.add_handlers(".*$", handlers)

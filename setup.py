@@ -6,14 +6,14 @@ from os.path import join as pjoin
 
 from jupyter_packaging import (
     create_cmdclass, install_npm, ensure_targets,
-    combine_commands, ensure_python, get_version    
+    combine_commands, ensure_python, get_version
 )
 import setuptools
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
 # The name of the project
-name="swanprojects"
+name = "swanprojects"
 
 # Ensure a valid python version
 ensure_python(">=3.5")
@@ -41,9 +41,9 @@ data_files_spec = [
 ]
 
 cmdclass = create_cmdclass("jsdeps",
-    package_data_spec=package_data_spec,
-    data_files_spec=data_files_spec
-)
+                           package_data_spec=package_data_spec,
+                           data_files_spec=data_files_spec
+                           )
 
 cmdclass["jsdeps"] = combine_commands(
     install_npm(HERE, build_cmd="build:all", npm=["jlpm"]),
@@ -59,10 +59,10 @@ setup_args = dict(
     url="https://github.com/swan-cern/jupyter-extensions",
     author="SWAN Team",
     description="SWAN backend and lab extension for projects.",
-    long_description= long_description,
+    long_description=long_description,
     long_description_content_type="text/markdown",
-    scripts=['bin/swan_env','bin/swan_bash','bin/swan_kmspecs'],
-    cmdclass= cmdclass,
+    scripts=['bin/swan_env', 'bin/swan_bash', 'bin/swan_kmspecs'],
+    cmdclass=cmdclass,
     packages=setuptools.find_packages(),
     install_requires=[
         "jupyterlab~=2.0",
