@@ -7,7 +7,7 @@ import { Card, HelpTooltip } from './Components';
 export interface IStackOptions {
   visible: boolean;
 }
-import { swanProjectIcon, sftIcon, cmsIcon, condaIcon } from './icons';
+import { swanProjectIcon, sftIcon, cmsIcon } from './icons';
 
 import { ProjectDialog } from './ProjectDialog';
 
@@ -148,9 +148,9 @@ export class ProjectWidget extends ReactWidget {
                 </div>
               </td>
               <td colSpan={1}>
-                <div style={{ float: 'left' }}>
+                {/* <div style={{ float: 'left' }}>
                   {Card('Conda', condaIcon, this.selectStack)}
-                </div>
+                </div> */}
               </td>
               <td colSpan={1}></td>
             </tr>
@@ -232,10 +232,10 @@ export class ProjectWidget extends ReactWidget {
             <tr>
               <td colSpan={4}>
                 <br />
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex',padding: '0px 0px 5px 0px' }}>
                   <div> Bash Script </div>
-                  <div> {HelpTooltip('bash_script', 'User Script')} </div>
-                </div>{' '}
+                  <div> {' '}{HelpTooltip('bash_script', 'User Script')}{' '} </div>
+                </div>
                 <div style={{ width: '100%' }}>
                   <input
                     className="userScript"

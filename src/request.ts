@@ -49,7 +49,6 @@ export function contentRequest(cwd: string): any {
     });
   } catch (reason) {
     const msg = `Error on GET 'api/contents'+ ${cwd}.\n${reason}`;
-    console.error(msg);
     return { status: 'error', reason: reason, param: cwd, msg: msg };
   }
 }
