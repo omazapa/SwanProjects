@@ -74,7 +74,6 @@ export function createProjectRequest(options: ProjectDialog.ISWANOptions): any {
     });
   } catch (reason) {
     const msg = `Error on POST /swan/project/create ${options}.\n${reason}`;
-    console.error(msg);
     return { status: 'error', reason: reason, param: options, msg: msg };
   }
 }

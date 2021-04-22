@@ -231,8 +231,8 @@ export class ProjectWidget extends ReactWidget {
               <td colSpan={4}>
                 <br />
                 <div style={{ display: 'flex',padding: '0px 0px 5px 0px' }}>
-                  <div> Bash Script </div>
-                  <div> {' '}{HelpTooltip('bash_script', 'User Script')}{' '} </div>
+                  <div> User environment </div>
+                  <div> {' '}{HelpTooltip('bash_script', 'User environment script')}{' '} </div>
                 </div>
                 <div style={{ width: '100%' }}>
                   <input
