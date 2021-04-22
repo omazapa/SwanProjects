@@ -163,11 +163,9 @@ export class ProjectWidget extends ReactWidget {
                     {' '}
                     {HelpTooltip(
                       'release',
-                      'Software stack: LCG/CMSSW release <br/> \
-                                              that will be used to configure your environment.<br/> \
-                                              From your project, you will have available <br/>\
-                                              all the software packages included in the LCG/CMSSW <br/>\
-                                              release that you selected.'
+                      'Software stack: TODO! <br/> \
+                                    No message yet.<br/> \
+                                    ;('
                     )}{' '}
                   </div>
                 </div>
