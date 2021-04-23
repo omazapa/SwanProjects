@@ -57,3 +57,16 @@ def get_project_readme(project_path):
         return text
     else:
         return None
+
+def check_project_info(project_info):
+    """
+    Allows to check if the .swanproject file content is corrupted.
+    """
+    project_keys = ["stack","platform","release","user_script","python3","python2","kernel_dirs"]
+    not_found = []
+    status=True
+    for key in project_keys:
+        if not key in project_info.keys():
+            status=False
+            not_found.append(key)
+    return {"status":status,"not_found":not_found}
