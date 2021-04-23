@@ -1,6 +1,7 @@
-from ._version import __version__
-from .handlers import setup_handlers
-from .kernelmanager import kernelspecmanager 
+from ._version import __version__  # noqa: F401
+from .handlers import setup_handlers  # noqa: F401
+from .kernelmanager import kernelspecmanager  # noqa: F401
+
 
 def _jupyter_server_extension_paths():
     return [{"module": "swanprojects"}]

@@ -6,7 +6,7 @@ from notebook.utils import url_path_join
 
 import tornado
 from tornado.web import StaticFileHandler
-from swanprojects.config import get_software_stacks
+from swanprojects.utils import get_software_stacks
 import os
 import json
 import shutil

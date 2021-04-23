@@ -4,7 +4,7 @@
 from jupyter_client.kernelspec import KernelSpecManager, NoSuchKernel
 from swanprojects.utils import get_project_info, project_path
 from traitlets import Unicode
-from swanprojects.config import get_kernel_resorces_path
+from swanprojects.utils import get_kernel_resorces_path
 
 import shutil
 import json
