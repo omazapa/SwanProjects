@@ -31,6 +31,7 @@ export class ProjectWidget extends ReactWidget {
     this.setOptions(options);
     this.selectStack = this.selectStack.bind(this);
     this.changeRelease = this.changeRelease.bind(this);
+    this.changePlatform = this.changePlatform.bind(this);
     this.changeName = this.changeName.bind(this);
     this.changeUserScript = this.changeUserScript.bind(this);
     this.changeClicked = this.changeClicked.bind(this);
@@ -89,6 +90,12 @@ export class ProjectWidget extends ReactWidget {
       this.platforms.push({ value: platform, label: platform });
     });
     this.options.platform = platforms[0];
+    this.update();
+  }
+  changePlatform(event: any): void {
+    this.options.platform = event.value;
+    
+    console.log(event);
     this.update();
   }
 
@@ -223,6 +230,7 @@ export class ProjectWidget extends ReactWidget {
                       value: this.options.platform,
                       label: this.options.platform
                     }}
+                    onChange={this.changePlatform}
                   />
                 }
               </td>

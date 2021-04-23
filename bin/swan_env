@@ -3,7 +3,9 @@
 #DEFINITIONS:
 # STACK: LCG/CMSSW
 # RELEASE: version of the stack ex (LCG_99)
-# PLATFORM:  
+# PLATFORM:  usually os and compiler version
+# USER_SCRIPT: customized bash script provided by the user
+# CWD: working directory path
 PARAMETERS=($@) #WARNING: empty options disappear
 
 STACK="$1"
@@ -72,7 +74,8 @@ if [[ $STACK == "CMSSW" ]]; then
 fi
 
 if [ "$USER_SCRIPT" != "" ]; then
-    source $USER_SCRIPT
+
+    . ${USER_SCRIPT}
 fi
 cd $CWD
 $COMMAND

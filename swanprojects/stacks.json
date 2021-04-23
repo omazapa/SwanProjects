@@ -2,7 +2,8 @@
   "LCG":{
       "LCG_99": [
       "x86_64-centos7-gcc8-opt",
-      "x86_64-centos7-gcc9-opt"
+      "x86_64-centos7-gcc9-opt",
+      "x86_64-ubuntu2004-gcc9-opt"
       ],
       "LCG_99python2": [
         "x86_64-centos7-gcc8-opt",

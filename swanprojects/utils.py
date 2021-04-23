@@ -7,7 +7,7 @@ def get_path():
 
 
 def get_software_stacks():
-    stack_json = get_path() + "stacks.json"
+    stack_json = get_path() + "/stacks.json"
     stacks = {}
     with open(stack_json) as f:
         stacks = json.loads(f.read())
