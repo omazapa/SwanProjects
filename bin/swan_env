@@ -72,6 +72,7 @@ if [[ $STACK == "CMSSW" ]]; then
     export PATH=/cvmfs/cms.cern.ch/$SCRAM/cms/cmssw/$CMSSW/external/$SCRAM/bin/:$PATH
 
 fi
+export SWAN_STACK="$RELEASE($PLATFORM)"
 
 if [ "$USER_SCRIPT" != "" ]; then
 

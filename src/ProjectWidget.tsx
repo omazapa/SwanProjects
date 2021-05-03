@@ -35,6 +35,13 @@ export class ProjectWidget extends ReactWidget {
     this.changeName = this.changeName.bind(this);
     this.changeUserScript = this.changeUserScript.bind(this);
     this.changeClicked = this.changeClicked.bind(this);
+    // function changeSize(event:any)
+    // {
+    //   console.log(event.target)
+    //   console.log(event.target.innerHeight)
+    // }
+    // window.addEventListener("resize",changeSize);  
+
   }
 
   getOptions(): ProjectDialog.ISWANOptions {
@@ -116,8 +123,8 @@ export class ProjectWidget extends ReactWidget {
         className="jp-Dialog-body"
         style={{ minHeight: '300px', minWidth: '420px' }}
       >
-        <table style={{ height: '100%', width: '95%' }}>
-          <tbody>
+        <table style={{ height: '100%', width: '95%' }} cellSpacing="0">
+          <tbody style={{resize: 'horizontal'}}>
             <tr>
               <td align="center">
                 <swanProjectIcon.react
@@ -182,7 +189,7 @@ export class ProjectWidget extends ReactWidget {
                 Platform
               </td>
             </tr>
-            <tr style={{ width: '100%' }}>
+            <tr style={{ width: '100%', maxHeight: '40px' }}>
               {/* https://react-select.com/advanced#portaling */}
               <td colSpan={2} style={{ width: '50%' }}>
                 <Select
@@ -238,22 +245,24 @@ export class ProjectWidget extends ReactWidget {
             <tr>
               <td colSpan={4}>
                 <br />
-                <div style={{ display: 'flex', padding: '0px 0px 5px 0px' }}>
+                <div style={{ display: 'flex', padding: '0px 0px 5px 0px'}}>
                   <div> User environment </div>
                   <div>
                     {' '}
                     {HelpTooltip('bash_script', 'User environment script')}{' '}
                   </div>
                 </div>
-                <div style={{ width: '100%' }}>
-                  <input
+                <div style={{ width: '100%', height: '100%',minHeight:'100%' }}>
+                  <textarea
                     className="userScript"
-                    type="text"
                     placeholder="Bash User Script"
                     style={{
                       width: '100%',
+                      height: '100%',
+                      minWidth: '420px',
+                      minHeight: '300px',
                       padding: '5px 0px 5px 0px',
-                      textIndent: '10px'
+                      resize: 'none'
                     }}
                     onChange={this.changeUserScript}
                     defaultValue={this.options.user_script}
@@ -264,7 +273,8 @@ export class ProjectWidget extends ReactWidget {
             <tr>
               <td colSpan={4}>
                 <div style={{ float: 'right' }}>
-                  <br />
+                <br />
+                <br />
                   <button
                     type="button"
                     className="jp-mod-styled"
