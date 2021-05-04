@@ -1,5 +1,4 @@
-#!/bin/bash
-
+#!/usr/bin/env -S -i PATH="${PATH}" HOME="${HOME}" USER="${USER}" SWAN_ENV_SILENCE="${SWAN_ENV_SILENCE}" bash -l 
 #DEFINITIONS:
 # STACK: LCG/CMSSW
 # RELEASE: version of the stack ex (LCG_99)
@@ -8,33 +7,37 @@
 # CWD: working directory path
 PARAMETERS=($@) #WARNING: empty options disappear
 
-STACK="$1"
-RELEASE="$2"
-PLATFORM="$3"
-USER_SCRIPT="$4"
-CWD="$5"
+#Checking if jq is installed
+if ! [ -x "$(command -v jq)" ]; then
+  echo 'Error: jq is not installed.' >&2
+  sleep 60
+  exit 1
+fi
+
+#Checking if we have more that 2 parameters
+if [[ $# -lt 2 ]] ; then
+  echo 'Error: project name and commands required.' >&2
+  echo 'Example: swan_env myproject  python --version' >&2
+  sleep 60
+  exit 1
+fi
+
+PROJECT=$1
+PROJECT_PATH="$HOME/SWAN_projects/$PROJECT"
+PROJECT_FILE="$PROJECT_PATH/.swanproject"
+STACK=`jq -r '.stack' $PROJECT_FILE`
+RELEASE=`jq -r '.release' $PROJECT_FILE`
+PLATFORM=`jq -r '.platform' $PROJECT_FILE`
+USER_SCRIPT="$PROJECT_PATH/.userscript"
+
+CWD="$2"
+
 i=0
-if [ "$STACK" != "" ]; then
-    i=$((i+1))
-fi
-
-if [ "$RELEASE" != "" ]; then
-    i=$((i+1))
-fi
-
-if [ "$PLATFORM" != "" ]; then
-    i=$((i+1))
-fi
-
-if [ "$USER_SCRIPT" != "" ]; then
-    i=$((i+1))
-fi
-
 if [ "$CWD" != "" ]; then
     i=$((i+1))
 fi
 
-for j in $(seq 0 1 $((i-1)));do
+for j in $(seq 0 1 $((i)));do
     unset PARAMETERS[$j]
 done
 
@@ -43,6 +46,7 @@ COMMAND=${PARAMETERS[@]}
 #if [ "$SWAN_ENV_SILENCE" != "1" ]; then
 #clear
 #fi
+
 
 if [[ $STACK == "LCG" ]]; then 
     #example: swan_env SFT LCG_96 x86_64-centos7-gcc8-opt "" $PWD  which python
@@ -73,6 +77,7 @@ if [[ $STACK == "CMSSW" ]]; then
 
 fi
 export SWAN_STACK="$RELEASE($PLATFORM)"
+export SWAN_PROJECT=$PROJECT
 
 if [ "$USER_SCRIPT" != "" ]; then
 

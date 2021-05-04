@@ -58,6 +58,17 @@ def get_project_readme(project_path):
     else:
         return None
 
+def get_user_script_content(project_path):
+    user_script_path = project_path + os.path.sep + ".userscript"
+    if os.path.exists(user_script_path):
+        f = open(user_script_path, "r")
+        text = f.read()
+        f.close()
+        return text
+    else:
+        return ""
+
+
 def check_project_info(project_info):
     """
     Allows to check if the .swanproject file content is corrupted.

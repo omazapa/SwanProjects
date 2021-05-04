@@ -91,8 +91,8 @@ def generate_ksminfo(project_path):
     check_native_kernel(project_path)
     save_kernel_paths(project_path)
 
-def swan_kmspecs(project_path,source,stack,platform,user_script):
-    command =  ["/bin/bash","swan_env",source,stack,platform,user_script, ".","python",__file__,"--generate_ksminfo","--project_path",project_path]
+def swan_kmspecs(project_name):
+    command =  ["/bin/bash","swan_env",project_name, ".","python",__file__,"--generate_ksminfo","--project_name",project_name]
     print(" ".join(command))
     proc = subprocess.Popen(command, stdout = subprocess.PIPE)
     proc.wait()
@@ -100,39 +100,20 @@ def swan_kmspecs(project_path,source,stack,platform,user_script):
     print(data)
     proc.communicate()
     if proc.returncode !=0 :
-        print("Error creating navite kernel for project {}".format(project_path))
+        print("Error creating navite kernel for project {}".format(project_name))
 
     return proc.returncode
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Swan Enviroment Kernel Manager CMD options.')
-    parser.add_argument('--project_path', type=str,required=True, help='Project directory path')
-    parser.add_argument('--stack', type=str,default=None, help='Software source: SFT or CMS')
-    parser.add_argument('--release', type=str,default=None, help='Stack release ex: LCG_99')
-    parser.add_argument('--platform', type=str,default=None, help='Project directory path')
-    parser.add_argument('--user_script', type=str,default="", help='Project directory path')
+    parser.add_argument('--project_name', type=str,required=True, help='Project name')
     parser.add_argument('--generate_ksminfo', action='store_true',default=None, help='Generates Kernel Spec Manager info')
     args         = parser.parse_args()
-    project_path = args.project_path
-    release       = args.release
-    stack        = args.stack
-    platform     = args.platform
-    user_script  = args.user_script
+    project_name = args.project_name
 
+    project_path = os.environ["HOME"]+"/SWAN_projects/"+project_name
     if args.generate_ksminfo:
         generate_ksminfo(project_path)
     else:
-        if release is None:
-            print("release parameter can not be None")
-            sys.exit(1)
-        if stack is None:
-            print("stack parameter can not be None")
-            sys.exit(1)
-        if platform is None:
-            print("platform parameter can not be None")
-            sys.exit(1)
-        if stack is None:
-            print("stack parameter can not be None")
-            sys.exit(1)
-        rcode = swan_kmspecs(project_path,stack,release,platform,user_script)
+        rcode = swan_kmspecs(project_name)
         sys.exit(rcode)

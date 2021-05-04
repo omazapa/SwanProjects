@@ -14,9 +14,9 @@ if [[ $# -gt 0 ]] ; then
     STACK=`jq '.stack' $PROJECT_FILE`
     RELEASE=`jq '.release' $PROJECT_FILE`
     PLATFORM=`jq '.platform' $PROJECT_FILE`
-    USER_SCRIPT=`jq '.user_script' $PROJECT_FILE`
+    USER_SCRIPT="$PROJECT_PATH/.userscript"
     
     PS1_SWAN="$(PS1="($PROJECT) $PS1")" #`bash -c "echo \($PROJECT\) $PS1 "`
     echo $PS1_SWAN
-    bash -c "swan_env $STACK $RELEASE $PLATFORM $USER_SCRIPT $PROJECT_PATH  bash --rcfile <(echo 'PS1=\"($PROJECT) $PS1 \"') "
+    bash -c "swan_env $PROJECT $PROJECT_PATH  bash --rcfile <(echo 'PS1=\"($PROJECT) $PS1 \"') "
 fi
