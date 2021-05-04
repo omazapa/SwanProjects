@@ -35,12 +35,6 @@ export class ProjectWidget extends ReactWidget {
     this.changeName = this.changeName.bind(this);
     this.changeUserScript = this.changeUserScript.bind(this);
     this.changeClicked = this.changeClicked.bind(this);
-    // function changeSize(event:any)
-    // {
-    //   console.log(event.target)
-    //   console.log(event.target.innerHeight)
-    // }
-    // window.addEventListener("resize",changeSize);  
 
   }
 
@@ -169,7 +163,7 @@ export class ProjectWidget extends ReactWidget {
               <td colSpan={1}></td>
             </tr>
             <tr>
-              <td colSpan={2}>
+              <td colSpan={2} style={{width: '48%', padding: '10px 0px 0px 2%'}}>
                 <br />
                 <div style={{ display: 'flex' }}>
                   <div> Release </div>
@@ -184,7 +178,7 @@ export class ProjectWidget extends ReactWidget {
                   </div>
                 </div>
               </td>
-              <td colSpan={2}>
+              <td colSpan={2}  style={{width: '48%', padding: '10px 0px 0px 2%'}}>
                 <br />
                 Platform
               </td>
@@ -243,8 +237,7 @@ export class ProjectWidget extends ReactWidget {
               </td>
             </tr>
             <tr>
-              <td colSpan={4}>
-                <br />
+              <td colSpan={4} style={{ padding: '15px 0px 0px 0px'}}>
                 <div style={{ display: 'flex', padding: '0px 0px 5px 0px'}}>
                   <div> User environment </div>
                   <div>
