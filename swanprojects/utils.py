@@ -37,13 +37,12 @@ def get_project_info(path):
         None
 
 
-def project_path(cwd):
-    home = os.path.expanduser("~")
+def get_project_path(cwd):
     paths = cwd.split(os.path.sep)
     cwd_current = cwd
     for i in range(len(paths)):
-        if has_project_file(home + os.path.sep + cwd_current):
-            return home + os.path.sep + cwd_current
+        if has_project_file(cwd_current):
+            return cwd_current
         cwd_current = cwd_current[:-(len(paths[len(paths) - i - 1]) + 1)]
     return None
 
@@ -69,12 +68,12 @@ def get_user_script_content(project_path):
         return ""
 
 def get_project_name(project_path):
-    path = project_path(project_path)
-    name=None
+    path = get_project_path(project_path)
+    name = None
     if path is not None:
-        name=path.split('/')[-1]
+        name = path.split('/')[-1]
     return name
-    
+
 def check_project_info(project_info):
     """
     Allows to check if the .swanproject file content is corrupted.

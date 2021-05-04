@@ -11,7 +11,7 @@ import os
 import json
 import shutil
 
-from swanprojects.utils import project_path, get_project_info, get_project_readme, get_user_script_content
+from swanprojects.utils import get_project_path, get_project_info, get_project_readme, get_user_script_content
 
 import subprocess
 
@@ -29,7 +29,7 @@ class ProjectInfoHandler(APIHandler):
         """
         input_data = self.get_json_body()
         path = input_data["path"]
-        project = project_path(path)
+        project = get_project_path(path)
         self.kernel_spec_manager.set_path(path)
         project_data = {}
         if project is not None:

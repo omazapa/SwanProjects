@@ -2,7 +2,7 @@
 # Author: Omar.Zapata@cern.ch 2021
 
 from jupyter_client.kernelspec import KernelSpecManager, NoSuchKernel
-from swanprojects.utils import get_project_info, project_path
+from swanprojects.utils import get_project_info, get_project_path
 from traitlets import Unicode
 from swanprojects.utils import get_kernel_resorces_path, get_project_name
 
@@ -39,7 +39,7 @@ class SwanKernelSpecManager(KernelSpecManager):
 
     def set_path(self, path):
         self.path = path
-        self.project = project_path(path)
+        self.project = get_project_path(path)
         if self.project is None:
             self.kernel_dirs = []
         else:
