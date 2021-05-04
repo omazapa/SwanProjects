@@ -68,7 +68,13 @@ def get_user_script_content(project_path):
     else:
         return ""
 
-
+def get_project_name(project_path):
+    path = project_path(project_path)
+    name=None
+    if path is not None:
+        name=path.split('/')[-1]
+    return name
+    
 def check_project_info(project_info):
     """
     Allows to check if the .swanproject file content is corrupted.

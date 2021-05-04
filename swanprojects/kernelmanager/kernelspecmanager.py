@@ -4,7 +4,7 @@
 from jupyter_client.kernelspec import KernelSpecManager, NoSuchKernel
 from swanprojects.utils import get_project_info, project_path
 from traitlets import Unicode
-from swanprojects.utils import get_kernel_resorces_path
+from swanprojects.utils import get_kernel_resorces_path, get_project_name
 
 import shutil
 import json
@@ -44,6 +44,7 @@ class SwanKernelSpecManager(KernelSpecManager):
             self.kernel_dirs = []
         else:
             self.project_info = get_project_info(self.project)
+            self.project_name = get_project_name(self.project)
             self.kernel_dirs = self.project_info["kernel_dirs"]
             local_kernels = self.project + "/.local/share/jupyter/kernels/"
             for version in ["2", "3"]:
@@ -56,19 +57,12 @@ class SwanKernelSpecManager(KernelSpecManager):
             self.kernel_dirs.append(local_kernels)
             print("KERNEL DIRS = ", self.kernel_dirs)
 
-    def wrap_kernel_specs(self, project_info, kspec):
-        stack = project_info["stack"]
-        release = project_info["release"]
-        platform = project_info["platform"]
-        user_script = project_info["user_script"]
+    def wrap_kernel_specs(self, project_name, kspec):
 
         argv = [
             "/bin/bash",
             "swan_env",
-            stack,
-            release,
-            platform,
-            user_script,
+            project_name,
             "."]
 
         kspec.argv = argv + kspec.argv
@@ -91,7 +85,7 @@ class SwanKernelSpecManager(KernelSpecManager):
         if self.project is None:
             return kspec
         else:
-            kspec = self.wrap_kernel_specs(self.project_info, kspec)
+            kspec = self.wrap_kernel_specs(self.project_name, kspec)
             print("-" * 10)
             print("ON get_kernel_spec = ", kspec.argv)
             print("-" * 10)

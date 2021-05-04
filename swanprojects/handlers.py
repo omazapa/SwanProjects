@@ -84,8 +84,7 @@ class CreateProjectHandler(APIHandler):
             f.write(user_script)
             f.close()
 
-        command = ["swan_kmspecs", "--stack", stack, "--release", release, "--platform",
-                   platform, "--user_script", user_script, "--project_path", project_dir]
+        command = ["swan_kmspecs", "--project_name", name]
         proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         proc.wait()
         data = proc.stdout.read().decode("utf-8")
@@ -139,8 +138,7 @@ class EditProjectHandler(APIHandler):
             f.write(user_script)
             f.close()
 
-        command = ["swan_kmspecs", "--stack", stack, "--release", release, "--platform",
-                   platform, "--user_script", user_script, "--project_path", project_dir]
+        command = ["swan_kmspecs", "--project_name", name]
         print(" ".join(command))
         proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         proc.wait()
