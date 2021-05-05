@@ -113,11 +113,7 @@ export namespace ProjectDialog {
             if (oldName !== options.name) {
               const content = await contentRequest(
                 'SWAN_projects/' + options.name
-              ).catch((response: Response, message: any) => {
-                console.log(
-                  "404 checking project name, means project doesn't exists and it is a valid name."
-                );
-              });
+              );
               if (content === undefined) {
                 valid = true;
               } else {
