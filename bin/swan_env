@@ -1,4 +1,4 @@
-#!/usr/bin/env -S -i PATH="${PATH}" HOME="${HOME}" USER="${USER}" SWAN_ENV_SILENCE="${SWAN_ENV_SILENCE}" bash -l 
+#!/bin/bash
 #DEFINITIONS:
 # STACK: LCG/CMSSW
 # RELEASE: version of the stack ex (LCG_99)
