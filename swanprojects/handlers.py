@@ -155,16 +155,16 @@ class EditProjectHandler(APIHandler):
 def setup_handlers(web_app, url_path):
     host_pattern = ".*$"
     base_url = web_app.settings["base_url"]
-
+    print("JupyterLab server extension swanprojects is activated!")
     # Prepend the base_url so that it works in a jupyterhub setting
     create_pattern = url_path_join(base_url, url_path, "project/create")
     edit_pattern = url_path_join(base_url, url_path, "project/edit")
     project_pattern = url_path_join(base_url, url_path, "project/info")
-    kernel_pattern = url_path_join(base_url, url_path, "stacks/info")
+    stacks_pattern = url_path_join(base_url, url_path, "stacks/info")
     handlers = [(create_pattern, CreateProjectHandler)]
     handlers.append((edit_pattern, EditProjectHandler))
     handlers.append((project_pattern, ProjectInfoHandler))
-    handlers.append((kernel_pattern, StacksInfoHandler))
+    handlers.append((stacks_pattern, StacksInfoHandler))
 
     web_app.add_handlers(host_pattern, handlers)
 

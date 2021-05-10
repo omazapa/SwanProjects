@@ -1,4 +1,4 @@
-#pip3 install swanprojects --user
+#pip3 install . --user --upgrade
 
 #pip3 install  . --user
 # Register server extension

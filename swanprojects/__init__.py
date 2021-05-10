@@ -19,3 +19,18 @@ def load_jupyter_server_extension(lab_app):
     lab_app.log.info(
         "Registered swanprojects extension at URL path /{}".format(url_path)
     )
+
+def _jupyter_server_extension_points():
+    """
+    Returns a list of dictionaries with metadata describing
+    where to find the `_load_jupyter_server_extension` function.
+    """
+    return [
+        {
+            "module": "swanprojects"
+        }
+    ]
+    
+# For backward compatibility with the classical notebook
+_load_jupyter_server_extension = load_jupyter_server_extension
+
