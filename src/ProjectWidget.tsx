@@ -248,7 +248,7 @@ export class ProjectWidget extends ReactWidget {
                 <div style={{ width: '100%', height: '100%',minHeight:'100%' }}>
                   <textarea
                     className="userScript"
-                    placeholder="#!/bin/bash \n Bash User Script"
+                    placeholder="#!/bin/bash &#10;Bash user script code here"
                     style={{
                       width: '100%',
                       height: '100%',

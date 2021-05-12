@@ -95,11 +95,7 @@ export namespace ProjectDialog {
           if (create) {
             const content = await contentRequest(
               'SWAN_projects/' + options.name
-            ).catch((response: Response, message: any): void => {
-              console.log(
-                "404 checking project name, means project doesn't exists and it is a valid name."
-              );
-            });
+            );
             if (content === undefined) {
               valid = true;
             } else {
@@ -150,7 +146,19 @@ export namespace ProjectDialog {
             showBrowser: true
           });
           return value;
-        });
+        })
+        // }).catch((response: Response, message: any): void => {
+        //   stopSpinner();
+        //   console.log(
+        //     "Error creating the project"
+        //   );
+        //   console.log(response);
+        //   console.log(message);
+        //   showErrorMessage(
+        //     'Error creating project',
+        //     'Internal error'
+        //   );
+        // });
       } else {
         if (oldName !== options.name) {
           result = commands

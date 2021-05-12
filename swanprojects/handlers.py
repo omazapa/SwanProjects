@@ -1,22 +1,20 @@
 # Copyright (c) SWAN Development Team.
 # Author: Omar.Zapata@cern.ch 2021
-
-from notebook.base.handlers import APIHandler
-from notebook.utils import url_path_join
-
+from jupyter_server.base.handlers import JupyterHandler
+import jupyter_server
 import tornado
-from tornado.web import StaticFileHandler
-from swanprojects.utils import get_software_stacks
+
 import os
 import json
 import shutil
 
+from swanprojects.utils import get_software_stacks
 from swanprojects.utils import get_project_path, get_project_info, get_project_readme, get_user_script_content
 
 import subprocess
 
 
-class ProjectInfoHandler(APIHandler):
+class ProjectInfoHandler(JupyterHandler):
     @tornado.web.authenticated
     def post(self):
         """
@@ -44,7 +42,7 @@ class ProjectInfoHandler(APIHandler):
         self.finish(json.dumps(payload))
 
 
-class StacksInfoHandler(APIHandler):
+class StacksInfoHandler(JupyterHandler):
     @tornado.web.authenticated
     def get(self):
         """
@@ -54,7 +52,7 @@ class StacksInfoHandler(APIHandler):
         pass
 
 
-class CreateProjectHandler(APIHandler):
+class CreateProjectHandler(JupyterHandler):
     @tornado.web.authenticated
     def post(self):
         """
@@ -95,7 +93,7 @@ class CreateProjectHandler(APIHandler):
         self.finish(json.dumps(data))
 
 
-class EditProjectHandler(APIHandler):
+class EditProjectHandler(JupyterHandler):
 
     @tornado.web.authenticated
     def post(self):
@@ -150,30 +148,17 @@ class EditProjectHandler(APIHandler):
                 "msg": "edited project: {}".format(name)}
         self.finish(json.dumps(data))
 
-
-# URL to handler mappings
-def setup_handlers(web_app, url_path):
-    host_pattern = ".*$"
-    base_url = web_app.settings["base_url"]
+def _load_jupyter_server_extension(serverapp):
+    """
+    This function is called when the extension is loaded.
+    """
     print("JupyterLab server extension swanprojects is activated!")
-    # Prepend the base_url so that it works in a jupyterhub setting
-    create_pattern = url_path_join(base_url, url_path, "project/create")
-    edit_pattern = url_path_join(base_url, url_path, "project/edit")
-    project_pattern = url_path_join(base_url, url_path, "project/info")
-    stacks_pattern = url_path_join(base_url, url_path, "stacks/info")
-    handlers = [(create_pattern, CreateProjectHandler)]
-    handlers.append((edit_pattern, EditProjectHandler))
-    handlers.append((project_pattern, ProjectInfoHandler))
-    handlers.append((stacks_pattern, StacksInfoHandler))
-
-    web_app.add_handlers(host_pattern, handlers)
-
-    # Prepend the base_url so that it works in a jupyterhub setting
-    doc_url = url_path_join(base_url, url_path, "static")
-    doc_dir = os.getenv(
-        "SWAN_JLAB_SERVER_STATIC_DIR",
-        os.path.join(os.path.dirname(__file__), "static"),
-    )
-    handlers = [("{}/(.*)".format(doc_url),
-                 StaticFileHandler, {"path": doc_dir})]
-    web_app.add_handlers(".*$", handlers)
+    host_pattern = ".*$"
+    handlers = [
+        ('/swan/project/create', CreateProjectHandler),
+        ('/swan/project/edit', EditProjectHandler),
+        ('/swan/project/info', ProjectInfoHandler),
+        ('/swan/stacks/info', StacksInfoHandler),
+        
+    ]
+    serverapp.web_app.add_handlers('.*$', handlers)

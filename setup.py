@@ -65,6 +65,7 @@ setup_args = dict(
     license=pkg_json["license"],
     long_description=long_description,
     long_description_content_type="text/markdown",
+    scripts=['bin/swan_env', 'bin/swan_bash', 'bin/swan_kmspecs'],
     cmdclass=cmdclass,
     packages=setuptools.find_packages(),
     include_package_data=True,
