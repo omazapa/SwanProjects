@@ -95,7 +95,18 @@ export namespace ProjectDialog {
           if (create) {
             const content = await contentRequest(
               'SWAN_projects/' + options.name
-            );
+            ).catch((response: Response, message: any): void => {
+              console.log("----")
+              console.log(
+                response
+              );
+              console.log("----")
+              console.log(
+                message
+              );
+              console.log("----")
+              
+            });
             if (content === undefined) {
               valid = true;
             } else {
@@ -146,19 +157,22 @@ export namespace ProjectDialog {
             showBrowser: true
           });
           return value;
-        })
-        // }).catch((response: Response, message: any): void => {
-        //   stopSpinner();
-        //   console.log(
-        //     "Error creating the project"
-        //   );
-        //   console.log(response);
-        //   console.log(message);
-        //   showErrorMessage(
-        //     'Error creating project',
-        //     'Internal error'
-        //   );
-        // });
+        }).catch((response: Response, message: any): void => {
+          console.log("----")
+          console.log(
+            response
+          );
+          console.log("----")
+          console.log(
+            message
+          );
+          console.log("----")
+          stopSpinner();
+          showErrorMessage(
+            'Error creating project',
+            response
+          );
+        });
       } else {
         if (oldName !== options.name) {
           result = commands

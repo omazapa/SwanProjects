@@ -1,7 +1,6 @@
 # Copyright (c) SWAN Development Team.
 # Author: Omar.Zapata@cern.ch 2021
 from jupyter_server.base.handlers import JupyterHandler
-import jupyter_server
 import tornado
 
 import os
@@ -61,6 +60,8 @@ class CreateProjectHandler(JupyterHandler):
         project is set inside the project folder.
         """
         input_data = self.get_json_body()
+        print("creating project {}".format(input_data))
+        
         name = input_data["name"]
         stack = input_data["stack"]  # CMSSW/LCG
         platform = input_data["platform"]  # SCRAM
@@ -148,17 +149,4 @@ class EditProjectHandler(JupyterHandler):
                 "msg": "edited project: {}".format(name)}
         self.finish(json.dumps(data))
 
-def _load_jupyter_server_extension(serverapp):
-    """
-    This function is called when the extension is loaded.
-    """
-    print("JupyterLab server extension swanprojects is activated!")
-    host_pattern = ".*$"
-    handlers = [
-        ('/swan/project/create', CreateProjectHandler),
-        ('/swan/project/edit', EditProjectHandler),
-        ('/swan/project/info', ProjectInfoHandler),
-        ('/swan/stacks/info', StacksInfoHandler),
-        
-    ]
-    serverapp.web_app.add_handlers('.*$', handlers)
+
