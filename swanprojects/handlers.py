@@ -50,6 +50,20 @@ class StacksInfoHandler(JupyterHandler):
         self.finish(json.dumps({"stacks": get_software_stacks()}))
         pass
 
+class KernelSpecManagerPathHandler(JupyterHandler):
+    @tornado.web.authenticated
+    def post(self):
+        """
+        This endpoint is required for the project kernel spec manager, it's it is setting the path to 
+        check if we are inside a project to change the kernel spec manager path
+        """
+        input_data = self.get_json_body()
+        path = input_data["path"]
+        print('--- KernelSpecManagerPathHandler = {}'.format(input_data))        
+        self.kernel_spec_manager.set_path(path)
+        project = get_project_path(path)
+        self.finish(json.dumps({"is_project":project is not None,'path':path }))
+        pass
 
 class CreateProjectHandler(JupyterHandler):
     @tornado.web.authenticated

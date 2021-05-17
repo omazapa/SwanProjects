@@ -2,7 +2,7 @@ from ._version import __version__  # noqa: F401
 #from .handlers import _load_jupyter_server_extension  # noqa: F401
 from .kernelmanager import kernelspecmanager  # noqa: F401
 from  jupyter_server.serverapp import ServerApp
-from  .handlers import CreateProjectHandler, EditProjectHandler, ProjectInfoHandler, StacksInfoHandler
+from  .handlers import CreateProjectHandler, EditProjectHandler, ProjectInfoHandler, StacksInfoHandler, KernelSpecManagerPathHandler
 
 def _load_jupyter_server_extension(serverapp: ServerApp):
     """
@@ -15,6 +15,7 @@ def _load_jupyter_server_extension(serverapp: ServerApp):
         ('/swan/project/edit', EditProjectHandler),
         ('/swan/project/info', ProjectInfoHandler),
         ('/swan/stacks/info', StacksInfoHandler),
+        ('/swan/kernelspec/set',KernelSpecManagerPathHandler)
         
     ]
     serverapp.web_app.add_handlers('.*$', handlers)
