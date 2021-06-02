@@ -1,8 +1,10 @@
 # Copyright (c) SWAN Development Team.
 # Author: Omar.Zapata@cern.ch 2021
-from jupyter_server.base.handlers import JupyterHandler
-import tornado
+from notebook.base.handlers import APIHandler
+from notebook.utils import url_path_join
 
+import tornado
+from tornado.web import StaticFileHandler
 import os
 import json
 import shutil
@@ -13,7 +15,7 @@ from swanprojects.utils import get_project_path, get_project_info, get_project_r
 import subprocess
 
 
-class ProjectInfoHandler(JupyterHandler):
+class ProjectInfoHandler(APIHandler):
     @tornado.web.authenticated
     def post(self):
         """
@@ -41,7 +43,7 @@ class ProjectInfoHandler(JupyterHandler):
         self.finish(json.dumps(payload))
 
 
-class StacksInfoHandler(JupyterHandler):
+class StacksInfoHandler(APIHandler):
     @tornado.web.authenticated
     def get(self):
         """
@@ -50,7 +52,7 @@ class StacksInfoHandler(JupyterHandler):
         self.finish(json.dumps({"stacks": get_software_stacks()}))
         pass
 
-class KernelSpecManagerPathHandler(JupyterHandler):
+class KernelSpecManagerPathHandler(APIHandler):
     @tornado.web.authenticated
     def post(self):
         """
@@ -65,7 +67,7 @@ class KernelSpecManagerPathHandler(JupyterHandler):
         self.finish(json.dumps({"is_project":project is not None,'path':path }))
         pass
 
-class CreateProjectHandler(JupyterHandler):
+class CreateProjectHandler(APIHandler):
     @tornado.web.authenticated
     def post(self):
         """
@@ -108,7 +110,7 @@ class CreateProjectHandler(JupyterHandler):
         self.finish(json.dumps(data))
 
 
-class EditProjectHandler(JupyterHandler):
+class EditProjectHandler(APIHandler):
 
     @tornado.web.authenticated
     def post(self):
@@ -164,3 +166,31 @@ class EditProjectHandler(JupyterHandler):
         self.finish(json.dumps(data))
 
 
+# URL to handler mappings
+def setup_handlers(web_app, url_path):
+    host_pattern = ".*$"
+    base_url = web_app.settings["base_url"]
+
+    # Prepend the base_url so that it works in a jupyterhub setting
+    create_pattern = url_path_join(base_url, url_path, "project/create")
+    edit_pattern = url_path_join(base_url, url_path, "project/edit")
+    project_pattern = url_path_join(base_url, url_path, "project/info")
+    stack_pattern = url_path_join(base_url, url_path, "stacks/info")
+    ksm_path_pattern = url_path_join(base_url, url_path, "kernelspec/set") 
+    handlers = [(create_pattern, CreateProjectHandler)]
+    handlers.append((edit_pattern, EditProjectHandler))
+    handlers.append((project_pattern, ProjectInfoHandler))
+    handlers.append((stack_pattern, StacksInfoHandler))
+    handlers.append((ksm_path_pattern, KernelSpecManagerPathHandler))
+
+    web_app.add_handlers(host_pattern, handlers)
+
+    # Prepend the base_url so that it works in a jupyterhub setting
+    doc_url = url_path_join(base_url, url_path, "static")
+    doc_dir = os.getenv(
+        "SWAN_JLAB_SERVER_STATIC_DIR",
+        os.path.join(os.path.dirname(__file__), "static"),
+    )
+    handlers = [("{}/(.*)".format(doc_url),
+                 StaticFileHandler, {"path": doc_dir})]
+    web_app.add_handlers(".*$", handlers)
