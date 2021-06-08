@@ -120,6 +120,8 @@ class EditProjectHandler(APIHandler):
         and metadata in the .swanproject is updated.
         """
         input_data = self.get_json_body()
+        print("Called Editing project")
+        print(input_data)
         old_name = input_data["old_name"]
         name = input_data["name"]
         stack = input_data["stack"]  # CMSSW/LCG

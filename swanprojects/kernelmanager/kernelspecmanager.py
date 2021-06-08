@@ -58,14 +58,14 @@ class SwanKernelSpecManager(KernelSpecManager):
             print("KERNEL DIRS = ", self.kernel_dirs)
 
     def wrap_kernel_specs(self, project_name, kspec):
-
-        argv = [
+        HOME=os.environ["HOME"]
+        argv = ["env","-i","HOME="+HOME,
             "/bin/bash",
-            "swan_env",
-            project_name,
-            "."]
+            "-l","-c",
+            "swan_env {} {} ".format(project_name,".")+" ".join(kspec.argv)
+            ]
 
-        kspec.argv = argv + kspec.argv
+        kspec.argv = argv
         return kspec
 
     def find_kernel_specs(self, skip_base=True):

@@ -103,9 +103,8 @@ export function editProjectRequest(
       method: 'POST'
     });
   } catch (reason) {
-    console.error(
-      `Error on POST 'swan/project/edit'+ ${dataToSend}.\n${reason}`
-    );
+    const msg = `Error on POST swan/project/edit ${options}.\n${reason}`;
+    return { status: 'error', reason: reason, param: options, msg: msg };
   }
 }
 

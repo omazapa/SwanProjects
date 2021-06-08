@@ -4,6 +4,7 @@
 # Register server extension
 jupyter serverextension enable --py swanprojects
 # Install dependencies
+jlpm clean
 jlpm
 # Build Typescript source
 jlpm build
