@@ -1,3 +1,4 @@
+rm -rf tsconfig.tsbuildinfo lib
 #pip3 install . --user --upgrade
 
 #pip3 install  . --user

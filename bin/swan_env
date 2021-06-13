@@ -7,6 +7,16 @@
 # CWD: working directory path
 PARAMETERS=($@) #WARNING: empty options disappear
 
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+# # Source HOME definitions
+# if [ -f $HOME/.bashrc ]; then
+# 	. $HOME/.bashrc
+# fi
+
+
 #Checking if jq is installed
 if ! [ -x "$(command -v jq)" ]; then
   echo 'Error: jq is not installed.' >&2

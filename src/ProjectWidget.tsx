@@ -14,7 +14,7 @@ import { ProjectDialog } from './ProjectDialog';
 import Select from 'react-select';
 
 /**
- * A Counter Lumino Widget that wraps a CounterComponent.
+ * React ProjectWidget.
  */
 export class ProjectWidget extends ReactWidget {
   /**
@@ -108,6 +108,7 @@ export class ProjectWidget extends ReactWidget {
     this.options.user_script = event.target.value; // eslint-disable-line @typescript-eslint/camelcase
   }
   changeClicked(): void {
+    console.log("Clicked")
     this.clicked = true;
     this.parent.parent.close();
   }
