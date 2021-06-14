@@ -108,7 +108,6 @@ export class ProjectWidget extends ReactWidget {
     this.options.user_script = event.target.value; // eslint-disable-line @typescript-eslint/camelcase
   }
   changeClicked(): void {
-    console.log("Clicked")
     this.clicked = true;
     this.parent.parent.close();
   }
@@ -116,7 +115,7 @@ export class ProjectWidget extends ReactWidget {
     return (
       <span
         className="jp-Dialog-body"
-        style={{ minHeight: '300px', minWidth: '420px' }}
+        style={{ minHeight: '300px', minWidth: '440px' }}
       >
         <table style={{ height: '100%', width: '95%' }} cellSpacing="0">
           <tbody style={{resize: 'horizontal'}}>
