@@ -160,61 +160,38 @@ export namespace ProjectDialog {
             showErrorMessage('Error creating project', msg);
           });
       } else {
-        if (oldName !== options.name) {
-          await commands
-            .execute('filebrowser:go-to-path', {
-              path: '/SWAN_projects',
-              showBrowser: true
-            })
-            .then(async () => {
-              await editProjectRequest(oldName, options)
-                .then(async (value: any) => {
-                  await commands
-                    .execute('filebrowser:go-to-path', {
-                      path: value['project_dir'],
-                      showBrowser: true
-                    })
-                    .catch((msg: any) => {
-                      stopSpinner();
-                      console.log(
-                        'Error moving from edited project: ' + oldName
-                      );
-                      console.log(msg);
-                    });
-                })
-                .catch((msg: any) => {
-                  stopSpinner();
-                  console.log('Error editing project: ' + oldName);
-                  console.log(msg);
-                });
-            })
-            .catch((msg: any) => {
-              stopSpinner();
-              console.log(
-                'Error moving to /SWAN_projects to edit the project: ' + oldName
-              );
-              console.log(msg);
-            });
-        } else {
-          await editProjectRequest(oldName, options)
-            .then(async (value: any) => {
-              await commands
-                .execute('filebrowser:go-to-path', {
-                  path: value['project_dir'],
-                  showBrowser: true
-                })
-                .catch((msg: any) => {
-                  stopSpinner();
-                  console.log('Error moving to the edited project.');
-                  console.log(msg);
-                });
-            })
-            .catch((msg: any) => {
-              stopSpinner();
-              console.log('Error editing project: ' + oldName);
-              console.log(msg);
-            });
-        }
+        await commands
+          .execute('filebrowser:go-to-path', {
+            path: '/SWAN_projects',
+            showBrowser: true
+          })
+          .then(async () => {
+            await editProjectRequest(oldName, options)
+              .then(async (value: any) => {
+                await commands
+                  .execute('filebrowser:go-to-path', {
+                    path: value['project_dir'],
+                    showBrowser: true
+                  })
+                  .catch((msg: any) => {
+                    stopSpinner();
+                    console.log('Error moving from edited project: ' + oldName);
+                    console.log(msg);
+                  });
+              })
+              .catch((msg: any) => {
+                stopSpinner();
+                console.log('Error editing project: ' + oldName);
+                console.log(msg);
+              });
+          })
+          .catch((msg: any) => {
+            stopSpinner();
+            console.log(
+              'Error moving to /SWAN_projects to edit the project: ' + oldName
+            );
+            console.log(msg);
+          });
       }
       stopSpinner();
     }
