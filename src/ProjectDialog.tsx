@@ -95,9 +95,9 @@ export namespace ProjectDialog {
             const content = await contentRequest(
               'SWAN_projects/' + options.name
             ).catch((): void => {
-                //not message here, it is not needed,
-                //I am checking if the directory doesn't exist in order
-                //to make valid the creation of the project folder.
+              //not message here, it is not needed,
+              //I am checking if the directory doesn't exist in order
+              //to make valid the creation of the project folder.
             });
             if (content === undefined) {
               valid = true;
@@ -110,13 +110,13 @@ export namespace ProjectDialog {
             }
           } else {
             if (oldName !== options.name) {
-              let content = await contentRequest(
+              const content = await contentRequest(
                 'SWAN_projects/' + options.name
-              ).catch(()=>{
+              ).catch(() => {
                 //not message here, it is not needed,
                 //I am checking if the directory doesn't exist in order
                 //to make valid the edition of the name of the project folder.
-              })
+              });
               if (content === undefined) {
                 valid = true; //folder doesn't exists, then I can to raname the project.
               } else {
@@ -143,64 +143,77 @@ export namespace ProjectDialog {
         valid = true;
       }
     } while (!valid);
-    let result: any = null;
+    const result: any = null;
     if (dialog.clicked) {
       startSpinner();
       if (create) {
-        await createProjectRequest(options).then((value: any) => {
-          commands.execute('filebrowser:go-to-path', {
-            path: value['project_dir'],
-            showBrowser: true
+        await createProjectRequest(options)
+          .then((value: any) => {
+            commands.execute('filebrowser:go-to-path', {
+              path: value['project_dir'],
+              showBrowser: true
+            });
+            return value;
+          })
+          .catch((msg: any): void => {
+            stopSpinner();
+            showErrorMessage('Error creating project', msg);
           });
-          return value;
-        }).catch((msg: any): void => {
-          stopSpinner();
-          showErrorMessage(
-            'Error creating project',
-            msg
-          );
-        });
       } else {
         if (oldName !== options.name) {
-          await commands.execute('filebrowser:go-to-path', {
+          await commands
+            .execute('filebrowser:go-to-path', {
               path: '/SWAN_projects',
               showBrowser: true
             })
             .then(async () => {
-              await editProjectRequest(oldName, options).then(async (value: any) => {
-                await commands.execute('filebrowser:go-to-path', {
-                  path: value['project_dir'],
-                  showBrowser: true
-                }).catch((msg:any)=>{
+              await editProjectRequest(oldName, options)
+                .then(async (value: any) => {
+                  await commands
+                    .execute('filebrowser:go-to-path', {
+                      path: value['project_dir'],
+                      showBrowser: true
+                    })
+                    .catch((msg: any) => {
+                      stopSpinner();
+                      console.log(
+                        'Error moving from edited project: ' + oldName
+                      );
+                      console.log(msg);
+                    });
+                })
+                .catch((msg: any) => {
                   stopSpinner();
-                  console.log("Error moving from edited project: "+oldName)
-                  console.log(msg)
+                  console.log('Error editing project: ' + oldName);
+                  console.log(msg);
                 });
-              }).catch((msg:any)=>{
-                stopSpinner();
-                console.log("Error editing project: "+oldName)
-                console.log(msg)
-              });;
-            }).catch((msg:any)=>{
+            })
+            .catch((msg: any) => {
               stopSpinner();
-              console.log("Error moving to /SWAN_projects to edit the project: "+oldName)
-              console.log(msg)
+              console.log(
+                'Error moving to /SWAN_projects to edit the project: ' + oldName
+              );
+              console.log(msg);
             });
         } else {
-          await editProjectRequest(oldName, options).then(async (value: any) => {
-            await commands.execute('filebrowser:go-to-path', {
-              path: value['project_dir'],
-              showBrowser: true
-            }).catch((msg:any)=>{
+          await editProjectRequest(oldName, options)
+            .then(async (value: any) => {
+              await commands
+                .execute('filebrowser:go-to-path', {
+                  path: value['project_dir'],
+                  showBrowser: true
+                })
+                .catch((msg: any) => {
+                  stopSpinner();
+                  console.log('Error moving to the edited project.');
+                  console.log(msg);
+                });
+            })
+            .catch((msg: any) => {
               stopSpinner();
-              console.log("Error moving to the edited project.")
-              console.log(msg)
+              console.log('Error editing project: ' + oldName);
+              console.log(msg);
             });
-          }).catch((msg:any)=>{
-            stopSpinner();
-            console.log("Error editing project: "+oldName)
-            console.log(msg)
-          });
         }
       }
       stopSpinner();

@@ -65,7 +65,7 @@ export function createProjectRequest(options: ProjectDialog.ISWANOptions): any {
     stack: options.stack,
     release: options.release,
     platform: options.platform,
-    user_script: options.user_script // eslint-disable-line @typescript-eslint/camelcase
+    user_script: options.user_script
   };
   try {
     return request<any>('swan/project/create', {
@@ -86,16 +86,16 @@ export function createProjectRequest(options: ProjectDialog.ISWANOptions): any {
  * @returns json object with the keys 'project_dir' and 'msg' or json object with the information of the error.
  */
 export function editProjectRequest(
-  old_name: string, // eslint-disable-line @typescript-eslint/camelcase
+  old_name: string,
   options: ProjectDialog.ISWANOptions
 ): any {
   const dataToSend = {
-    old_name: old_name, // eslint-disable-line @typescript-eslint/camelcase
+    old_name: old_name,
     name: options.name,
     stack: options.stack,
     release: options.release,
     platform: options.platform,
-    user_script: options.user_script // eslint-disable-line @typescript-eslint/camelcase
+    user_script: options.user_script
   };
   try {
     return request<any>('swan/project/edit', {

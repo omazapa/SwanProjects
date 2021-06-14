@@ -26,7 +26,6 @@ namespace CommandIDs {
 import { ILauncher } from '@jupyterlab/launcher';
 import { kernelsInfoRequest } from './request';
 
-
 /**
  * Initialization data for the server-extension-example extension.
  */
@@ -56,8 +55,8 @@ const extension: JupyterFrontEndPlugin<void> = {
             stack: '',
             release: '',
             platform: '',
-            user_script: '', // eslint-disable-line @typescript-eslint/camelcase
-            stacks_options: stacks['stacks'] // eslint-disable-line @typescript-eslint/camelcase
+            user_script: '',
+            stacks_options: stacks['stacks']
           },
           true,
           commands
@@ -77,8 +76,8 @@ const extension: JupyterFrontEndPlugin<void> = {
             stack: args.stack as string,
             release: args.release as string,
             platform: args.platform as string,
-            user_script: args.user_script as string, // eslint-disable-line @typescript-eslint/camelcase
-            stacks_options: stacks['stacks'] // eslint-disable-line @typescript-eslint/camelcase
+            user_script: args.user_script as string,
+            stacks_options: stacks['stacks']
           },
           false,
           commands

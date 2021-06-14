@@ -35,7 +35,6 @@ export class ProjectWidget extends ReactWidget {
     this.changeName = this.changeName.bind(this);
     this.changeUserScript = this.changeUserScript.bind(this);
     this.changeClicked = this.changeClicked.bind(this);
-
   }
 
   getOptions(): ProjectDialog.ISWANOptions {
@@ -79,7 +78,8 @@ export class ProjectWidget extends ReactWidget {
 
     this.update();
   }
-  changeRelease(event: any): void {
+  changeRelease(event: { value: string; label: string }): void {
+    console.log(event);
     this.options.release = event.value;
     const stackValues = this.options.stacks_options[
       this.options.stack
@@ -93,18 +93,18 @@ export class ProjectWidget extends ReactWidget {
     this.options.platform = platforms[0];
     this.update();
   }
-  changePlatform(event: any): void {
+  changePlatform(event: { value: string; label: string }): void {
     this.options.platform = event.value;
-    
+
     this.update();
   }
 
-  changeName(event: any): void {
+  changeName(event: React.ChangeEvent<HTMLInputElement>): void {
     this.options.name = event.target.value;
   }
 
-  changeUserScript(event: any): void {
-    this.options.user_script = event.target.value; // eslint-disable-line @typescript-eslint/camelcase
+  changeUserScript(event: React.ChangeEvent<HTMLTextAreaElement>): void {
+    this.options.user_script = event.target.value;
   }
   changeClicked(): void {
     this.clicked = true;
@@ -117,7 +117,7 @@ export class ProjectWidget extends ReactWidget {
         style={{ minHeight: '300px', minWidth: '440px' }}
       >
         <table style={{ height: '100%', width: '95%' }} cellSpacing="0">
-          <tbody style={{resize: 'horizontal'}}>
+          <tbody style={{ resize: 'horizontal' }}>
             <tr>
               <td align="center">
                 <swanProjectIcon.react
@@ -162,7 +162,10 @@ export class ProjectWidget extends ReactWidget {
               <td colSpan={1}></td>
             </tr>
             <tr>
-              <td colSpan={2} style={{width: '48%', padding: '10px 0px 0px 2%'}}>
+              <td
+                colSpan={2}
+                style={{ width: '48%', padding: '10px 0px 0px 2%' }}
+              >
                 <br />
                 <div style={{ display: 'flex' }}>
                   <div> Release </div>
@@ -177,7 +180,10 @@ export class ProjectWidget extends ReactWidget {
                   </div>
                 </div>
               </td>
-              <td colSpan={2}  style={{width: '48%', padding: '10px 0px 0px 2%'}}>
+              <td
+                colSpan={2}
+                style={{ width: '48%', padding: '10px 0px 0px 2%' }}
+              >
                 <br />
                 Platform
               </td>
@@ -236,15 +242,17 @@ export class ProjectWidget extends ReactWidget {
               </td>
             </tr>
             <tr>
-              <td colSpan={4} style={{ padding: '15px 0px 0px 0px'}}>
-                <div style={{ display: 'flex', padding: '0px 0px 5px 0px'}}>
+              <td colSpan={4} style={{ padding: '15px 0px 0px 0px' }}>
+                <div style={{ display: 'flex', padding: '0px 0px 5px 0px' }}>
                   <div> User environment </div>
                   <div>
                     {' '}
                     {HelpTooltip('bash_script', 'User environment script')}{' '}
                   </div>
                 </div>
-                <div style={{ width: '100%', height: '100%',minHeight:'100%' }}>
+                <div
+                  style={{ width: '100%', height: '100%', minHeight: '100%' }}
+                >
                   <textarea
                     className="userScript"
                     placeholder="#!/bin/bash &#10;Bash user script code here"
@@ -265,8 +273,8 @@ export class ProjectWidget extends ReactWidget {
             <tr>
               <td colSpan={4}>
                 <div style={{ float: 'right' }}>
-                <br />
-                <br />
+                  <br />
+                  <br />
                   <button
                     type="button"
                     className="jp-mod-styled"
