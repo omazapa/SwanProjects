@@ -85,9 +85,9 @@ setup_args = dict(
     zip_safe=False,
     python_requires=">=3.6",
     platforms="Linux, Mac OS X, Windows",
-    keywords=["Jupyter", "JupyterLab", "JupyterLab3"],
+    keywords=["Jupyter", "JupyterLab", "JupyterLab3", "SWAN"],
     classifiers=[
-        "License :: OSI Approved :: BSD License",
+        "License :: OSI Approved :: AGPL-3.0",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
