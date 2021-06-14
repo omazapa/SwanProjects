@@ -43,7 +43,7 @@ export function showDialog<T>(
  */
 export function showErrorMessage(
   title: string,
-  error: any,
+  error: any, // eslint-disable-line @typescript-eslint/explicit-module-boundary-types
   buttons: ReadonlyArray<Dialog.IButton> = [
     Dialog.okButton({ label: 'Dismiss' })
   ]
