@@ -52,20 +52,23 @@ class StacksInfoHandler(APIHandler):
         self.finish(json.dumps({"stacks": get_software_stacks()}))
         pass
 
+
 class KernelSpecManagerPathHandler(APIHandler):
     @tornado.web.authenticated
     def post(self):
         """
-        This endpoint is required for the project kernel spec manager, it's it is setting the path to 
+        This endpoint is required for the project kernel spec manager, it's it is setting the path to
         check if we are inside a project to change the kernel spec manager path
         """
         input_data = self.get_json_body()
         path = input_data["path"]
-        print('--- KernelSpecManagerPathHandler = {}'.format(input_data))        
+        print('--- KernelSpecManagerPathHandler = {}'.format(input_data))
         self.kernel_spec_manager.set_path(path)
         project = get_project_path(path)
-        self.finish(json.dumps({"is_project":project is not None,'path':path }))
+        self.finish(json.dumps(
+            {"is_project": project is not None, 'path': path}))
         pass
+
 
 class CreateProjectHandler(APIHandler):
     @tornado.web.authenticated
@@ -77,7 +80,7 @@ class CreateProjectHandler(APIHandler):
         """
         input_data = self.get_json_body()
         print("creating project {}".format(input_data))
-        
+
         name = input_data["name"]
         stack = input_data["stack"]  # CMSSW/LCG
         platform = input_data["platform"]  # SCRAM
@@ -178,7 +181,7 @@ def setup_handlers(web_app, url_path):
     edit_pattern = url_path_join(base_url, url_path, "project/edit")
     project_pattern = url_path_join(base_url, url_path, "project/info")
     stack_pattern = url_path_join(base_url, url_path, "stacks/info")
-    ksm_path_pattern = url_path_join(base_url, url_path, "kernelspec/set") 
+    ksm_path_pattern = url_path_join(base_url, url_path, "kernelspec/set")
     handlers = [(create_pattern, CreateProjectHandler)]
     handlers.append((edit_pattern, EditProjectHandler))
     handlers.append((project_pattern, ProjectInfoHandler))

@@ -57,6 +57,7 @@ def get_project_readme(project_path):
     else:
         return None
 
+
 def get_user_script_content(project_path):
     user_script_path = project_path + os.path.sep + ".userscript"
     if os.path.exists(user_script_path):
@@ -67,6 +68,7 @@ def get_user_script_content(project_path):
     else:
         return ""
 
+
 def get_project_name(project_path):
     path = get_project_path(project_path)
     name = None
@@ -74,15 +76,17 @@ def get_project_name(project_path):
         name = path.split('/')[-1]
     return name
 
+
 def check_project_info(project_info):
     """
     Allows to check if the .swanproject file content is corrupted.
     """
-    project_keys = ["stack","platform","release","user_script","python3","python2","kernel_dirs"]
+    project_keys = ["stack", "platform", "release",
+                    "user_script", "python3", "python2", "kernel_dirs"]
     not_found = []
-    status=True
+    status = True
     for key in project_keys:
-        if not key in project_info.keys():
-            status=False
+        if key not in project_info.keys():
+            status = False
             not_found.append(key)
-    return {"status":status,"not_found":not_found}
+    return {"status": status, "not_found": not_found}
