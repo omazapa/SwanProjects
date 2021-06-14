@@ -96,7 +96,6 @@ export class ProjectWidget extends ReactWidget {
   changePlatform(event: any): void {
     this.options.platform = event.value;
     
-    console.log(event);
     this.update();
   }
 

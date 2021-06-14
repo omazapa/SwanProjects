@@ -92,7 +92,6 @@ export namespace ProjectDialog {
         if (options.name.trim() !== '') {
           //check is project already exists
           if (create) {
-            console.log("calling create");
             const content = await contentRequest(
               'SWAN_projects/' + options.name
             ).catch((): void => {
@@ -144,7 +143,6 @@ export namespace ProjectDialog {
         valid = true;
       }
     } while (!valid);
-    console.log("IS VALID!"+valid)
     let result: any = null;
     if (dialog.clicked) {
       startSpinner();
@@ -170,7 +168,6 @@ export namespace ProjectDialog {
             })
             .then(async () => {
               await editProjectRequest(oldName, options).then(async (value: any) => {
-                console.log(value);
                 await commands.execute('filebrowser:go-to-path', {
                   path: value['project_dir'],
                   showBrowser: true
