@@ -55,7 +55,8 @@ class SwanKernelSpecManager(KernelSpecManager):
                         self.save_native_spec(
                             kerne_dir, self.project_info[python]["path"], "Python " + version)
             self.kernel_dirs.append(local_kernels)
-            print("KERNEL DIRS = ", self.kernel_dirs)
+        print("KERNEL DIRS = ", self.kernel_dirs)
+        print(self.get_all_specs())
 
     def wrap_kernel_specs(self, project_name, kspec):
         HOME = os.environ["HOME"]
@@ -63,7 +64,7 @@ class SwanKernelSpecManager(KernelSpecManager):
                 "/bin/bash",
                 "-l", "-c",
                 "swan_env {} {} ".format(
-                    project_name, ".") + " ".join(kspec.argv)
+                    project_name, ".") + "'" + " ".join(kspec.argv) + "'"
                 ]
 
         kspec.argv = argv

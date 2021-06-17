@@ -67,7 +67,6 @@ class KernelSpecManagerPathHandler(APIHandler):
         project = get_project_path(path)
         self.finish(json.dumps(
             {"is_project": project is not None, 'path': path}))
-        pass
 
 
 class CreateProjectHandler(APIHandler):

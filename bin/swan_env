@@ -87,7 +87,8 @@ if [[ $STACK == "CMSSW" ]]; then
 
 fi
 export SWAN_STACK="$RELEASE($PLATFORM)"
-export SWAN_PROJECT=$PROJECT
+export SWAN_PROJECT_NAME=$PROJECT
+export SWAN_PROJECT_PATH=$PROJECT_PATH
 
 if [ "$USER_SCRIPT" != "" ]; then
 
