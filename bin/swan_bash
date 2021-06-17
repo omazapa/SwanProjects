@@ -11,12 +11,19 @@ if [[ $# -gt 0 ]] ; then
     PROJECT=$1
     PROJECT_PATH="$HOME/SWAN_projects/$PROJECT"
     PROJECT_FILE="$PROJECT_PATH/.swanproject"
-    STACK=`jq '.stack' $PROJECT_FILE`
-    RELEASE=`jq '.release' $PROJECT_FILE`
-    PLATFORM=`jq '.platform' $PROJECT_FILE`
-    USER_SCRIPT="$PROJECT_PATH/.userscript"
     
-    PS1_SWAN="$(PS1="($PROJECT) $PS1")" #`bash -c "echo \($PROJECT\) $PS1 "`
-    echo $PS1_SWAN
-    bash -c "swan_env $PROJECT $PROJECT_PATH  bash --rcfile <(echo 'PS1=\"($PROJECT) $PS1 \"') "
+    if [ -d "$PROJECT_PATH" ] 
+    then
+      STACK=`jq '.stack' $PROJECT_FILE`
+      RELEASE=`jq '.release' $PROJECT_FILE`
+      PLATFORM=`jq '.platform' $PROJECT_FILE`
+      USER_SCRIPT="$PROJECT_PATH/.userscript"
+      PS1_SWAN="$(PS1="($PROJECT) $PS1")" #`bash -c "echo \($PROJECT\) $PS1 "`
+      echo $PS1_SWAN
+      bash -c "swan_env $PROJECT $PROJECT_PATH  bash --rcfile <(echo 'PS1=\"($PROJECT) $PS1 \"') " 
+    else
+      echo "Error: project $PROJECT_PATH doesn't exists" >&2
+      sleep 60
+      exit 1
+    fi
 fi
