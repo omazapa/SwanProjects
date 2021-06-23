@@ -88,7 +88,7 @@ export class Dialog<T> extends Widget {
    */
   constructor(options: Partial<Dialog.IOptions<T>> = {}) {
     super();
-    this.addClass('jp-Dialog');
+    this.addClass('sw-Dialog');
     const normalized = Private.handleOptions(options);
     const renderer = normalized.renderer;
 
@@ -104,7 +104,7 @@ export class Dialog<T> extends Widget {
 
     const layout = (this.layout = new PanelLayout());
     const content = new Panel();
-    content.addClass('jp-Dialog-content');
+    content.addClass('sw-Dialog-content');
     layout.addWidget(content);
 
     this._body = normalized.body;
@@ -238,7 +238,7 @@ export class Dialog<T> extends Widget {
     this._first = Private.findFirstFocusable(this.node);
     this._original = document.activeElement as HTMLElement;
     if (this._focusNodeSelector) {
-      const body = this.node.querySelector('.jp-Dialog-body');
+      const body = this.node.querySelector('.sw-Dialog-body');
       const el = body?.querySelector(this._focusNodeSelector);
 
       if (el) {
@@ -277,7 +277,7 @@ export class Dialog<T> extends Widget {
    */
   protected _evtClick(event: MouseEvent): void {
     const content = this.node.getElementsByClassName(
-      'jp-Dialog-content'
+      'sw-Dialog-content'
     )[0] as HTMLElement;
     if (!content.contains(event.target as HTMLElement)) {
       event.stopPropagation();
@@ -670,7 +670,7 @@ export namespace Dialog {
             {title}
             {options.hasClose && (
               <Button
-                className="jp-Dialog-close-button"
+                className="sw-Dialog-close-button"
                 onMouseDown={handleMouseDown}
                 onKeyDown={handleKeyDown}
                 title="Cancel"
@@ -689,7 +689,7 @@ export namespace Dialog {
       } else {
         header = ReactWidget.create(title);
       }
-      header.addClass('jp-Dialog-header');
+      header.addClass('sw-Dialog-header');
       Styling.styleNode(header.node);
       return header;
     }
@@ -714,7 +714,7 @@ export namespace Dialog {
         // order to trigger a render of the DOM nodes from the React element.
         MessageLoop.sendMessage(body, Widget.Msg.UpdateRequest);
       }
-      body.addClass('jp-Dialog-body');
+      body.addClass('sw-Dialog-body');
       Styling.styleNode(body.node);
       return body;
     }
@@ -728,7 +728,7 @@ export namespace Dialog {
      */
     createFooter(buttons: ReadonlyArray<HTMLElement>): Widget {
       const footer = new Widget();
-      footer.addClass('jp-Dialog-footer');
+      footer.addClass('sw-Dialog-footer');
       each(buttons, button => {
         footer.node.appendChild(button);
       });
@@ -760,7 +760,7 @@ export namespace Dialog {
      */
     createItemClass(data: IButton): string {
       // Setup the initial class name.
-      let name = 'jp-Dialog-button';
+      let name = 'sw-Dialog-button';
 
       // Add the other state classes.
       if (data.accept) {
@@ -804,7 +804,7 @@ export namespace Dialog {
      * @returns The full class name for the item icon.
      */
     createIconClass(data: IButton): string {
-      const name = 'jp-Dialog-buttonIcon';
+      const name = 'sw-Dialog-buttonIcon';
       const extra = data.iconClass;
       return extra ? `${name} ${extra}` : name;
     }
@@ -818,7 +818,7 @@ export namespace Dialog {
      */
     renderLabel(data: IButton): HTMLElement {
       const e = document.createElement('div');
-      e.className = 'jp-Dialog-buttonLabel';
+      e.className = 'sw-Dialog-buttonLabel';
       e.title = data.caption;
       e.appendChild(document.createTextNode(data.label));
       return e;

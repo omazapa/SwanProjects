@@ -28,6 +28,7 @@ export class ProjectWidget extends ReactWidget {
     super();
     this.clicked = false;
     this.addClass('jp-ReactWidget');
+
     this.setOptions(options);
     this.selectStack = this.selectStack.bind(this);
     this.changeRelease = this.changeRelease.bind(this);
@@ -113,7 +114,7 @@ export class ProjectWidget extends ReactWidget {
   render(): JSX.Element {
     return (
       <span
-        className="jp-Dialog-body"
+        className="sw-Dialog-body"
         style={{ minHeight: '300px', minWidth: '440px' }}
       >
         <table style={{ height: '100%', width: '95%' }} cellSpacing="0">
