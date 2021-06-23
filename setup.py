@@ -3,14 +3,15 @@ swanprojects setup
 """
 import json
 from pathlib import Path
-
 from jupyter_packaging import (
     create_cmdclass,
     install_npm,
     ensure_targets,
     combine_commands,
     skip_if_exists,
+    get_data_files
 )
+
 import setuptools
 
 HERE = Path(__file__).parent.resolve()
@@ -18,40 +19,42 @@ HERE = Path(__file__).parent.resolve()
 # The name of the project
 name = "swanprojects"
 
-lab_path = HERE / name / "labextension"
+lab_path = (HERE / name.replace("-", "_") / "labextension")
 
 # Representative files that should exist after a successful build
-jstargets = [
+ensured_targets = [
     str(lab_path / "package.json"),
+    str(lab_path / "static/style.js")
 ]
 
 package_data_spec = {name: ["*"]}
 
 labext_name = "@swan/swanprojects"
+
 data_files_spec = [
     ("share/jupyter/labextensions/%s" % labext_name, str(lab_path), "**"),
-    ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),
-    ("etc/jupyter/jupyter_notebook_config.d", "jupyter-config/jupyter_notebook_config.d", "swanprojects.json"),
-    ("etc/jupyter/jupyter_server_config.d", "jupyter-config/jupyter_server_config.d", "swanprojects.json"),
-    ("share/jupyter/lab/extensions", lab_path, "*.tgz"),
+    ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),("etc/jupyter/jupyter_server_config.d",
+     "jupyter-config/server-config", "swanprojects.json"),
+    # For backward compatibility with notebook server
+    ("etc/jupyter/jupyter_notebook_config.d",
+     "jupyter-config/nb-config", "swanprojects.json"),
+    
 ]
+
+long_description = (HERE / "README.md").read_text()
 
 cmdclass = create_cmdclass(
     "jsdeps", package_data_spec=package_data_spec, data_files_spec=data_files_spec
 )
-
 js_command = combine_commands(
     install_npm(HERE, build_cmd="build:prod", npm=["jlpm"]),
-    ensure_targets(jstargets),
+    ensure_targets(ensured_targets),
 )
-
 is_repo = (HERE / ".git").exists()
 if is_repo:
     cmdclass["jsdeps"] = js_command
 else:
     cmdclass["jsdeps"] = skip_if_exists(jstargets, js_command)
-
-long_description = (HERE / "README.md").read_text()
 
 # Get the package info from package.json
 pkg_json = json.loads((HERE / "package.json").read_bytes())
@@ -67,25 +70,16 @@ setup_args = dict(
     long_description_content_type="text/markdown",
     scripts=['bin/swan_env', 'bin/swan_bash', 'bin/swan_kmspecs'],
     cmdclass=cmdclass,
+    data_files=get_data_files(data_files_spec), 
     packages=setuptools.find_packages(),
-    include_package_data=True,
-    data_files=[
-        (
-            "etc/jupyter/jupyter_server_config.d",
-            ["jupyter-config/jupyter_server_config.d/swanprojects.json"]
-        ),
-        (
-            "etc/jupyter/jupyter_notebook_config.d",
-            ["jupyter-config/jupyter_notebook_config.d/swanprojects.json"]
-        ),
-    ],
     install_requires=[
-        "jupyterlab~=3.0",
+        "jupyter_server>=1.6,<2"
     ],
     zip_safe=False,
+    include_package_data=True,
     python_requires=">=3.6",
     platforms="Linux, Mac OS X, Windows",
-    keywords=["Jupyter", "JupyterLab", "JupyterLab3", "SWAN"],
+    keywords=["Jupyter", "JupyterLab", "JupyterLab3"],
     classifiers=[
         "License :: OSI Approved :: GNU Affero General Public License v3",
         "Programming Language :: Python",

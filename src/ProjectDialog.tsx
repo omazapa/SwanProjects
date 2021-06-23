@@ -62,8 +62,8 @@ export namespace ProjectDialog {
      */
     function startSpinner(): void {
       const node = document.getElementById('jp-main-dock-panel');
-      node.appendChild(_spinner.node);
-      node.focus();
+      node?.appendChild(_spinner.node);
+      node?.focus();
       _spinner.activate();
       _spinner.show();
       _spinner.node.focus();
@@ -89,7 +89,7 @@ export namespace ProjectDialog {
       await modal;
       if (dialog.clicked) {
         options = dialog.getOptions();
-        if (options.name.trim() !== '') {
+        if (options.name?.trim() !== '') {
           //check is project already exists
           if (create) {
             const content = await contentRequest(
@@ -132,7 +132,7 @@ export namespace ProjectDialog {
           }
         }
 
-        if (options.name.trim() === '') {
+        if (options.name?.trim() === '') {
           await showErrorMessage(
             'Invalid project name',
             'Select a valid (non-empty) project name.'
@@ -166,7 +166,7 @@ export namespace ProjectDialog {
             showBrowser: true
           })
           .then(async () => {
-            await editProjectRequest(oldName, options)
+            await editProjectRequest(oldName as string, options)
               .then(async (value: any) => {
                 await commands
                   .execute('filebrowser:go-to-path', {
