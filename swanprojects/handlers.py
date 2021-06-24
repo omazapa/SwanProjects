@@ -101,7 +101,17 @@ class CreateProjectHandler(APIHandler):
             f.write(user_script)
             f.close()
 
-        command = ["swan_kmspecs", "--project_name", name]
+        command = ["env","-i","HOME=%"%os.environ["HOME"]]
+        #checking if we are on EOS to add the env variables
+        #we required this to read/write in a isolate environment with EOS
+        if "OAUTH2_FILE" in os.environ:
+            commandb.append("OAUTH2_FILE=%"%os.environ["OAUTH2_FILE"])
+        if "OAUTH2_TOKEN" in os.environ:
+            commandb.append("OAUTH2_TOKEN=%"%os.environ["OAUTH2_TOKEN"])
+        if "OAUTH_INSPECTION_ENDPOINT" in os.environ:
+            commandb.append("OAUTH_INSPECTION_ENDPOINT=%"%os.environ["OAUTH_INSPECTION_ENDPOINT"])
+        command += ["bash","-c", "'swan_kmspecs --project_name {}'".format(name)]
+
         proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         proc.wait()
         data = proc.stdout.read().decode("utf-8")

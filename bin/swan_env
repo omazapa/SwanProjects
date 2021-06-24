@@ -7,10 +7,11 @@
 # CWD: working directory path
 PARAMETERS=($@) #WARNING: empty options disappear
 
-# Source global definitions
-if [ -f /etc/bashrc ]; then
-	. /etc/bashrc
-fi
+# Source global definitions (this is producing error en swan-qa)
+# /scratch/ozapatam/.bash_profile is loaded 
+# if [ -f /etc/bashrc ]; then
+# 	. /etc/bashrc
+# fi
 # # Source HOME definitions
 # if [ -f $HOME/.bashrc ]; then
 # 	. $HOME/.bashrc

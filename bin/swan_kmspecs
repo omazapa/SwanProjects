@@ -92,7 +92,7 @@ def generate_ksminfo(project_path):
     save_kernel_paths(project_path)
 
 def swan_kmspecs(project_name):
-    command =  ["/bin/bash","swan_env",project_name, ".","python",__file__,"--generate_ksminfo","--project_name",project_name]
+    command =  ['env', '-i', 'HOME=%'%os.environ["HOME"],"/bin/bash","swan_env",project_name, ".","python",__file__,"--generate_ksminfo","--project_name",project_name]
     print(" ".join(command))
     proc = subprocess.Popen(command, stdout = subprocess.PIPE)
     proc.wait()
