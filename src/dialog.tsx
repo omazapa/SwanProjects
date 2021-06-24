@@ -88,7 +88,7 @@ export class Dialog<T> extends Widget {
    */
   constructor(options: Partial<Dialog.IOptions<T>> = {}) {
     super();
-    this.addClass('sw-Dialog');
+    this.addClass('jp-Dialog');
     const normalized = Private.handleOptions(options);
     const renderer = normalized.renderer;
 

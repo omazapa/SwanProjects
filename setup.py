@@ -33,8 +33,8 @@ labext_name = "@swan/swanprojects"
 
 data_files_spec = [
     ("share/jupyter/labextensions/%s" % labext_name, str(lab_path), "**"),
-    ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),("etc/jupyter/jupyter_server_config.d",
-     "jupyter-config/server-config", "swanprojects.json"),
+    ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),
+    ("etc/jupyter/jupyter_server_config.d","jupyter-config/server-config", "swanprojects.json"),
     # For backward compatibility with notebook server
     ("etc/jupyter/jupyter_notebook_config.d",
      "jupyter-config/nb-config", "swanprojects.json"),
@@ -54,7 +54,7 @@ is_repo = (HERE / ".git").exists()
 if is_repo:
     cmdclass["jsdeps"] = js_command
 else:
-    cmdclass["jsdeps"] = skip_if_exists(jstargets, js_command)
+    cmdclass["jsdeps"] = skip_if_exists(ensured_targets, js_command)
 
 # Get the package info from package.json
 pkg_json = json.loads((HERE / "package.json").read_bytes())
