@@ -59,11 +59,19 @@ class SwanKernelSpecManager(KernelSpecManager):
         print(self.get_all_specs())
 
     def wrap_kernel_specs(self, project_name, kspec):
-        HOME = os.environ["HOME"]
-        argv = ["env", "-i", "HOME=" + HOME,
-                "/bin/bash",
-                "-l", "-c",
-                "swan_env {} {} ".format(
+        
+        argv = ["env", "-i", "HOME=%s"%os.environ["HOME"]]
+
+        #checking if we are on EOS to add the env variables
+        #we required this to read/write in a isolate environment with EOS
+        if "OAUTH2_FILE" in os.environ:
+            argv.append("OAUTH2_FILE=%s"%os.environ["OAUTH2_FILE"])
+        if "OAUTH2_TOKEN" in os.environ:
+            argv.append("OAUTH2_TOKEN=%s"%os.environ["OAUTH2_TOKEN"])
+        if "OAUTH_INSPECTION_ENDPOINT" in os.environ:
+            argv.append("OAUTH_INSPECTION_ENDPOINT=%s"%os.environ["OAUTH_INSPECTION_ENDPOINT"])
+        
+        argv += ["/bin/bash","-c","swan_env {} {} ".format(
                     project_name, ".") + "'" + " ".join(kspec.argv) + "'"
                 ]
 

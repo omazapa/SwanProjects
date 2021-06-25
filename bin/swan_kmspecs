@@ -92,7 +92,14 @@ def generate_ksminfo(project_path):
     save_kernel_paths(project_path)
 
 def swan_kmspecs(project_name):
-    command =  ['env', '-i', 'HOME=%'%os.environ["HOME"],"/bin/bash","swan_env",project_name, ".","python",__file__,"--generate_ksminfo","--project_name",project_name]
+    command =  ['env', '-i', 'HOME=%s'%os.environ["HOME"]]
+    if "OAUTH2_FILE" in os.environ:
+        command.append("OAUTH2_FILE=%s"%os.environ["OAUTH2_FILE"])
+    if "OAUTH2_TOKEN" in os.environ:
+        command.append("OAUTH2_TOKEN=%s"%os.environ["OAUTH2_TOKEN"])
+    if "OAUTH_INSPECTION_ENDPOINT" in os.environ:
+        command.append("OAUTH_INSPECTION_ENDPOINT=%s"%os.environ["OAUTH_INSPECTION_ENDPOINT"])
+    command += ["/bin/bash","swan_env",project_name, ".","python",__file__,"--generate_ksminfo","--project_name",project_name]    
     print(" ".join(command))
     proc = subprocess.Popen(command, stdout = subprocess.PIPE)
     proc.wait()
