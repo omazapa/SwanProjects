@@ -67,6 +67,7 @@
     overflow: auto;
     min-width: 440px;
     min-height: 650px;
+    width: 100%;
   }
   
   .sw-Dialog-body table {
@@ -115,8 +116,8 @@
 
   .sw-Dialog-userscript-title{
     display: 'flex';
-    padding-top: 20px;
-    padding-bottom: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
   }
   .sw-Dialog-userscript-tooltip, .sw-Dialog-release-tooltip
   {
