@@ -12,7 +12,7 @@ export function HelpTooltip(
   message: string
 ): React.ReactElement<any> {
   return (
-    <div style={{ padding: '0px 5px 0px 10px' }}>
+    <div className="sw-Component-tooltip">
       <div
         style={{
           borderRadius: '50%',

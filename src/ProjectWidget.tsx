@@ -161,7 +161,7 @@ export class ProjectWidget extends ReactWidget {
                 <br />
                 <div style={{ display: 'flex' }}>
                   <div> Release </div>
-                  <div>
+                  <div className="sw-Dialog-release-tooltip">
                     {' '}
                     {HelpTooltip(
                       'release',
@@ -234,23 +234,27 @@ export class ProjectWidget extends ReactWidget {
             </tr>
             <tr>
               <td className="sw-Dialog-userscript" colSpan={4}>
-                <div id="sw-Dialog-userscript-title" style={{ display: 'flex'}}>
+                <div className="sw-Dialog-userscript-title" style={{ display: 'flex'}}>
                   <div> User environment </div>
-                  <div>
+                  <div className="sw-Dialog-userscript-tooltip">
                     {' '}
                     {HelpTooltip('bash_script', 'User environment script')}{' '}
                   </div>
                 </div>
-                <div
-                  style={{ width: '100%', height: '100%', minHeight: '100%' }}
-                >
                   <textarea
                     className="userScript"
                     placeholder="#!/bin/bash &#10;Bash user script code here"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      minWidth: '420px',
+                      minHeight: '300px',
+                      padding: '5px 0px 5px 0px',
+                      resize: 'none'
+                    }}
                     onChange={this.changeUserScript}
                     defaultValue={this.options.user_script}
                   />
-                </div>
               </td>
             </tr>
             <tr>
