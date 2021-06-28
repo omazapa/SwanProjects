@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------------------
-| Copyright (c) 2014-2017, Jupyter Development Team.
+| Copyright (c) 2021, SWAN Team.
 |
-| Distributed under the terms of the Modified BSD License.
+| Distributed under the terms of the AGPL License.
 |----------------------------------------------------------------------------*/
   
   .sw-Dialog-content {
@@ -65,6 +65,66 @@
     font-size: var(--jp-ui-font-size1);
     background: var(--jp-layout-color1);
     overflow: auto;
+    min-width: 440px;
+    min-height: 650px;
+  }
+  
+  .sw-Dialog-body table {
+    height: 100%;
+    width: 95%;
+    border-spacing:0px;
+  }
+
+  .sw-Dialog-body tbody {
+    resize: horizontal;
+  }
+
+  .sw-Dialog-project-icon *{
+    width: 50px;
+    right: 7px;
+    top: 5px;
+  }
+
+  .sw-Dialog-select {
+    width: 100%;
+    max-height: 40px;
+  }
+  .sw-Dialog-select td{
+    width: 50%;
+  }
+
+  .sw-Dialog-tooltip{
+    width: 48%;
+    padding: 10px 0px 0px 2%;
+  }
+
+  .sw-Dialog-project-name{
+    width: 100%;
+    padding: 5px 5px 5px 0px;
+  }
+
+  .sw-Dialog-project-name input{
+    width: 100%;
+    padding: 5px 0px 5px 0px;
+    text-indent: 10px;
+  }
+  
+  .sw-Dialog-userscript{
+    padding: 15px 0px 0px 0px;
+  }
+
+  #sw-Dialog-userscript-title div{
+    display: 'flex';
+    padding: '0px 0px 5px 0px'; 
+  }
+  .sw-Dialog-userscript textarea{
+    width: '100%';
+    height: '100%';
+    min-width: '420px';
+    min-height: '300px';
+    padding: '5px 0px 5px 0px';
+    resize: 'none';
+
   }
   
   .sw-Dialog-footer {

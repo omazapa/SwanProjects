@@ -115,30 +115,22 @@ export class ProjectWidget extends ReactWidget {
     return (
       <span
         className="sw-Dialog-body"
-        style={{ minHeight: '300px', minWidth: '440px' }}
       >
-        <table style={{ height: '100%', width: '95%' }} cellSpacing="0">
-          <tbody style={{ resize: 'horizontal' }}>
+        <table>
+          <tbody >
             <tr>
               <td align="center">
                 <swanProjectIcon.react
+                  className="sw-Dialog-project-icon"
                   tag="span"
-                  width="50px"
-                  right="7px"
-                  top="5px"
                 />
               </td>
               <td colSpan={3}>
-                <div style={{ width: '100%', padding: '5px 5px 5px 0px' }}>
+                <div className="sw-Dialog-project-name">
                   <input
                     type="text"
                     defaultValue={this.options.name}
                     placeholder="Project Name"
-                    style={{
-                      width: '100%',
-                      padding: '5px 0px 5px 0px',
-                      textIndent: '10px'
-                    }}
                     onChange={this.changeName}
                   />
                 </div>
@@ -163,9 +155,8 @@ export class ProjectWidget extends ReactWidget {
               <td colSpan={1}></td>
             </tr>
             <tr>
-              <td
+              <td className="sw-Dialog-tooltip"
                 colSpan={2}
-                style={{ width: '48%', padding: '10px 0px 0px 2%' }}
               >
                 <br />
                 <div style={{ display: 'flex' }}>
@@ -181,17 +172,16 @@ export class ProjectWidget extends ReactWidget {
                   </div>
                 </div>
               </td>
-              <td
+              <td className="sw-Dialog-tooltip"
                 colSpan={2}
-                style={{ width: '48%', padding: '10px 0px 0px 2%' }}
               >
                 <br />
                 Platform
               </td>
             </tr>
-            <tr style={{ width: '100%', maxHeight: '40px' }}>
+            <tr className="sw-Dialog-select">
               {/* https://react-select.com/advanced#portaling */}
-              <td colSpan={2} style={{ width: '50%' }}>
+              <td colSpan={2}>
                 <Select
                   isSearchable={false}
                   options={this.releases as any}
@@ -215,7 +205,7 @@ export class ProjectWidget extends ReactWidget {
                   onChange={this.changeRelease}
                 />
               </td>
-              <td colSpan={2} style={{ width: '50%' }}>
+              <td colSpan={2}>
                 {
                   <Select
                     isSearchable={false}
@@ -243,8 +233,8 @@ export class ProjectWidget extends ReactWidget {
               </td>
             </tr>
             <tr>
-              <td colSpan={4} style={{ padding: '15px 0px 0px 0px' }}>
-                <div style={{ display: 'flex', padding: '0px 0px 5px 0px' }}>
+              <td className="sw-Dialog-userscript" colSpan={4}>
+                <div id="sw-Dialog-userscript-title" style={{ display: 'flex'}}>
                   <div> User environment </div>
                   <div>
                     {' '}
@@ -257,14 +247,6 @@ export class ProjectWidget extends ReactWidget {
                   <textarea
                     className="userScript"
                     placeholder="#!/bin/bash &#10;Bash user script code here"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      minWidth: '420px',
-                      minHeight: '300px',
-                      padding: '5px 0px 5px 0px',
-                      resize: 'none'
-                    }}
                     onChange={this.changeUserScript}
                     defaultValue={this.options.user_script}
                   />
