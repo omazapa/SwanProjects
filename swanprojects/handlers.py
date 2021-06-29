@@ -1,19 +1,26 @@
 # Copyright (c) SWAN Development Team.
 # Author: Omar.Zapata@cern.ch 2021
-from notebook.base.handlers import APIHandler
-from notebook.utils import url_path_join
-
-import tornado
-from tornado.web import StaticFileHandler
-import os
 import json
+import os
 import shutil
-
-from swanprojects.utils import get_software_stacks
-from swanprojects.utils import get_project_path, get_project_info, get_project_readme, get_user_script_content
-
 import subprocess
 
+import tornado
+from notebook.base.handlers import APIHandler
+from notebook.utils import url_path_join
+from tornado.web import StaticFileHandler
+from traitlets import Bool, Unicode
+from traitlets.config import Configurable
+
+from .utils import (get_project_info, get_project_path, get_project_readme,
+                    get_user_script_content)
+
+
+class SwanProjects(Configurable):
+    stacks_path = Unicode(
+        os.path.dirname(os.path.abspath(__file__))+'/stacks.json',
+        config=True,
+        help="The path to the JSON containing stack configuration")
 
 class ProjectInfoHandler(APIHandler):
     @tornado.web.authenticated
@@ -44,13 +51,20 @@ class ProjectInfoHandler(APIHandler):
 
 
 class StacksInfoHandler(APIHandler):
+
+    swan_projects_config = None
+
+    def initialize(self):
+        self.swan_projects_config = SwanProjects(config=self.config)
+
     @tornado.web.authenticated
     def get(self):
         """
         This endpoint is required for the project dialog, it's returning the information save on stacks.json
         """
-        self.finish(json.dumps({"stacks": get_software_stacks()}))
-        pass
+        with open(self.swan_projects_config.stacks_path) as f:
+            stacks = json.loads(f.read())
+        self.finish(json.dumps({"stacks": stacks}))
 
 
 class KernelSpecManagerPathHandler(APIHandler):
@@ -62,7 +76,7 @@ class KernelSpecManagerPathHandler(APIHandler):
         """
         input_data = self.get_json_body()
         path = input_data["path"]
-        print('--- KernelSpecManagerPathHandler = {}'.format(input_data))
+        self.log.info(f"KernelSpecManagerPathHandler = {input_data}")
         self.kernel_spec_manager.set_path(path)
         project = get_project_path(path)
         self.finish(json.dumps(
@@ -78,7 +92,7 @@ class CreateProjectHandler(APIHandler):
         project is set inside the project folder.
         """
         input_data = self.get_json_body()
-        print("creating project {}".format(input_data))
+        self.log.info(f"creating project {input_data}")
 
         name = input_data["name"]
         stack = input_data["stack"]  # CMSSW/LCG
@@ -114,7 +128,8 @@ class CreateProjectHandler(APIHandler):
         #print(" ".join(command))
         proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         proc.wait()
-        data = proc.stdout.read().decode("utf-8")
+        output = proc.stdout.read().decode("utf-8")
+        self.log.info(f"swan_kmspecs output: {output}")
         proc.communicate()
 
         data = {"project_dir": "SWAN_projects/" + name,
@@ -168,11 +183,11 @@ class EditProjectHandler(APIHandler):
             f.close()
 
         command = ["swan_kmspecs", "--project_name", name]
-        print(" ".join(command))
+        self.log.info(f"running {command} ")
         proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         proc.wait()
         output = proc.stdout.read().decode("utf-8")
-        print(output)
+        self.log.info(f"result {output} ")
         proc.communicate()
 
         data = {"project_dir": "SWAN_projects/" + name,

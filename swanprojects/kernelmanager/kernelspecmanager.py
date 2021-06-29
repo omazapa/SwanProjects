@@ -1,28 +1,43 @@
 # Copyright (c) SWAN Development Team.
 # Author: Omar.Zapata@cern.ch 2021
 
-from jupyter_client.kernelspec import KernelSpecManager, NoSuchKernel
-from swanprojects.utils import get_project_info, get_project_path
-from traitlets import Unicode
-from swanprojects.utils import get_kernel_resorces_path, get_project_name
-
-import shutil
 import json
 import os
+import shutil
 
+from jupyter_client.kernelspec import KernelSpecManager, NoSuchKernel
+from swanprojects.utils import (get_project_info, get_project_name,
+                                get_project_path)
+from traitlets import Bool, Unicode
+from traitlets.config import Configurable
+
+
+class SwanKSMConfig(Configurable):
+    kernel_resources = Unicode(
+        os.path.dirname(os.path.abspath(__file__))+'/resources',
+        config = True, 
+        help = "The path to the folder containg the resources to add to the kernel"
+    )
 
 class SwanKernelSpecManager(KernelSpecManager):
     path = Unicode("", config=True, allow_none=True,
                    help="SWAN Project path")
 
+
     def __init__(self, **kwargs):
         super(SwanKernelSpecManager, self).__init__(**kwargs)
-        print("JupyterLab swankernelspecmanager is activated!")
+        self.log.info("JupyterLab swankernelspecmanager is activated!")
         self.project = None
         self.kernel_dirs = []
+        self.ksmconfig = SwanKSMConfig(config=self.config)
 
     def save_native_spec(self, kernel_dir, python_path, display_name):
-        shutil.copytree(get_kernel_resorces_path(), kernel_dir)
+        """
+        This function creates a default kernel with info from the stack.
+        It's only necessary for CMSSW stacks as those don't have a Python kernel
+        """
+        self.log.info(f"copying resources from {self.ksmconfig.kernel_resources} to {kernel_dir}")
+        shutil.copytree(self.ksmconfig.kernel_resources, kernel_dir)
         spec = {"argv": [python_path,
                          "-m",
                          "ipykernel_launcher",
@@ -55,8 +70,8 @@ class SwanKernelSpecManager(KernelSpecManager):
                         self.save_native_spec(
                             kerne_dir, self.project_info[python]["path"], "Python " + version)
             self.kernel_dirs.append(local_kernels)
-        print("KERNEL DIRS = ", self.kernel_dirs)
-        print(self.get_all_specs())
+        self.log.debug(f"KERNEL DIRS = {self.kernel_dirs}")
+        self.log.debug(f"specs:\n {self.get_all_specs()}")
 
     def wrap_kernel_specs(self, project_name, kspec):
         
@@ -96,9 +111,7 @@ class SwanKernelSpecManager(KernelSpecManager):
             return kspec
         else:
             kspec = self.wrap_kernel_specs(self.project_name, kspec)
-            print("-" * 10)
-            print("ON get_kernel_spec = ", kspec.argv)
-            print("-" * 10)
+            self.log.debug(f"ON get_kernel_spec = {kspec.argv}")
 
         return kspec
 
