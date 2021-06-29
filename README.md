@@ -34,5 +34,8 @@ c.NotebookApp.default_url = 'lab'
 c.NotebookApp.contents_manager_class = 'swancontents.filemanager.swanfilemanager.SwanFileManager'
 c.NotebookApp.kernel_spec_manager_class = 'swanprojects.kernelmanager.kernelspecmanager.SwanKernelSpecManager'
 c.KernelSpecManager.ensure_native_kernel = False
+
+c.SwanProjects.stacks_path=path_to_stacks.json
+c.SwanKSMConfig.kernel_resources=path_to_native_kernel_resources
 ```
 
