@@ -13,7 +13,7 @@ from traitlets import Bool, Unicode
 from traitlets.config import Configurable
 
 from .utils import (get_project_info, get_project_path, get_project_readme,
-                    get_user_script_content)
+                    get_user_script_content, get_env_isolated)
 
 
 class SwanProjects(Configurable):
@@ -114,18 +114,9 @@ class CreateProjectHandler(APIHandler):
         with open(swan_user_script_file, 'w') as f:
             f.write(user_script)
             f.close()
-
-        command = ["env","-i","HOME=%s"%os.environ["HOME"]]
-        #checking if we are on EOS to add the env variables
-        #we required this to read/write in a isolate environment with EOS
-        if "OAUTH2_FILE" in os.environ:
-            command.append("OAUTH2_FILE=%s"%os.environ["OAUTH2_FILE"])
-        if "OAUTH2_TOKEN" in os.environ:
-            command.append("OAUTH2_TOKEN=%s"%os.environ["OAUTH2_TOKEN"])
-        if "OAUTH_INSPECTION_ENDPOINT" in os.environ:
-            command.append("OAUTH_INSPECTION_ENDPOINT=%s"%os.environ["OAUTH_INSPECTION_ENDPOINT"])
+        command = get_env_isolated()
         command += ["/bin/bash","-c", "swan_kmspecs --project_name %s"%name]
-        #print(" ".join(command))
+        self.log.info(f"running {command} ")
         proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         proc.wait()
         output = proc.stdout.read().decode("utf-8")
@@ -181,8 +172,9 @@ class EditProjectHandler(APIHandler):
         with open(swan_user_script_file, 'w') as f:
             f.write(user_script)
             f.close()
-
-        command = ["swan_kmspecs", "--project_name", name]
+        
+        command = get_env_isolated()
+        command += ["swan_kmspecs", "--project_name", name]
         self.log.info(f"running {command} ")
         proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         proc.wait()

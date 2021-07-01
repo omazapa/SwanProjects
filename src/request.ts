@@ -86,11 +86,15 @@ export function createProjectRequest(options: ProjectDialog.ISWANOptions): any {
  * @returns json object with the keys 'project_dir' and 'msg' or json object with the information of the error.
  */
 export function editProjectRequest(
-  old_name: string,
+  old_options: ProjectDialog.ISWANOptions,
   options: ProjectDialog.ISWANOptions
 ): any {
   const dataToSend = {
-    old_name: old_name,
+    old_name: old_options.name,
+    old_stack: old_options.stack,
+    old_release: old_options.release,
+    old_platform: old_options.platform,
+    old_userscript:old_options.user_script,
     name: options.name,
     stack: options.stack,
     release: options.release,

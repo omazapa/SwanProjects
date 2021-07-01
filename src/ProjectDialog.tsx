@@ -55,7 +55,7 @@ export namespace ProjectDialog {
     commands: CommandRegistry
   ): Promise<any> {
     const _spinner = new Spinner();
-    const oldName = options.name;
+    const old_options = Object.assign({}, options);;
     const dialog = new ProjectWidget(options);
     /**
      *
@@ -109,7 +109,7 @@ export namespace ProjectDialog {
               valid = false;
             }
           } else {
-            if (oldName !== options.name) {
+            if (old_options.name !== options.name) {
               const content = await contentRequest(
                 'SWAN_projects/' + options.name
               ).catch(() => {
@@ -163,32 +163,32 @@ export namespace ProjectDialog {
         await commands
           .execute('filebrowser:go-to-path', {
             path: '/SWAN_projects',
-            showBrowser: true
+            showBrowser: false
           })
           .then(async () => {
-            await editProjectRequest(oldName as string, options)
+            await editProjectRequest(old_options, options)
               .then(async (value: any) => {
                 await commands
                   .execute('filebrowser:go-to-path', {
                     path: value['project_dir'],
-                    showBrowser: true
+                    showBrowser: false
                   })
                   .catch((msg: any) => {
                     stopSpinner();
-                    console.log('Error moving from edited project: ' + oldName);
+                    console.log('Error moving from edited project: ' + old_options.name);
                     console.log(msg);
                   });
               })
               .catch((msg: any) => {
                 stopSpinner();
-                console.log('Error editing project: ' + oldName);
+                console.log('Error editing project: ' + old_options.name);
                 console.log(msg);
               });
           })
           .catch((msg: any) => {
             stopSpinner();
             console.log(
-              'Error moving to /SWAN_projects to edit the project: ' + oldName
+              'Error moving to /SWAN_projects to edit the project: ' + old_options.name
             );
             console.log(msg);
           });

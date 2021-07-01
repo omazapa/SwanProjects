@@ -7,7 +7,7 @@ import subprocess
 import sys
 from distutils.spawn import find_executable
 from shutil import rmtree
-
+#from swanprojects.utils import get_env_isolated #this can not be use, becuase this command is isolated too 
 
 def _checkipykernel(project_path,python_interpreter,python_version):
     python_code='import ipykernel'
@@ -93,13 +93,18 @@ def generate_ksminfo(project_path):
     save_kernel_paths(project_path)
 
 def swan_kmspecs(project_name):
-    command =  ['env', '-i', 'HOME=%s'%os.environ["HOME"]]
+    command = ["env","-i","HOME=%s"%os.environ["HOME"]]
+    #checking if we are on EOS to add the env variables
+    #we required this to read/write in a isolate environment with EOS
     if "OAUTH2_FILE" in os.environ:
         command.append("OAUTH2_FILE=%s"%os.environ["OAUTH2_FILE"])
     if "OAUTH2_TOKEN" in os.environ:
         command.append("OAUTH2_TOKEN=%s"%os.environ["OAUTH2_TOKEN"])
     if "OAUTH_INSPECTION_ENDPOINT" in os.environ:
         command.append("OAUTH_INSPECTION_ENDPOINT=%s"%os.environ["OAUTH_INSPECTION_ENDPOINT"])
+    
+    #special case when the package was not installed like root, useful for development
+    command.append("PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:{}/.local/bin/".format(os.environ["HOME"])) 
     command += ["/bin/bash","swan_env",project_name, ".","python",__file__,"--generate_ksminfo","--project_name",project_name]    
     print(" ".join(command))
     proc = subprocess.Popen(command, stdout = subprocess.PIPE)
