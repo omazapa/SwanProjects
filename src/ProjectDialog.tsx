@@ -55,7 +55,7 @@ export namespace ProjectDialog {
     commands: CommandRegistry
   ): Promise<any> {
     const _spinner = new Spinner();
-    const old_options = Object.assign({}, options);;
+    const old_options = Object.assign({}, options);
     const dialog = new ProjectWidget(options);
     /**
      *
@@ -110,7 +110,7 @@ export namespace ProjectDialog {
             }
           } else {
             //this is a special case for editing because I need to check that the new name of the project doesn't exists.
-            if (old_options.name !== options.name) { 
+            if (old_options.name !== options.name) {
               const content = await contentRequest(
                 'SWAN_projects/' + options.name
               ).catch(() => {
@@ -130,12 +130,11 @@ export namespace ProjectDialog {
             }
 
             //verifying that options where changed, othewise I will not send the request
-            if( JSON.stringify(old_options) !==  JSON.stringify(options))  
-            {
+            if (JSON.stringify(old_options) !== JSON.stringify(options)) {
               valid = true;
-            }else{
+            } else {
               valid = false;
-            }       
+            }
           }
         }
 
@@ -182,7 +181,9 @@ export namespace ProjectDialog {
                   })
                   .catch((msg: any) => {
                     stopSpinner();
-                    console.log('Error moving from edited project: ' + old_options.name);
+                    console.log(
+                      'Error moving from edited project: ' + old_options.name
+                    );
                     console.log(msg);
                   });
               })
@@ -195,7 +196,8 @@ export namespace ProjectDialog {
           .catch((msg: any) => {
             stopSpinner();
             console.log(
-              'Error moving to /SWAN_projects to edit the project: ' + old_options.name
+              'Error moving to /SWAN_projects to edit the project: ' +
+                old_options.name
             );
             console.log(msg);
           });

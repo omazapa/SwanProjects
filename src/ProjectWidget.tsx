@@ -113,11 +113,9 @@ export class ProjectWidget extends ReactWidget {
   }
   render(): JSX.Element {
     return (
-      <span
-        className="sw-Dialog-body"
-      >
+      <span className="sw-Dialog-body">
         <table>
-          <tbody >
+          <tbody>
             <tr>
               <td align="center">
                 <swanProjectIcon.react
@@ -155,9 +153,7 @@ export class ProjectWidget extends ReactWidget {
               <td colSpan={1}></td>
             </tr>
             <tr>
-              <td className="sw-Dialog-tooltip"
-                colSpan={2}
-              >
+              <td className="sw-Dialog-tooltip" colSpan={2}>
                 <br />
                 <div style={{ display: 'flex' }}>
                   <div> Release </div>
@@ -172,9 +168,7 @@ export class ProjectWidget extends ReactWidget {
                   </div>
                 </div>
               </td>
-              <td className="sw-Dialog-tooltip"
-                colSpan={2}
-              >
+              <td className="sw-Dialog-tooltip" colSpan={2}>
                 <br />
                 Platform
               </td>
@@ -234,27 +228,30 @@ export class ProjectWidget extends ReactWidget {
             </tr>
             <tr>
               <td className="sw-Dialog-userscript" colSpan={4}>
-                <div className="sw-Dialog-userscript-title" style={{ display: 'flex'}}>
+                <div
+                  className="sw-Dialog-userscript-title"
+                  style={{ display: 'flex' }}
+                >
                   <div> User environment </div>
                   <div className="sw-Dialog-userscript-tooltip">
                     {' '}
                     {HelpTooltip('bash_script', 'User environment script')}{' '}
                   </div>
                 </div>
-                  <textarea
-                    className="userScript"
-                    placeholder="#!/bin/bash &#10;Bash user script code here"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      minWidth: '420px',
-                      minHeight: '300px',
-                      padding: '5px 0px 5px 0px',
-                      resize: 'none'
-                    }}
-                    onChange={this.changeUserScript}
-                    defaultValue={this.options.user_script}
-                  />
+                <textarea
+                  className="userScript"
+                  placeholder="#!/bin/bash &#10;Bash user script code here"
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    minWidth: '420px',
+                    minHeight: '300px',
+                    padding: '5px 0px 5px 0px',
+                    resize: 'none'
+                  }}
+                  onChange={this.changeUserScript}
+                  defaultValue={this.options.user_script}
+                />
               </td>
             </tr>
             <tr>

@@ -22,6 +22,7 @@ class SwanProjects(Configurable):
         config=True,
         help="The path to the JSON containing stack configuration")
 
+
 class ProjectInfoHandler(APIHandler):
     @tornado.web.authenticated
     def post(self):
@@ -115,7 +116,7 @@ class CreateProjectHandler(APIHandler):
             f.write(user_script)
             f.close()
         command = get_env_isolated()
-        command += ["/bin/bash","-c", "swan_kmspecs --project_name %s"%name]
+        command += ["/bin/bash", "-c", "swan_kmspecs --project_name %s" % name]
         self.log.info(f"running {command} ")
         proc = subprocess.Popen(command, stdout=subprocess.PIPE)
         proc.wait()
@@ -123,10 +124,9 @@ class CreateProjectHandler(APIHandler):
         self.log.info(f"swan_kmspecs output: {output}")
         proc.communicate()
         self.log.info(f"swan_kmspecs return code: {proc.returncode}")
-        
 
         data = {"project_dir": "SWAN_projects/" + name,
-                "msg": "created project: %s"%name}
+                "msg": "created project: %s" % name}
         self.finish(json.dumps(data))
 
 
@@ -179,7 +179,8 @@ class EditProjectHandler(APIHandler):
                 shutil.rmtree(kernel_dir + "/python3")
 
             with open(swan_project_file, 'w+') as f:
-                f.write(json.dumps(swan_project_content, indent=4, sort_keys=True))
+                f.write(json.dumps(swan_project_content,
+                        indent=4, sort_keys=True))
                 f.close()
             command = get_env_isolated()
             command += ["swan_kmspecs", "--project_name", name]

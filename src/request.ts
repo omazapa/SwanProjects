@@ -94,7 +94,7 @@ export function editProjectRequest(
     old_stack: old_options.stack,
     old_release: old_options.release,
     old_platform: old_options.platform,
-    old_userscript:old_options.user_script,
+    old_userscript: old_options.user_script,
     name: options.name,
     stack: options.stack,
     release: options.release,
