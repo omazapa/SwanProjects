@@ -109,7 +109,8 @@ export namespace ProjectDialog {
               valid = false;
             }
           } else {
-            if (old_options.name !== options.name) {
+            //this is a special case for editing because I need to check that the new name of the project doesn't exists.
+            if (old_options.name !== options.name) { 
               const content = await contentRequest(
                 'SWAN_projects/' + options.name
               ).catch(() => {
@@ -126,9 +127,15 @@ export namespace ProjectDialog {
                 );
                 valid = false;
               }
-            } else {
-              valid = true;
             }
+
+            //verifying that options where changed, othewise I will not send the request
+            if( JSON.stringify(old_options) !==  JSON.stringify(options))  
+            {
+              valid = true;
+            }else{
+              valid = false;
+            }       
           }
         }
 
