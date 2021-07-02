@@ -2,6 +2,7 @@
 # Author: Omar.Zapata@cern.ch 2021
 import json
 import os
+import sys
 import shutil
 import subprocess
 
@@ -106,15 +107,30 @@ class CreateProjectHandler(APIHandler):
         swan_project_file = project_dir + os.path.sep + '.swanproject'
         swan_project_content = {'stack': stack, 'release': release,
                                 'platform': platform}
+        try:
+            with open(swan_project_file, 'w+') as f:
+                f.write(json.dumps(swan_project_content,
+                        indent=4, sort_keys=True))
+                f.close()
+        except:
+            msg = sys.exc_info()[0]
+            data = {"status": False, "project_dir": f"SWAN_projects/{name}",
+                    "msg": f"Error creating .swanproject file for project {name}, traceback: {msg}"}
+            self.finish(json.dumps(data))
+            return
 
-        with open(swan_project_file, 'w+') as f:
-            f.write(json.dumps(swan_project_content, indent=4, sort_keys=True))
-            f.close()
+        try:
+            swan_user_script_file = project_dir + os.path.sep + '.userscript'
+            with open(swan_user_script_file, 'w') as f:
+                f.write(user_script)
+                f.close()
+        except:
+            msg = sys.exc_info()[0]
+            data = {"status": False, "project_dir": f"SWAN_projects/{name}",
+                    "msg": f"Error creating .userscript file for project {name}, traceback: {msg}"}
+            self.finish(json.dumps(data))
+            return
 
-        swan_user_script_file = project_dir + os.path.sep + '.userscript'
-        with open(swan_user_script_file, 'w') as f:
-            f.write(user_script)
-            f.close()
         command = get_env_isolated()
         command += ["/bin/bash", "-c", "swan_kmspecs --project_name %s" % name]
         self.log.info(f"running {command} ")
@@ -124,9 +140,14 @@ class CreateProjectHandler(APIHandler):
         self.log.info(f"swan_kmspecs output: {output}")
         proc.communicate()
         self.log.info(f"swan_kmspecs return code: {proc.returncode}")
+        if proc.returncode != 0:
+            data = {"status": False, "project_dir": f"SWAN_projects/{name}",
+                    "msg": f"Error collecting the information from cvmfs for project {name},  traceback: {output}"}
+            self.finish(json.dumps(data))
+            return
 
-        data = {"project_dir": "SWAN_projects/" + name,
-                "msg": "created project: %s" % name}
+        data = {"status": True, "project_dir": f"SWAN_projects/{name}",
+                f"msg": "created project {name}"}
         self.finish(json.dumps(data))
 
 
@@ -140,7 +161,6 @@ class EditProjectHandler(APIHandler):
         and metadata in the .swanproject is updated.
         """
         input_data = self.get_json_body()
-        print("Called Editing project")
         print(input_data)
         old_name = input_data["old_name"]
         old_stack = input_data["old_stack"]
@@ -156,14 +176,30 @@ class EditProjectHandler(APIHandler):
 
         project_dir = os.environ["HOME"] + "/SWAN_projects/" + name
         if old_name != name:
-            old_project_dir = os.environ["HOME"] + "/SWAN_projects/" + old_name
-            os.rename(old_project_dir, project_dir)
+            try:
+                old_project_dir = os.environ["HOME"] + \
+                    "/SWAN_projects/" + old_name
+                os.rename(old_project_dir, project_dir)
+            except:
+                msg = sys.exc_info()[0]
+                data = {"status": False, "project_dir": f"SWAN_projects/{name}",
+                        "msg": f"Error editing project folder {name},  traceback: {msg}"}
+                # this will stop the execution here, it's the same for the next exceptions.
+                self.finish(json.dumps(data))
+                return
 
         if old_userscript != user_script:
             userscript_file = project_dir + os.path.sep + '.userscript'
-            with open(userscript_file, 'w') as f:
-                f.write(user_script)
-                f.close()
+            try:
+                with open(userscript_file, 'w') as f:
+                    f.write(user_script)
+                    f.close()
+            except:
+                msg = sys.exc_info()[0]
+                data = {"status": False, "project_dir": f"SWAN_projects/{name}",
+                        "msg": f"Error editing .userscript for project {name},  traceback: {msg}"}
+                self.finish(json.dumps(data))
+                return
 
         if stack != old_stack or platform != old_platform or release != old_release:
             swan_project_file = project_dir + os.path.sep + '.swanproject'
@@ -191,9 +227,14 @@ class EditProjectHandler(APIHandler):
             self.log.info(f"result {output} ")
             proc.communicate()
             self.log.info(f"swan_kmspecs return code: {proc.returncode}")
+            if proc.returncode != 0:
+                data = {"status": False, "project_dir": f"SWAN_projects/{name}",
+                        "msg": f"Error editing stack, platform or relase for project {name},  traceback: {output}"}
+                self.finish(json.dumps(data))
+                return
 
-        data = {"project_dir": "SWAN_projects/" + name,
-                "msg": "edited project: {}".format(name)}
+        data = {"status": True, "project_dir": f"SWAN_projects/{name}",
+                "msg": f"edited project {name}"}
         self.finish(json.dumps(data))
 
 
