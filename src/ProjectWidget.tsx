@@ -38,9 +38,16 @@ export class ProjectWidget extends ReactWidget {
     this.changeClicked = this.changeClicked.bind(this);
   }
 
+  /**
+   * returns the project values, such as name, stack, release ...
+   */
   getOptions(): ProjectDialog.ISWANOptions {
     return this.options;
   }
+
+  /**
+   * fill the form with project values, such as name, stack, release ...
+   */
   setOptions(options: ProjectDialog.ISWANOptions): void {
     this.options = options;
     if (this.options.stack === undefined || this.options.stack === '') {
@@ -50,6 +57,10 @@ export class ProjectWidget extends ReactWidget {
     this.update();
   }
 
+  /**
+   * method to change stack, allows to handle the information
+   * in the Select component for platform and release
+   */
   selectStack(source: string): void {
     this.options.stack = source;
 
@@ -79,8 +90,11 @@ export class ProjectWidget extends ReactWidget {
 
     this.update();
   }
+
+  /**
+   * method to change release in the Select component
+   */
   changeRelease(event: { value: string; label: string }): void {
-    console.log(event);
     this.options.release = event.value;
     const stackValues = this.options.stacks_options[
       this.options.stack
@@ -94,19 +108,33 @@ export class ProjectWidget extends ReactWidget {
     this.options.platform = platforms[0];
     this.update();
   }
+
+  /**
+   * method to change platform in the Select component
+   */
   changePlatform(event: { value: string; label: string }): void {
     this.options.platform = event.value;
 
     this.update();
   }
 
+  /**
+   * method to change name in the input text.
+   */
   changeName(event: React.ChangeEvent<HTMLInputElement>): void {
     this.options.name = event.target.value;
   }
 
+  /**
+   * method to change text in the text area for the user script.
+   */
   changeUserScript(event: React.ChangeEvent<HTMLTextAreaElement>): void {
     this.options.user_script = event.target.value;
   }
+
+  /**
+   * method to indicated that the
+   */
   changeClicked(): void {
     this.clicked = true;
     this.parent.parent.close();
@@ -145,11 +173,7 @@ export class ProjectWidget extends ReactWidget {
                   {Card('CMSSW', cmsIcon, this.selectStack)}
                 </div>
               </td>
-              <td colSpan={1}>
-                {/* <div style={{ float: 'left' }}>
-                  {Card('Conda', condaIcon, this.selectStack)}
-                </div> */}
-              </td>
+              <td colSpan={1}></td>
               <td colSpan={1}></td>
             </tr>
             <tr>

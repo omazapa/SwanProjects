@@ -56,7 +56,7 @@ export function contentRequest(cwd: string): any {
 /**
  * Request to create a project
  *
- * @param options parameters to send to the backend, like: name, stack, release etc..
+ * @param options parameters to send to the backend, such as name, stack, release etc..
  * @returns  json object with the keys 'project_dir' and 'msg' or json object with the information of the error.
  */
 export function createProjectRequest(options: ProjectDialog.ISWANOptions): any {
@@ -82,7 +82,7 @@ export function createProjectRequest(options: ProjectDialog.ISWANOptions): any {
  * Request to edit project
  *
  * @param old_name previous name of the project
- * @param options new project parameters to send to the backend, like: name, stack, release etc..
+ * @param options new project parameters to send to the backend, such as name, stack, release etc..
  * @returns json object with the keys 'project_dir' and 'msg' or json object with the information of the error.
  */
 export function editProjectRequest(

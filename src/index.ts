@@ -85,7 +85,7 @@ const extension: JupyterFrontEndPlugin<void> = {
       }
     });
 
-    // // Add the command to the launcher
+    // Add the command to the launcher
     if (launcher) {
       launcher.add({
         command: CommandIDs.projectDialog,

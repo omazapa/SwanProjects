@@ -49,6 +49,7 @@ export namespace ProjectDialog {
     project_dir: string;
     msg: string;
   }
+
   /**
    * Create and show a modal dialog to create or modify projects.
    *
@@ -66,10 +67,11 @@ export namespace ProjectDialog {
     const _spinner = new Spinner();
     const old_options = Object.assign({}, options);
     const dialog = new ProjectWidget(options);
-    /**
-     *
-     */
+
     function startSpinner(): void {
+      /**
+       * Function to start the spiner in the SwanLauncer, embed in the html tag with id jp-main-dock-panel.
+       */
       const node = document.getElementById('jp-main-dock-panel');
       node?.appendChild(_spinner.node);
       node?.focus();
@@ -79,13 +81,12 @@ export namespace ProjectDialog {
     }
 
     /**
-     *
+     * hides the spiner from the component
      */
     function stopSpinner(): void {
       _spinner.hide();
     }
 
-    //Widget.attach(dialog, document.body);
     let valid = false;
     do {
       dialog.clicked = false;

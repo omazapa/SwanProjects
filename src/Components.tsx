@@ -1,3 +1,5 @@
+// Copyright (c) SWAN Development Team.
+// Author: Omar.Zapata@cern.ch 2021
 import { classes, LabIcon } from '@jupyterlab/ui-components';
 import * as React from 'react';
 import ReactTooltip from 'react-tooltip';
@@ -52,7 +54,6 @@ export function Card(
   icon: LabIcon,
   updateCallback: (stack: string) => void
 ): React.ReactElement<any> {
-  // Get some properties of the command
   const title = label;
   // Build the onclick handler.
   const onclick = (): void => {
@@ -61,8 +62,6 @@ export function Card(
     updateCallback(label);
   };
 
-  // With tabindex working, you can now pick a kernel by tabbing around and
-  // pressing Enter.
   const onkeypress = (event: React.KeyboardEvent): void => {
     if (event.key === 'Enter') {
       onclick();
