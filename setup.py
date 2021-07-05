@@ -33,12 +33,13 @@ labext_name = "@swan/swanprojects"
 
 data_files_spec = [
     ("share/jupyter/labextensions/%s" % labext_name, str(lab_path), "**"),
-    ("share/jupyter/labextensions/%s" % labext_name, str(HERE), "install.json"),
-    ("etc/jupyter/jupyter_server_config.d","jupyter-config/server-config", "swanprojects.json"),
+    ("share/jupyter/labextensions/%s" %
+     labext_name, str(HERE), "install.json"),
+    ("etc/jupyter/jupyter_server_config.d",
+     "jupyter-config/server-config", "swanprojects.json"),
     # For backward compatibility with notebook server
     ("etc/jupyter/jupyter_notebook_config.d",
      "jupyter-config/nb-config", "swanprojects.json"),
-    
 ]
 
 long_description = (HERE / "README.md").read_text()
@@ -70,7 +71,7 @@ setup_args = dict(
     long_description_content_type="text/markdown",
     scripts=['bin/swan_env', 'bin/swan_bash', 'bin/swan_kmspecs'],
     cmdclass=cmdclass,
-    data_files=get_data_files(data_files_spec), 
+    data_files=get_data_files(data_files_spec),
     packages=setuptools.find_packages(),
     install_requires=[
         "jupyter_server>=1.6,<2"

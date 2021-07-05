@@ -8,21 +8,21 @@ import shutil
 from jupyter_client.kernelspec import KernelSpecManager, NoSuchKernel
 from swanprojects.utils import (get_project_info, get_project_name,
                                 get_project_path)
-from traitlets import Bool, Unicode
+from traitlets import Unicode
 from traitlets.config import Configurable
 
 
 class SwanKSMConfig(Configurable):
     kernel_resources = Unicode(
-        os.path.dirname(os.path.abspath(__file__))+'/resources',
-        config = True, 
-        help = "The path to the folder containg the resources to add to the kernel"
+        os.path.dirname(os.path.abspath(__file__)) + '/resources',
+        config=True,
+        help="The path to the folder containg the resources to add to the kernel"
     )
+
 
 class SwanKernelSpecManager(KernelSpecManager):
     path = Unicode("", config=True, allow_none=True,
                    help="SWAN Project path")
-
 
     def __init__(self, **kwargs):
         super(SwanKernelSpecManager, self).__init__(**kwargs)
@@ -36,7 +36,8 @@ class SwanKernelSpecManager(KernelSpecManager):
         This function creates a default kernel with info from the stack.
         It's only necessary for CMSSW stacks as those don't have a Python kernel
         """
-        self.log.info(f"copying resources from {self.ksmconfig.kernel_resources} to {kernel_dir}")
+        self.log.info(
+            f"copying resources from {self.ksmconfig.kernel_resources} to {kernel_dir}")
         shutil.copytree(self.ksmconfig.kernel_resources, kernel_dir)
         spec = {"argv": [python_path,
                          "-m",
@@ -74,21 +75,22 @@ class SwanKernelSpecManager(KernelSpecManager):
         self.log.debug(f"specs:\n {self.get_all_specs()}")
 
     def wrap_kernel_specs(self, project_name, kspec):
-        
-        argv = ["env", "-i", "HOME=%s"%os.environ["HOME"]]
 
-        #checking if we are on EOS to add the env variables
-        #we required this to read/write in a isolate environment with EOS
+        argv = ["env", "-i", "HOME=%s" % os.environ["HOME"]]
+
+        # checking if we are on EOS to add the env variables
+        # we required this to read/write in a isolate environment with EOS
         if "OAUTH2_FILE" in os.environ:
-            argv.append("OAUTH2_FILE=%s"%os.environ["OAUTH2_FILE"])
+            argv.append("OAUTH2_FILE=%s" % os.environ["OAUTH2_FILE"])
         if "OAUTH2_TOKEN" in os.environ:
-            argv.append("OAUTH2_TOKEN=%s"%os.environ["OAUTH2_TOKEN"])
+            argv.append("OAUTH2_TOKEN=%s" % os.environ["OAUTH2_TOKEN"])
         if "OAUTH_INSPECTION_ENDPOINT" in os.environ:
-            argv.append("OAUTH_INSPECTION_ENDPOINT=%s"%os.environ["OAUTH_INSPECTION_ENDPOINT"])
-        
-        argv += ["/bin/bash","-c","swan_env {} {} ".format(
-                    project_name, ".") + "'" + " ".join(kspec.argv) + "'"
-                ]
+            argv.append("OAUTH_INSPECTION_ENDPOINT=%s" %
+                        os.environ["OAUTH_INSPECTION_ENDPOINT"])
+
+        argv += ["/bin/bash", "-c", "swan_env {} {} ".format(
+            project_name, ".") + "'" + " ".join(kspec.argv) + "'"
+        ]
 
         kspec.argv = argv
         return kspec

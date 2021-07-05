@@ -2,7 +2,6 @@
 # Author: Omar.Zapata@cern.ch 2021
 import json
 import os
-import sys
 import shutil
 import subprocess
 
@@ -10,7 +9,7 @@ import tornado
 from notebook.base.handlers import APIHandler
 from notebook.utils import url_path_join
 from tornado.web import StaticFileHandler
-from traitlets import Bool, Unicode
+from traitlets import Unicode
 from traitlets.config import Configurable
 
 from .utils import (get_project_info, get_project_path, get_project_readme,
@@ -19,7 +18,7 @@ from .utils import (get_project_info, get_project_path, get_project_readme,
 
 class SwanProjects(Configurable):
     stacks_path = Unicode(
-        os.path.dirname(os.path.abspath(__file__))+'/stacks.json',
+        os.path.dirname(os.path.abspath(__file__)) + '/stacks.json',
         config=True,
         help="The path to the JSON containing stack configuration")
 
@@ -103,7 +102,13 @@ class CreateProjectHandler(APIHandler):
         user_script = input_data["user_script"]
 
         project_dir = os.environ["HOME"] + "/SWAN_projects/" + name
-        os.makedirs(project_dir)
+        try:
+            os.makedirs(project_dir)
+        except Exception as msg:
+            data = {"status": False, "project_dir": f"SWAN_projects/{name}",
+                    "msg": f"Error creating folder for project {name}, traceback: {msg}"}
+            self.finish(json.dumps(data))
+            return
         swan_project_file = project_dir + os.path.sep + '.swanproject'
         swan_project_content = {'stack': stack, 'release': release,
                                 'platform': platform}
@@ -112,8 +117,7 @@ class CreateProjectHandler(APIHandler):
                 f.write(json.dumps(swan_project_content,
                         indent=4, sort_keys=True))
                 f.close()
-        except:
-            msg = sys.exc_info()[0]
+        except Exception as msg:
             data = {"status": False, "project_dir": f"SWAN_projects/{name}",
                     "msg": f"Error creating .swanproject file for project {name}, traceback: {msg}"}
             self.finish(json.dumps(data))
@@ -124,8 +128,7 @@ class CreateProjectHandler(APIHandler):
             with open(swan_user_script_file, 'w') as f:
                 f.write(user_script)
                 f.close()
-        except:
-            msg = sys.exc_info()[0]
+        except Exception as msg:
             data = {"status": False, "project_dir": f"SWAN_projects/{name}",
                     "msg": f"Error creating .userscript file for project {name}, traceback: {msg}"}
             self.finish(json.dumps(data))
@@ -147,7 +150,7 @@ class CreateProjectHandler(APIHandler):
             return
 
         data = {"status": True, "project_dir": f"SWAN_projects/{name}",
-                f"msg": "created project {name}"}
+                "msg": f"created project {name}"}
         self.finish(json.dumps(data))
 
 
@@ -180,8 +183,7 @@ class EditProjectHandler(APIHandler):
                 old_project_dir = os.environ["HOME"] + \
                     "/SWAN_projects/" + old_name
                 os.rename(old_project_dir, project_dir)
-            except:
-                msg = sys.exc_info()[0]
+            except Exception as msg:
                 data = {"status": False, "project_dir": f"SWAN_projects/{name}",
                         "msg": f"Error editing project folder {name},  traceback: {msg}"}
                 # this will stop the execution here, it's the same for the next exceptions.
@@ -194,8 +196,7 @@ class EditProjectHandler(APIHandler):
                 with open(userscript_file, 'w') as f:
                     f.write(user_script)
                     f.close()
-            except:
-                msg = sys.exc_info()[0]
+            except Exception as msg:
                 data = {"status": False, "project_dir": f"SWAN_projects/{name}",
                         "msg": f"Error editing .userscript for project {name},  traceback: {msg}"}
                 self.finish(json.dumps(data))

@@ -26,7 +26,7 @@ export namespace ProjectDialog {
   }
 
   /**
-   * Constructor options for project dialogs
+   * options for project dialogs
    */
   export interface ISWANOptions extends IOptions {
     /**
@@ -40,6 +40,14 @@ export namespace ProjectDialog {
     stacks_options?: JSONObject;
   }
 
+  /**
+   * variables from backend response
+   */
+  export interface ISWANReqResponse {
+    status: boolean;
+    project_dir: string;
+    msg: string;
+  }
   /**
    * Create and show a modal dialog to create or modify projects.
    *
@@ -154,12 +162,17 @@ export namespace ProjectDialog {
       startSpinner();
       if (create) {
         await createProjectRequest(options)
-          .then((value: any) => {
-            commands.execute('filebrowser:go-to-path', {
-              path: value['project_dir'],
-              showBrowser: true
-            });
-            return value;
+          .then((res: ISWANReqResponse) => {
+            if (res.status) {
+              commands.execute('filebrowser:go-to-path', {
+                path: res.project_dir,
+                showBrowser: false
+              });
+            } else {
+              stopSpinner();
+              showErrorMessage('Error creating project', res.msg);
+            }
+            return res;
           })
           .catch((msg: any): void => {
             stopSpinner();
@@ -173,19 +186,25 @@ export namespace ProjectDialog {
           })
           .then(async () => {
             await editProjectRequest(old_options, options)
-              .then(async (value: any) => {
-                await commands
-                  .execute('filebrowser:go-to-path', {
-                    path: value['project_dir'],
-                    showBrowser: false
-                  })
-                  .catch((msg: any) => {
-                    stopSpinner();
-                    console.log(
-                      'Error moving from edited project: ' + old_options.name
-                    );
-                    console.log(msg);
-                  });
+              .then(async (res: ISWANReqResponse) => {
+                if (res.status) {
+                  await commands
+                    .execute('filebrowser:go-to-path', {
+                      path: res.project_dir,
+                      showBrowser: false
+                    })
+                    .catch((msg: any) => {
+                      stopSpinner();
+                      console.log(
+                        'Error moving from edited project  ' + old_options.name
+                      );
+                      console.log(msg);
+                    });
+                } else {
+                  stopSpinner();
+                  showErrorMessage('Error creating project', res.msg);
+                }
+                return res;
               })
               .catch((msg: any) => {
                 stopSpinner();

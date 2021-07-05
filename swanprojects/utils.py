@@ -1,4 +1,3 @@
-import shutil
 import json
 import os
 
@@ -75,17 +74,20 @@ def check_project_info(project_info):
             not_found.append(key)
     return {"status": status, "not_found": not_found}
 
+
 def get_env_isolated():
-    command = ["env","-i","HOME=%s"%os.environ["HOME"]]
-    #checking if we are on EOS to add the env variables
-    #we required this to read/write in a isolate environment with EOS
+    command = ["env", "-i", "HOME=%s" % os.environ["HOME"]]
+    # checking if we are on EOS to add the env variables
+    # we required this to read/write in a isolate environment with EOS
     if "OAUTH2_FILE" in os.environ:
-        command.append("OAUTH2_FILE=%s"%os.environ["OAUTH2_FILE"])
+        command.append("OAUTH2_FILE=%s" % os.environ["OAUTH2_FILE"])
     if "OAUTH2_TOKEN" in os.environ:
-        command.append("OAUTH2_TOKEN=%s"%os.environ["OAUTH2_TOKEN"])
+        command.append("OAUTH2_TOKEN=%s" % os.environ["OAUTH2_TOKEN"])
     if "OAUTH_INSPECTION_ENDPOINT" in os.environ:
-        command.append("OAUTH_INSPECTION_ENDPOINT=%s"%os.environ["OAUTH_INSPECTION_ENDPOINT"])
-    
-    #special case when the package was not installed like root, useful for development
-    command.append("PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:{}/.local/bin/".format(os.environ["HOME"])) 
+        command.append("OAUTH_INSPECTION_ENDPOINT=%s" %
+                       os.environ["OAUTH_INSPECTION_ENDPOINT"])
+
+    # special case when the package was not installed like root, useful for development
+    command.append(
+        "PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:{}/.local/bin/".format(os.environ["HOME"]))
     return command
