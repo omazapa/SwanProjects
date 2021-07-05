@@ -1,7 +1,7 @@
 // Copyright (c) SWAN Team.
 // Author: Omar Zapata CERN 2021
 
-import { showErrorMessage } from '@jupyterlab/apputils'
+import { showErrorMessage } from '@jupyterlab/apputils';
 import { Dialog, showDialog } from './dialog';
 import { ProjectWidget } from './ProjectWidget';
 import { JSONObject } from '@lumino/coreutils';
