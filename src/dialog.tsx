@@ -1,5 +1,5 @@
-// Copyright (c) Jupyter Development Team.
-// Distributed under the terms of the Modified BSD License.
+// Modified version for SWAN took from  @jupyterlab/apputils
+// required for customized modal dialogs.
 
 import { ArrayExt, each, map, toArray } from '@lumino/algorithm';
 
@@ -31,50 +31,6 @@ export function showDialog<T>(
 ): Promise<Dialog.IResult<T>> {
   const dialog = new Dialog(options);
   return dialog.launch();
-}
-
-/**
- * Show an error message dialog.
- *
- * @param title - The title of the dialog box.
- *
- * @param error - the error to show in the dialog body (either a string
- *   or an object with a string `message` property).
- */
-export function showErrorMessage(
-  title: string,
-  error: any, // eslint-disable-line @typescript-eslint/explicit-module-boundary-types
-  buttons: ReadonlyArray<Dialog.IButton> = [
-    Dialog.okButton({ label: 'Dismiss' })
-  ]
-): Promise<void> {
-  console.warn('Showing error:', error);
-
-  // Cache promises to prevent multiple copies of identical dialogs showing
-  // to the user.
-  const body = typeof error === 'string' ? error : error.message;
-  const key = title + '----' + body;
-  const promise = Private.errorMessagePromiseCache.get(key);
-  if (promise) {
-    return promise;
-  } else {
-    const dialogPromise = showDialog({
-      title: title,
-      body: body,
-      buttons: buttons
-    }).then(
-      () => {
-        Private.errorMessagePromiseCache.delete(key);
-      },
-      error => {
-        // TODO: Use .finally() above when supported
-        Private.errorMessagePromiseCache.delete(key);
-        throw error;
-      }
-    );
-    Private.errorMessagePromiseCache.set(key, dialogPromise);
-    return dialogPromise;
-  }
 }
 
 /**
@@ -231,7 +187,6 @@ export class Dialog<T> extends Widget {
    */
   protected onAfterAttach(msg: Message): void {
     const node = this.node;
-    // node.addEventListener('keydown', this, true);
     node.addEventListener('contextmenu', this, true);
     node.addEventListener('click', this, true);
     document.addEventListener('focus', this, true);
@@ -253,7 +208,6 @@ export class Dialog<T> extends Widget {
    */
   protected onAfterDetach(msg: Message): void {
     const node = this.node;
-    // node.removeEventListener('keydown', this, true);
     node.removeEventListener('contextmenu', this, true);
     node.removeEventListener('click', this, true);
     document.removeEventListener('focus', this, true);

@@ -184,8 +184,8 @@ class EditProjectHandler(APIHandler):
                     "/SWAN_projects/" + old_name
                 os.rename(old_project_dir, project_dir)
             except Exception as msg:
-                data = {"status": False, "project_dir": f"SWAN_projects/{name}",
-                        "msg": f"Error editing project folder {name},  traceback: {msg}"}
+                data = {"status": False, "project_dir": f"SWAN_projects/{old_name}",
+                        "msg": f"Error editing project folder {old_name},  traceback: {msg}"}
                 # this will stop the execution here, it's the same for the next exceptions.
                 self.finish(json.dumps(data))
                 return

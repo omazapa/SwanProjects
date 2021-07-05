@@ -1,7 +1,8 @@
 // Copyright (c) SWAN Team.
 // Author: Omar Zapata CERN 2021
 
-import { Dialog, showErrorMessage, showDialog } from './dialog';
+import { showErrorMessage } from '@jupyterlab/apputils'
+import { Dialog, showDialog } from './dialog';
 import { ProjectWidget } from './ProjectWidget';
 import { JSONObject } from '@lumino/coreutils';
 import {
@@ -202,7 +203,7 @@ export namespace ProjectDialog {
                     });
                 } else {
                   stopSpinner();
-                  showErrorMessage('Error creating project', res.msg);
+                  showErrorMessage('Error editing project', res.msg);
                 }
                 return res;
               })
