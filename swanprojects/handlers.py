@@ -37,7 +37,6 @@ class ProjectInfoHandler(APIHandler):
         input_data = self.get_json_body()
         path = input_data["path"]
         project = get_project_path(path)
-        self.kernel_spec_manager.set_path(path)
         project_data = {}
         if project is not None:
             project_data = get_project_info(project)
