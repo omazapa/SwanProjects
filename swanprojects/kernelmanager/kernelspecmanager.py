@@ -7,7 +7,7 @@ import shutil
 
 from jupyter_client.kernelspec import KernelSpecManager, NoSuchKernel
 from swanprojects.utils import (get_project_info, get_project_name,
-                                get_project_path)
+                                get_project_path, get_env_isolated)
 from traitlets import Unicode
 from traitlets.config import Configurable
 
@@ -84,18 +84,7 @@ class SwanKernelSpecManager(KernelSpecManager):
 
     def wrap_kernel_specs(self, project_name, kspec):
 
-        argv = ["env", "-i", "HOME=%s" % os.environ["HOME"]]
-
-        # checking if we are on EOS to add the env variables
-        # we required this to read/write in a isolate environment with EOS
-        if "OAUTH2_FILE" in os.environ:
-            argv.append("OAUTH2_FILE=%s" % os.environ["OAUTH2_FILE"])
-        if "OAUTH2_TOKEN" in os.environ:
-            argv.append("OAUTH2_TOKEN=%s" % os.environ["OAUTH2_TOKEN"])
-        if "OAUTH_INSPECTION_ENDPOINT" in os.environ:
-            argv.append("OAUTH_INSPECTION_ENDPOINT=%s" %
-                        os.environ["OAUTH_INSPECTION_ENDPOINT"])
-
+        argv = get_env_isolated()
         argv += ["/bin/bash", "-c", "swan_env {} {} ".format(
             project_name, ".") + "'" + " ".join(kspec.argv) + "'"
         ]
