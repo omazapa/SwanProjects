@@ -9,10 +9,10 @@ import ReactTooltip from 'react-tooltip';
  * @param message Message to display in the tooltip
  * @returns React Element
  */
-export function HelpTooltip(
-  id: string,
-  message: string
-): React.ReactElement<any> {
+export function HelpTooltip(props: {
+  id: string;
+  message: string;
+}): React.ReactElement<any> {
   return (
     <div className="sw-Component-tooltip">
       <div
@@ -27,12 +27,12 @@ export function HelpTooltip(
           alignItems: 'center'
         }}
       >
-        <a data-for={id} data-tip={message}>
+        <a data-for={props.id} data-tip={props.message}>
           ?
         </a>
         <ReactTooltip
           html={true}
-          id={id}
+          id={props.id}
           multiline={true}
           getContent={(dataTip): string => `${dataTip}`}
         />
@@ -49,17 +49,17 @@ export function HelpTooltip(
  * @param updateCallback - Callback to update stacks on other components
  * @returns a vdom `VirtualElement` for the launcher card.
  */
-export function Card(
-  label: string,
-  icon: LabIcon,
-  updateCallback: (stack: string) => void
-): React.ReactElement<any> {
-  const title = label;
+export function Card(props: {
+  label: string;
+  icon: LabIcon;
+  updateCallback: (stack: string) => void;
+}): React.ReactElement<any> {
+  const title = props.label;
   // Build the onclick handler.
   const onclick = (): void => {
     // If an item has already been launched,
     // don't try to launch another.
-    updateCallback(label);
+    props.updateCallback(props.label);
   };
 
   const onkeypress = (event: React.KeyboardEvent): void => {
@@ -67,12 +67,11 @@ export function Card(
       onclick();
     }
   };
-  // Return the VDOM element.
   return (
     <div
       style={{ height: '75px', width: '75px' }}
       className="jp-LauncherCard"
-      id={label}
+      id={props.label}
       title={title}
       onClick={onclick}
       onKeyPress={onkeypress}
@@ -81,14 +80,14 @@ export function Card(
       <div className="jp-LauncherCard-icon" style={{ paddingTop: '4px' }}>
         {
           <LabIcon.resolveReact
-            icon={icon}
+            icon={props.icon}
             iconClass={classes('', 'jp-Icon-cover')}
             stylesheet="launcherCard"
           />
         }
       </div>
       <div className="jp-LauncherCard-label" title={title}>
-        <p>{label}</p>
+        <p>{props.label}</p>
       </div>
     </div>
   );

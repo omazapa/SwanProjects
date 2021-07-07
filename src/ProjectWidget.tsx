@@ -139,163 +139,125 @@ export class ProjectWidget extends ReactWidget {
     this.clicked = true;
     this.parent.parent.close();
   }
+
   render(): JSX.Element {
     return (
-      <span className="sw-Dialog-body">
-        <table>
-          <tbody>
-            <tr>
-              <td align="center">
-                <swanProjectIcon.react
-                  className="sw-Dialog-project-icon"
-                  tag="span"
-                />
-              </td>
-              <td colSpan={3}>
-                <div className="sw-Dialog-project-name">
-                  <input
-                    type="text"
-                    defaultValue={this.options.name}
-                    placeholder="Project Name"
-                    onChange={this.changeName}
-                  />
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td colSpan={1}>
-                <div style={{ float: 'left' }}>
-                  {Card('LCG', sftIcon, this.selectStack)}
-                </div>
-              </td>
-              <td colSpan={1}>
-                <div style={{ float: 'left' }}>
-                  {Card('CMSSW', cmsIcon, this.selectStack)}
-                </div>
-              </td>
-              <td colSpan={1}></td>
-              <td colSpan={1}></td>
-            </tr>
-            <tr>
-              <td className="sw-Dialog-tooltip" colSpan={2}>
-                <br />
-                <div style={{ display: 'flex' }}>
-                  <div> Release </div>
-                  <div className="sw-Dialog-release-tooltip">
-                    {' '}
-                    {HelpTooltip(
-                      'release',
-                      'Software stack: TODO! <br/> \
+      <>
+        <div className="sw-Dialog-project-name">
+          <swanProjectIcon.react
+            className="sw-Dialog-project-icon"
+            tag="span"
+          />
+          <input
+            type="text"
+            defaultValue={this.options.name}
+            placeholder="Project Name"
+            onChange={this.changeName}
+          />
+        </div>
+        <div className="sw-Dialog-select-stack">
+          <Card label="LCG" icon={sftIcon} updateCallback={this.selectStack} />
+          <Card
+            label="CMSSW"
+            icon={cmsIcon}
+            updateCallback={this.selectStack}
+          />
+        </div>
+        <div className="sw-Dialog-stack-options">
+          <div>
+            <div className="sw-Dialog-stack-option-label">
+              <span> Release </span>
+              <span className="sw-Dialog-release-tooltip">
+                <HelpTooltip
+                  id="release"
+                  message="Software stack: TODO! <br/> \
                                     No message yet.<br/> \
-                                    ;('
-                    )}{' '}
-                  </div>
-                </div>
-              </td>
-              <td className="sw-Dialog-tooltip" colSpan={2}>
-                <br />
-                Platform
-              </td>
-            </tr>
-            <tr className="sw-Dialog-select">
-              {/* https://react-select.com/advanced#portaling */}
-              <td colSpan={2}>
-                <Select
-                  isSearchable={false}
-                  options={this.releases as any}
-                  menuPortalTarget={document.body}
-                  menuPosition={'absolute'}
-                  styles={{
-                    menuPortal: (base: any): any => ({
-                      ...base,
-                      zIndex: 999999
-                    })
-                  }}
-                  menuShouldScrollIntoView={false}
-                  defaultValue={{
-                    value: this.options.release,
-                    label: this.options.release
-                  }}
-                  value={{
-                    value: this.options.release,
-                    label: this.options.release
-                  }}
-                  onChange={this.changeRelease}
+                                    ;("
                 />
-              </td>
-              <td colSpan={2}>
-                {
-                  <Select
-                    isSearchable={false}
-                    options={this.platforms as any}
-                    menuPortalTarget={document.body}
-                    menuPosition={'absolute'}
-                    styles={{
-                      menuPortal: (base: any): any => ({
-                        ...base,
-                        zIndex: 999999
-                      })
-                    }}
-                    menuShouldScrollIntoView={false}
-                    defaultValue={{
-                      value: this.options.platform,
-                      label: this.options.platform
-                    }}
-                    value={{
-                      value: this.options.platform,
-                      label: this.options.platform
-                    }}
-                    onChange={this.changePlatform}
-                  />
-                }
-              </td>
-            </tr>
-            <tr>
-              <td className="sw-Dialog-userscript" colSpan={4}>
-                <div
-                  className="sw-Dialog-userscript-title"
-                  style={{ display: 'flex' }}
-                >
-                  <div> User environment </div>
-                  <div className="sw-Dialog-userscript-tooltip">
-                    {' '}
-                    {HelpTooltip('bash_script', 'User environment script')}{' '}
-                  </div>
-                </div>
-                <textarea
-                  className="userScript"
-                  placeholder="#!/bin/bash &#10;Bash user script code here"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    minWidth: '420px',
-                    minHeight: '300px',
-                    padding: '5px 0px 5px 0px',
-                    resize: 'none'
-                  }}
-                  onChange={this.changeUserScript}
-                  defaultValue={this.options.user_script}
+              </span>
+            </div>
+            <Select
+              isSearchable={false}
+              options={this.releases as any}
+              menuPortalTarget={document.body}
+              menuPosition={'absolute'}
+              styles={{
+                menuPortal: (base: any): any => ({
+                  ...base,
+                  zIndex: 999999
+                })
+              }}
+              menuShouldScrollIntoView={false}
+              defaultValue={{
+                value: this.options.release,
+                label: this.options.release
+              }}
+              value={{
+                value: this.options.release,
+                label: this.options.release
+              }}
+              onChange={this.changeRelease}
+            />
+          </div>
+          <div>
+            <div className="sw-Dialog-stack-option-label">
+              <span> Platform </span>
+              <span className="sw-Dialog-release-tooltip">
+                <HelpTooltip
+                  id="release"
+                  message="Platform: TODO! <br/> \
+                                    No message yet.<br/> \
+                                    ;("
                 />
-              </td>
-            </tr>
-            <tr>
-              <td colSpan={4}>
-                <div style={{ float: 'right' }}>
-                  <br />
-                  <br />
-                  <button
-                    type="button"
-                    className="jp-mod-styled"
-                    onClick={this.changeClicked}
-                  >
-                    Add
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </span>
+              </span>
+            </div>
+            <Select
+              isSearchable={false}
+              options={this.platforms as any}
+              menuPortalTarget={document.body}
+              menuPosition={'absolute'}
+              styles={{
+                menuPortal: (base: any): any => ({
+                  ...base,
+                  zIndex: 999999
+                })
+              }}
+              menuShouldScrollIntoView={false}
+              defaultValue={{
+                value: this.options.platform,
+                label: this.options.platform
+              }}
+              value={{
+                value: this.options.platform,
+                label: this.options.platform
+              }}
+              onChange={this.changePlatform}
+            />
+          </div>
+        </div>
+        <div className="sw-Dialog-userscript">
+          <div className="sw-Dialog-userscript-title">
+            <div> User environment </div>
+            <div className="sw-Dialog-userscript-tooltip">
+              <HelpTooltip id="bash_script" message="User environment script" />
+            </div>
+          </div>
+          <textarea
+            placeholder="#!/bin/bash &#10;Bash user script code here"
+            onChange={this.changeUserScript}
+            defaultValue={this.options.user_script}
+          />
+        </div>
+        <div className="sw-Dialog-button-area">
+          <button
+            type="button"
+            className="jp-mod-styled sw-Dialog-button"
+            onClick={this.changeClicked}
+          >
+            Add
+          </button>
+        </div>
+      </>
     );
   }
 }
