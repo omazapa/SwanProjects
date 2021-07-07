@@ -254,7 +254,7 @@ export class ProjectWidget extends ReactWidget {
             className="jp-mod-styled sw-Dialog-button"
             onClick={this.changeClicked}
           >
-            Create Project
+            Add
           </button>
         </div>
       </>
