@@ -1,9 +1,11 @@
 include LICENSE
 include README.md
+include RELEASE.md
 include pyproject.toml
 recursive-include jupyter-config *.json
 
 include swanprojects/kernelmanager/resources/*
+include swanprojects/stacks.json
 include package.json
 include install.json
 include ts*.json
