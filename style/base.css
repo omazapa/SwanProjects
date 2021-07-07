@@ -3,172 +3,173 @@
 |
 | Distributed under the terms of the AGPL License.
 |----------------------------------------------------------------------------*/
-  
-  .sw-Dialog-content {
-    display: flex;
-    flex-direction: column;
-    margin-left: auto;
-    margin-right: auto;
-    background: var(--jp-layout-color1);
-    padding: 24px;
-    padding-bottom: 12px;
-    min-width: 300px;
-    min-height: 150px;
-    max-width: 1000px;
-    max-height: 800px;
-    box-sizing: border-box;
-    box-shadow: var(--jp-elevation-z20);
-    word-wrap: break-word;
-    border-radius: var(--jp-border-radius);
-    /* This is needed so that all font sizing of children done in ems is
+
+.sw-Dialog-content {
+  display: flex;
+  flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  background: var(--jp-layout-color1);
+  padding: 24px;
+  padding-bottom: 12px;
+  height: 80%;
+  width: 70%;
+  min-width: 300px;
+  min-height: 400px;
+  max-width: 1000px;
+  max-height: 800px;
+  box-sizing: border-box;
+  box-shadow: var(--jp-elevation-z20);
+  word-wrap: break-word;
+  border-radius: var(--jp-border-radius);
+  /* This is needed so that all font sizing of children done in ems is
      * relative to this base size */
-    font-size: var(--jp-ui-font-size1);
-    color: var(--jp-ui-font-color1);
-    resize: both;
-  }
-  
-  .sw-Dialog-button {
-    overflow: visible;
-  }
-  
-  button.sw-Dialog-button:focus {
-    outline: 1px solid var(--jp-brand-color1);
-    outline-offset: 4px;
-    -moz-outline-radius: 0px;
-  }
-  
-  button.sw-Dialog-button:focus::-moz-focus-inner {
-    border: 0;
-  }
-  
-  button.sw-Dialog-close-button {
-    padding: 0;
-    height: 100%;
-    min-width: unset;
-    min-height: unset;
-  }
-  
-  .sw-Dialog-header {
-    display: flex;
-    justify-content: space-between;
-    flex: 0 0 auto;
-    padding-bottom: 12px;
-    font-size: var(--jp-ui-font-size3);
-    font-weight: 400;
-    color: var(--jp-ui-font-color0);
-  }
-  
-  .sw-Dialog-body {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    font-size: var(--jp-ui-font-size1);
-    background: var(--jp-layout-color1);
-    overflow: auto;
-    min-width: 440px;
-    min-height: 650px;
-    width: 100%;
-  }
-  
-  .sw-Dialog-body table {
-    height: 100%;
-    width: 95%;
-    border-spacing:0px;
-  }
+  font-size: var(--jp-ui-font-size1);
+  color: var(--jp-ui-font-color1);
+  resize: both;
+}
 
-  .sw-Dialog-body tbody {
-    resize: horizontal;
-  }
+button.sw-Dialog-button:focus {
+  outline: 1px solid var(--jp-brand-color1);
+  outline-offset: 4px;
+  -moz-outline-radius: 0px;
+}
 
-  .sw-Dialog-project-icon *{
-    width: 50px;
-    right: 7px;
-    top: 5px;
-  }
+button.sw-Dialog-button:focus::-moz-focus-inner {
+  border: 0;
+}
 
-  .sw-Dialog-select {
-    width: 100%;
-    max-height: 40px;
-  }
-  .sw-Dialog-select td{
-    width: 50%;
-  }
+button.sw-Dialog-close-button {
+  padding: 0;
+  height: 100%;
+  min-width: unset;
+  min-height: unset;
+}
 
-  .sw-Dialog-tooltip{
-    width: 48%;
-    padding: 10px 0px 0px 2%;
-  }
+.sw-Dialog-header {
+  display: flex;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  padding-bottom: 12px;
+  font-size: var(--jp-ui-font-size3);
+  font-weight: 400;
+  color: var(--jp-ui-font-color0);
+}
 
-  .sw-Dialog-project-name{
-    width: 100%;
-    padding: 5px 5px 5px 0px;
-  }
+.sw-Dialog-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  font-size: var(--jp-ui-font-size1);
+  background: var(--jp-layout-color1);
+  overflow: auto;
+  width: 100%;
+}
+.sw-Dialog-body > * + * {
+  margin-top: 8px;
+}
 
-  .sw-Dialog-project-name input{
-    width: 100%;
-    padding: 5px 0px 5px 0px;
-    text-indent: 10px;
-  }
-  
-  .sw-Dialog-userscript{
-    padding: 15px 0px 0px 0px;
-  }
+.sw-Dialog-project-icon * {
+  width: 50px;
+  right: 7px;
+  top: 5px;
+}
 
-  .sw-Dialog-userscript-title{
-    display: 'flex';
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-  .sw-Dialog-userscript-tooltip, .sw-Dialog-release-tooltip
-  {
-    padding-left: 5px;
-  }
-  
-  .sw-Dialog-userscript:nth-child(2){
-    width: '100%';
-    height: '100%';
-    min-height: '100%' 
-  }
 
-  .sw-Dialog-title {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
-  
-  .sw-Dialog-body > .jp-select-wrapper {
-    width: 100%;
-  }
-  
-  .sw-Dialog-body > button {
-    padding: 0px 16px;
-  }
-  
-  .sw-Dialog-body > label {
-    line-height: 1.4;
-    color: var(--jp-ui-font-color0);
-  }
-  
-  .sw-Dialog-button.jp-mod-styled:not(:last-child) {
-    margin-right: 12px;
-  }
+.sw-Dialog-project-name {
+  display: flex;
+  align-items: center;
+  margin: 0 20px;
+}
 
-  .sw-Component-tooltip {
-    padding: '0px 5px 0px 10px'
-  }
+.sw-Dialog-project-name input {
+  flex-grow: 1;
+  width: 100%;
+  padding: 5px 0px 5px 0px;
+  text-indent: 10px;
+  margin-left: 20px;
+}
 
+.sw-Dialog-userscript {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+.sw-Dialog-userscript textarea {
+  flex: 1 1 auto;
+  resize: none;
+  min-height: 0;
+  overflow: auto;
+}
+
+.sw-Dialog-userscript-title {
+  display: flex;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+.sw-Dialog-userscript-tooltip,
+.sw-Dialog-release-tooltip {
+  padding-left: 5px;
+}
+
+.sw-Dialog-title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.sw-Dialog-body > .jp-select-wrapper {
+  width: 100%;
+}
+
+.sw-Dialog-body > button {
+  padding: 0px 16px;
+}
+
+.sw-Dialog-body > label {
+  line-height: 1.4;
+  color: var(--jp-ui-font-color0);
+}
+
+.sw-Dialog-button.jp-mod-styled:not(:last-child) {
+  margin-right: 12px;
+}
 
 /* required to disable "new" notebook and console from the main menu */
 /* with the concept of project, notebook/console can be only created in the launcher, when kernel manager */
 /* have kernels available, otherwise the user will have a kernel error, becuase of kernels are not available*/
-li[data-command="notebook:create-new"] {
-  display:none;
+li[data-command='notebook:create-new'] {
+  display: none;
 }
 
-li[data-command="console:create"] {
-  display:none;
+li[data-command='console:create'] {
+  display: none;
 }
-li[data-command="terminal:create-new"] {
-  display:none;
+li[data-command='terminal:create-new'] {
+  display: none;
 }
 
+.sw-Dialog-select-stack {
+  display: flex;
+}
+
+.sw-Dialog-stack-options {
+  display: flex;
+  align-items: flex-end;
+}
+.sw-Dialog-stack-options > * {
+  flex-grow: 1;
+}
+.sw-Dialog-stack-options > * + * {
+  margin-left: 10px;
+}
+.sw-Dialog-stack-option-label {
+  display: flex;
+  margin-bottom: 4px;
+}
+
+.sw-Dialog-button-area {
+  display: flex;
+  padding: 8px 0px;
+  justify-content: flex-end;
+}
