@@ -117,7 +117,7 @@ export function editProjectRequest(
  *
  * @returns json with the software stack names, releases, platform, etc..
  */
-export function kernelsInfoRequest(): any {
+export function stacksInfoRequest(): any {
   try {
     return request<any>('swan/stacks/info', {
       method: 'GET'

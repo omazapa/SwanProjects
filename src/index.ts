@@ -24,7 +24,7 @@ namespace CommandIDs {
 }
 
 import { ILauncher } from '@jupyterlab/launcher';
-import { kernelsInfoRequest } from './request';
+import { stacksInfoRequest } from './request';
 
 /**
  * Initialization data for the server-extension-example extension.
@@ -48,7 +48,7 @@ const extension: JupyterFrontEndPlugin<void> = {
       label: 'New',
       caption: 'New',
       execute: async args => {
-        const stacks = await kernelsInfoRequest();
+        const stacks = await stacksInfoRequest();
         ProjectDialog.OpenModal(
           {
             name: '',
@@ -69,7 +69,7 @@ const extension: JupyterFrontEndPlugin<void> = {
       label: 'Edit',
       caption: 'Edit',
       execute: async args => {
-        const stacks = await kernelsInfoRequest();
+        const stacks = await stacksInfoRequest();
         ProjectDialog.OpenModal(
           {
             name: args.name as string,
