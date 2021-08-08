@@ -37,7 +37,6 @@ class ProjectInfoHandler(APIHandler):
         input_data = self.get_json_body()
         path = input_data["path"]
         project = get_project_path(path)
-        self.kernel_spec_manager.set_path(path)
         project_data = {}
         if project is not None:
             project_data = get_project_info(project)
@@ -77,11 +76,18 @@ class KernelSpecManagerPathHandler(APIHandler):
         """
         input_data = self.get_json_body()
         path = input_data["path"]
+
         self.log.info(f"KernelSpecManagerPathHandler = {input_data}")
-        self.kernel_spec_manager.set_path(path)
+
         project = get_project_path(path)
-        self.finish(json.dumps(
-            {"is_project": project is not None, 'path': path}))
+        if self.kernel_spec_manager.set_path(path):
+            data = {"status": True, "is_project": project is not None,
+                    "msg": f"SWAN kernel spec manager set to path: {path}"}
+            self.finish(json.dumps(data))
+        else:
+            data = {"status": False, "is_project": project is not None,
+                    "msg": f"Error setting SWAN kernel spec manager to path: {path}"}
+            self.finish(json.dumps(data))
 
 
 class CreateProjectHandler(APIHandler):
@@ -233,7 +239,8 @@ class EditProjectHandler(APIHandler):
                         "msg": f"Error editing stack, platform or relase for project {name},  traceback: {output}"}
                 self.finish(json.dumps(data))
                 return
-
+        # To add validation here! I need to be sure we have also kernel specs and pythons tags,
+        # other wise swan_kmspecs must be called.
         data = {"status": True, "project_dir": f"SWAN_projects/{name}",
                 "msg": f"edited project {name}"}
         self.finish(json.dumps(data))

@@ -7,7 +7,7 @@ import shutil
 
 from jupyter_client.kernelspec import KernelSpecManager, NoSuchKernel
 from swanprojects.utils import (get_project_info, get_project_name,
-                                get_project_path)
+                                get_project_path, get_env_isolated)
 from traitlets import Unicode
 from traitlets.config import Configurable
 
@@ -58,36 +58,33 @@ class SwanKernelSpecManager(KernelSpecManager):
         self.project = get_project_path(path)
         if self.project is None:
             self.kernel_dirs = []
+            return True
         else:
             self.project_info = get_project_info(self.project)
             self.project_name = get_project_name(self.project)
-            self.kernel_dirs = self.project_info["kernel_dirs"]
-            local_kernels = self.project + "/.local/share/jupyter/kernels/"
-            for version in ["2", "3"]:
-                python = "python" + version
-                if self.project_info[python]["found"] and self.project_info[python]["ipykernel"]:
-                    kerne_dir = local_kernels + python
-                    if not os.path.exists(kerne_dir):
-                        self.save_native_spec(
-                            kerne_dir, self.project_info[python]["path"], "Python " + version)
-            self.kernel_dirs.append(local_kernels)
-        self.log.debug(f"KERNEL DIRS = {self.kernel_dirs}")
-        self.log.debug(f"specs:\n {self.get_all_specs()}")
+            if "kernel_dirs" in self.project_info:
+                self.kernel_dirs = self.project_info["kernel_dirs"]
+                local_kernels = self.project + "/.local/share/jupyter/kernels/"
+                for version in ["2", "3"]:
+                    python = "python" + version
+                    if self.project_info[python]["found"] and self.project_info[python]["ipykernel"]:
+                        kerne_dir = local_kernels + python
+                        if not os.path.exists(kerne_dir):
+                            self.save_native_spec(
+                                kerne_dir, self.project_info[python]["path"], "Python " + version)
+                self.kernel_dirs.append(local_kernels)
+                self.log.debug(f"KERNEL DIRS = {self.kernel_dirs}")
+                self.log.debug(f"specs:\n {self.get_all_specs()}")
+                return True
+            else:
+                self.log.debug(
+                    f"Error setting kernel paths, project {self.project_name} corrupted.")
+                self.kernel_dirs = []
+                return False
 
     def wrap_kernel_specs(self, project_name, kspec):
 
-        argv = ["env", "-i", "HOME=%s" % os.environ["HOME"]]
-
-        # checking if we are on EOS to add the env variables
-        # we required this to read/write in a isolate environment with EOS
-        if "OAUTH2_FILE" in os.environ:
-            argv.append("OAUTH2_FILE=%s" % os.environ["OAUTH2_FILE"])
-        if "OAUTH2_TOKEN" in os.environ:
-            argv.append("OAUTH2_TOKEN=%s" % os.environ["OAUTH2_TOKEN"])
-        if "OAUTH_INSPECTION_ENDPOINT" in os.environ:
-            argv.append("OAUTH_INSPECTION_ENDPOINT=%s" %
-                        os.environ["OAUTH_INSPECTION_ENDPOINT"])
-
+        argv = get_env_isolated()
         argv += ["/bin/bash", "-c", "swan_env {} {} ".format(
             project_name, ".") + "'" + " ".join(kspec.argv) + "'"
         ]
