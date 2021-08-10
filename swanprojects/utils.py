@@ -21,6 +21,9 @@ def get_project_info(path):
 
 
 def get_project_path(cwd):
+    if cwd.startswith('/'):
+        cwd = cwd[1:]
+
     paths = cwd.split(os.path.sep)
     cwd_current = cwd
     for i in range(len(paths)):

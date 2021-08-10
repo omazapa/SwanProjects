@@ -35,7 +35,9 @@ class ProjectInfoHandler(APIHandler):
         to load and unload the kernels according to the project information.
         """
         input_data = self.get_json_body()
+        self.log.info(f"ProjectInfoHandler = {input_data}")
         path = input_data["path"]
+
         project = get_project_path(path)
         project_data = {}
         if project is not None:
