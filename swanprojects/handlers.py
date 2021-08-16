@@ -173,11 +173,26 @@ class EditProjectHandler(APIHandler):
         """
         input_data = self.get_json_body()
         print(input_data)
-        old_name = input_data["old_name"]
-        old_stack = input_data["old_stack"]
-        old_platform = input_data["old_platform"]
-        old_release = input_data["old_release"]
-        old_userscript = input_data["old_userscript"]
+
+        old_name = ""
+        if "old_name" in input_data.keys():
+            old_name = input_data["old_name"]
+
+        old_stack = ""
+        if "old_stack" in input_data.keys():
+            old_stack = input_data["old_stack"]
+
+        old_platform = ""
+        if "old_platform" in input_data.keys():
+            old_platform = input_data["old_platform"]
+
+        old_release = ""
+        if "old_release" in input_data.keys():
+            old_release = input_data["old_release"]
+
+        old_userscript = ""
+        if "old_userscript" in input_data.keys():
+            old_userscript = input_data["old_userscript"]
 
         name = input_data["name"]
         stack = input_data["stack"]  # CMSSW/LCG

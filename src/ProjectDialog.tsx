@@ -62,7 +62,8 @@ export namespace ProjectDialog {
   export async function OpenModal(
     options: ISWANOptions,
     create: boolean,
-    commands: CommandRegistry
+    commands: CommandRegistry,
+    corrupted?: boolean
   ): Promise<any> {
     const _spinner = new Spinner();
     const old_options = Object.assign({}, options);
@@ -140,7 +141,10 @@ export namespace ProjectDialog {
             }
 
             //verifying that options where changed, othewise I will not send the request
-            if (JSON.stringify(old_options) !== JSON.stringify(options)) {
+            if (
+              JSON.stringify(old_options) !== JSON.stringify(options) ||
+              corrupted
+            ) {
               valid = true;
             } else {
               valid = false;
