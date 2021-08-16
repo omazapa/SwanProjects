@@ -172,7 +172,11 @@ class EditProjectHandler(APIHandler):
         and metadata in the .swanproject is updated.
         """
         input_data = self.get_json_body()
-        print(input_data)
+        print(f"EditProjectHandler = {input_data}")
+
+        corrupted = False
+        if "corrupted" in input_data.keys():
+            corrupted = input_data["corrupted"]
 
         old_name = ""
         if "old_name" in input_data.keys():
@@ -225,7 +229,7 @@ class EditProjectHandler(APIHandler):
                 self.finish(json.dumps(data))
                 return
 
-        if stack != old_stack or platform != old_platform or release != old_release:
+        if stack != old_stack or platform != old_platform or release != old_release or corrupted:
             swan_project_file = project_dir + os.path.sep + '.swanproject'
             swan_project_content = {'stack': stack, 'release': release,
                                     'platform': platform}
