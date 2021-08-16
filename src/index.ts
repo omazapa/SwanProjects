@@ -80,7 +80,8 @@ const extension: JupyterFrontEndPlugin<void> = {
             stacks_options: stacks['stacks']
           },
           false,
-          commands
+          commands,
+          args.corrupted as boolean
         );
       }
     });

@@ -13,14 +13,21 @@ def has_project_file(path):
 def get_project_info(path):
     if has_project_file(path):
         swanfile = path + os.path.sep + ".swanproject"
-        with open(swanfile) as json_file:
-            data = json.load(json_file)
-        return data
+        try:
+            with open(swanfile) as json_file:
+                data = json.load(json_file)
+            return data
+        except Exception as e:
+            print(e)
+            return {}
     else:
-        None
+        return {}
 
 
 def get_project_path(cwd):
+    if cwd.startswith('/'):
+        cwd = cwd[1:]
+
     paths = cwd.split(os.path.sep)
     cwd_current = cwd
     for i in range(len(paths)):
