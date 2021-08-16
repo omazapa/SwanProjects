@@ -77,11 +77,11 @@ const extension: JupyterFrontEndPlugin<void> = {
             release: args.release as string,
             platform: args.platform as string,
             user_script: args.user_script as string,
-            stacks_options: stacks['stacks']
+            stacks_options: stacks['stacks'],
+            corrupted: args.corrupted as boolean
           },
           false,
-          commands,
-          args.corrupted as boolean
+          commands
         );
       }
     });
