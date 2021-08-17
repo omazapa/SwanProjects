@@ -39,6 +39,7 @@ export namespace ProjectDialog {
     platform?: string;
     user_script?: string;
     stacks_options?: JSONObject;
+    corrupted?: boolean;
   }
 
   /**
@@ -62,8 +63,7 @@ export namespace ProjectDialog {
   export async function OpenModal(
     options: ISWANOptions,
     create: boolean,
-    commands: CommandRegistry,
-    corrupted?: boolean
+    commands: CommandRegistry
   ): Promise<any> {
     const _spinner = new Spinner();
     const old_options = Object.assign({}, options);
@@ -137,14 +137,17 @@ export namespace ProjectDialog {
                   'Project already exists.'
                 );
                 valid = false;
+                continue;
               }
             }
 
+            if (options.corrupted) {
+              valid = true;
+              break;
+            }
+
             //verifying that options where changed, othewise I will not send the request
-            if (
-              JSON.stringify(old_options) !== JSON.stringify(options) ||
-              corrupted
-            ) {
+            if (JSON.stringify(old_options) !== JSON.stringify(options)) {
               valid = true;
             } else {
               valid = false;
