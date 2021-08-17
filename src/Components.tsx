@@ -52,6 +52,7 @@ export function HelpTooltip(props: {
 export function Card(props: {
   label: string;
   icon: LabIcon;
+  isSelected?: boolean;
   updateCallback: (stack: string) => void;
 }): React.ReactElement<any> {
   const title = props.label;
@@ -69,7 +70,11 @@ export function Card(props: {
   };
   return (
     <div
-      style={{ height: '75px', width: '75px' }}
+      style={{
+        height: '75px',
+        width: '75px',
+        border: props.isSelected ? '2px solid var(--jp-brand-color1)' : ''
+      }}
       className="jp-LauncherCard"
       id={props.label}
       title={title}
@@ -77,7 +82,7 @@ export function Card(props: {
       onKeyPress={onkeypress}
       tabIndex={100}
     >
-      <div className="jp-LauncherCard-icon" style={{ paddingTop: '4px' }}>
+      <div className="sw jp-LauncherCard-icon" style={{ paddingTop: '4px' }}>
         {
           <LabIcon.resolveReact
             icon={props.icon}
