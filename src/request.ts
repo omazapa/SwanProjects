@@ -101,7 +101,6 @@ export function editProjectRequest(
     platform: options.platform,
     user_script: options.user_script,
     corrupted: options.corrupted
-
   };
   try {
     return request<any>('swan/project/edit', {

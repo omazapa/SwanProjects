@@ -120,11 +120,6 @@ export namespace ProjectDialog {
               valid = false;
             }
           } else {
-            if(options.corrupted)
-            {
-              valid=true;
-              break
-            }
             //this is a special case for editing because I need to check that the new name of the project doesn't exists.
             if (old_options.name !== options.name) {
               const content = await contentRequest(
@@ -142,11 +137,17 @@ export namespace ProjectDialog {
                   'Project already exists.'
                 );
                 valid = false;
+                continue;
               }
             }
 
+            if (options.corrupted) {
+              valid = true;
+              break;
+            }
+
             //verifying that options where changed, othewise I will not send the request
-            if ( JSON.stringify(old_options) !== JSON.stringify(options) ) {
+            if (JSON.stringify(old_options) !== JSON.stringify(options)) {
               valid = true;
             } else {
               valid = false;
