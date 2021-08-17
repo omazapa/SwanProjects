@@ -6,7 +6,7 @@ import {
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
-import { ICommandPalette } from '@jupyterlab/apputils';
+import { ICommandPalette, IThemeManager } from '@jupyterlab/apputils';
 import { swanProjectIcon } from './icons';
 
 import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
@@ -32,16 +32,34 @@ import { kernelsInfoRequest } from './request';
 const extension: JupyterFrontEndPlugin<void> = {
   id: 'swanprojects',
   autoStart: true,
-  optional: [ILauncher],
+  optional: [ILauncher, IThemeManager],
   requires: [ICommandPalette],
   activate: async (
     app: JupyterFrontEnd,
     palette: ICommandPalette,
     launcher: ILauncher | null,
+    themeManager: IThemeManager,
     labShell: ILabShell,
     browserFactory: IFileBrowserFactory
   ) => {
     console.log('JupyterLab extension swanprojects is activated!');
+
+    let theme: 'light' | 'dark' = 'light';
+    if (themeManager) {
+      if (themeManager.theme && themeManager.isLight(themeManager.theme)) {
+        theme = 'light';
+      } else {
+        theme = 'dark';
+      }
+      themeManager.themeChanged.connect((_, args) => {
+        if (themeManager.isLight(args.newValue)) {
+          theme = 'light';
+        } else {
+          theme = 'dark';
+        }
+      });
+    }
+
     const { commands } = app;
     commands.addCommand(CommandIDs.projectDialog, {
       icon: swanProjectIcon,
@@ -59,7 +77,8 @@ const extension: JupyterFrontEndPlugin<void> = {
             stacks_options: stacks['stacks']
           },
           true,
-          commands
+          commands,
+          theme
         );
       }
     });
@@ -81,7 +100,8 @@ const extension: JupyterFrontEndPlugin<void> = {
             corrupted: args.corrupted as boolean
           },
           false,
-          commands
+          commands,
+          theme
         );
       }
     });
