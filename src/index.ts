@@ -100,7 +100,8 @@ const extension: JupyterFrontEndPlugin<void> = {
           },
           false,
           commands,
-          theme
+          theme,
+          args.corrupted as boolean
         );
       }
     });

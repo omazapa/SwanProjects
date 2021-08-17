@@ -45,7 +45,8 @@ export namespace ProjectDialog {
     options: ISWANOptions,
     create: boolean,
     commands: CommandRegistry,
-    theme: 'light' | 'dark'
+    theme: 'light' | 'dark',
+    corrupted?: boolean
   ): Promise<any> {
     const _spinner = new Spinner();
     const old_options = Object.assign({}, options);
@@ -122,7 +123,10 @@ export namespace ProjectDialog {
             }
 
             //verifying that options where changed, othewise I will not send the request
-            if (JSON.stringify(old_options) !== JSON.stringify(options)) {
+            if (
+              JSON.stringify(old_options) !== JSON.stringify(options) ||
+              corrupted
+            ) {
               valid = true;
             } else {
               valid = false;
