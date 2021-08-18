@@ -97,4 +97,8 @@ def get_env_isolated():
     # special case when the package was not installed like root, useful for development
     command.append(
         "PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:{}/.local/bin/".format(os.environ["HOME"]))
+    command.append(
+        "LD_LIBRARY_PATH=/usr/lib:/usr/local/lib"
+        )
+
     return command
