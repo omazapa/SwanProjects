@@ -21,6 +21,7 @@ export namespace ProjectDialog {
     platform?: string;
     user_script?: string;
     stacks_options?: { [stack: string]: { [release: string]: Array<string> } };
+    corrupted?: boolean;
   }
 
   /**
@@ -119,14 +120,17 @@ export namespace ProjectDialog {
                   'Project already exists.'
                 );
                 valid = false;
+                continue;
               }
             }
 
+            if (options.corrupted) {
+              valid = true;
+              break;
+            }
+
             //verifying that options where changed, othewise I will not send the request
-            if (
-              JSON.stringify(old_options) !== JSON.stringify(options) ||
-              corrupted
-            ) {
+            if (JSON.stringify(old_options) !== JSON.stringify(options)) {
               valid = true;
             } else {
               valid = false;

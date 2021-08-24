@@ -22,7 +22,8 @@ if [[ $# -gt 0 ]] ; then
              OAUTH2_TOKEN=$OAUTH2_TOKEN \
              OAUTH_INSPECTION_ENDPOINT=$OAUTH_INSPECTION_ENDPOINT \
              PROJECT=$PROJECT \
-             PROJECT_PATH=$PROJECT_PATH PS1=$PS1 \
+             PROJECT_PATH=$PROJECT_PATH PS1="$PS1" \
+             PATH="/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:$HOME/.local/bin/" \
              bash -c "swan_env $PROJECT $PROJECT_PATH  bash --rcfile  <(echo 'PS1=\"($PROJECT) $PS1 \"') " 
     else
       echo "Error: project $PROJECT_PATH doesn't exists" >&2
