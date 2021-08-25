@@ -1,15 +1,12 @@
 // Copyright (c) SWAN Development Team.
 // Author: Omar.Zapata@cern.ch 2021
 import {
-  ILabShell,
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 
 import { ICommandPalette, IThemeManager } from '@jupyterlab/apputils';
 import { swanProjectIcon } from './icons';
-
-import { IFileBrowserFactory } from '@jupyterlab/filebrowser';
 
 const PALETTE_CATEGORY = 'Project';
 
@@ -26,21 +23,22 @@ namespace CommandIDs {
 import { ILauncher } from '@jupyterlab/launcher';
 import { kernelsInfoRequest } from './request';
 
+import { IMainMenu } from '@jupyterlab/mainmenu';
+
 /**
  * Initialization data for the server-extension-example extension.
  */
 const extension: JupyterFrontEndPlugin<void> = {
   id: 'swanprojects',
   autoStart: true,
-  optional: [ILauncher, IThemeManager],
-  requires: [ICommandPalette],
+  optional: [],
+  requires: [ICommandPalette, ILauncher, IThemeManager, IMainMenu],
   activate: async (
     app: JupyterFrontEnd,
     palette: ICommandPalette,
-    launcher: ILauncher | null,
+    launcher: ILauncher,
     themeManager: IThemeManager,
-    labShell: ILabShell,
-    browserFactory: IFileBrowserFactory
+    mainMenu: IMainMenu
   ) => {
     console.log('JupyterLab extension swanprojects is activated!');
 
@@ -61,10 +59,11 @@ const extension: JupyterFrontEndPlugin<void> = {
     }
 
     const { commands } = app;
+
     commands.addCommand(CommandIDs.projectDialog, {
       icon: swanProjectIcon,
-      label: 'New',
-      caption: 'New',
+      label: 'New Project',
+      caption: 'New Project',
       execute: async args => {
         const stacks = await kernelsInfoRequest();
         ProjectDialog.OpenModal(
@@ -123,6 +122,16 @@ const extension: JupyterFrontEndPlugin<void> = {
         args: { isPalette: true },
         category: PALETTE_CATEGORY
       });
+    }
+    const command = CommandIDs.projectDialog;
+    app.contextMenu.addItem({
+      command: command,
+      rank: 0,
+      selector: '.jp-DirListing-content'
+    });
+
+    if (mainMenu) {
+      mainMenu.fileMenu.newMenu.addGroup([{ command: command }], 0);
     }
   }
 };
