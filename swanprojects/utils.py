@@ -7,8 +7,20 @@ def has_project_file(path):
     Method to check if .swanproject exists
     path: path to check
     """
-    return os.path.exists(path + os.path.sep + ".swanproject")
+    if is_inside_project_folder(path):
+        return os.path.exists(path + os.path.sep + ".swanproject")
+    else:
+        return False
 
+def is_inside_project_folder(path):
+    if path.startswith('/'):
+        path = path[1:]
+
+    paths = path.split(os.path.sep)
+    print(path)
+    print(paths)
+    #checking if we are inside the SWAN_projects folder
+    return len(paths)>0 and paths[0] != "SWAN_projects"
 
 def get_project_info(path):
     if has_project_file(path):
@@ -30,6 +42,9 @@ def get_project_path(cwd):
 
     paths = cwd.split(os.path.sep)
     cwd_current = cwd
+    if not is_inside_project_folder(cwd):
+        return None
+
     for i in range(len(paths)):
         if has_project_file(cwd_current):
             return cwd_current
