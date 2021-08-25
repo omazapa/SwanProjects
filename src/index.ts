@@ -61,10 +61,11 @@ const extension: JupyterFrontEndPlugin<void> = {
     }
 
     const { commands } = app;
+    
     commands.addCommand(CommandIDs.projectDialog, {
       icon: swanProjectIcon,
-      label: 'New',
-      caption: 'New',
+      label: 'New Project',
+      caption: 'New Project',
       execute: async args => {
         const stacks = await kernelsInfoRequest();
         ProjectDialog.OpenModal(
@@ -124,6 +125,9 @@ const extension: JupyterFrontEndPlugin<void> = {
         category: PALETTE_CATEGORY
       });
     }
+    const command = CommandIDs.projectDialog;
+    app.contextMenu.addItem({ command:command, rank:-1, selector:"body"})
+
   }
 };
 
