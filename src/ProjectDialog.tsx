@@ -2,9 +2,7 @@
 // Author: Omar Zapata CERN 2021
 
 import { showErrorMessage } from '@jupyterlab/apputils';
-import { Dialog, showDialog } from './dialog';
-import { ProjectWidget } from './ProjectWidget';
-import { JSONObject } from '@lumino/coreutils';
+import { showDialog } from './dialog';
 import {
   contentRequest,
   createProjectRequest,
@@ -16,29 +14,13 @@ import { CommandRegistry } from '@lumino/commands';
  * Namespace for project dialogs
  */
 export namespace ProjectDialog {
-  /**
-   * Common constructor options for input dialogs
-   */
-  export interface IOptions {
-    /**
-     * The top level text for the dialog.  Defaults to an empty string.
-     */
-    title?: Dialog.Header;
-  }
-
-  /**
-   * options for project dialogs
-   */
-  export interface ISWANOptions extends IOptions {
-    /**
-     * Default
-     */
+  export interface ISWANOptions {
     name?: string;
     stack?: string;
     release?: string;
     platform?: string;
     user_script?: string;
-    stacks_options?: JSONObject;
+    stacks_options?: { [stack: string]: { [release: string]: Array<string> } };
     corrupted?: boolean;
   }
 
@@ -63,11 +45,12 @@ export namespace ProjectDialog {
   export async function OpenModal(
     options: ISWANOptions,
     create: boolean,
-    commands: CommandRegistry
+    commands: CommandRegistry,
+    theme: 'light' | 'dark',
+    corrupted?: boolean
   ): Promise<any> {
     const _spinner = new Spinner();
     const old_options = Object.assign({}, options);
-    const dialog = new ProjectWidget(options);
 
     function startSpinner(): void {
       /**
@@ -89,17 +72,17 @@ export namespace ProjectDialog {
     }
 
     let valid = false;
+    let dialogResult: {
+      changesSaved: boolean;
+      newOptions?: ISWANOptions;
+    } | null = null;
     do {
-      dialog.clicked = false;
-      const modal = showDialog({
+      dialogResult = await showDialog({
         ...options,
-        body: dialog,
-        buttons: [],
-        focusNodeSelector: 'input'
+        theme
       });
-      await modal;
-      if (dialog.clicked) {
-        options = dialog.getOptions();
+      if (dialogResult?.changesSaved && dialogResult?.newOptions) {
+        options = dialogResult.newOptions;
         if (options.name?.trim() !== '') {
           //check is project already exists
           if (create) {
@@ -166,8 +149,7 @@ export namespace ProjectDialog {
         valid = true;
       }
     } while (!valid);
-    const result: any = null;
-    if (dialog.clicked) {
+    if (dialogResult.changesSaved) {
       startSpinner();
       if (create) {
         await createProjectRequest(options)
@@ -232,6 +214,5 @@ export namespace ProjectDialog {
       }
       stopSpinner();
     }
-    return result;
   }
 }
