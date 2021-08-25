@@ -126,7 +126,8 @@ const extension: JupyterFrontEndPlugin<void> = {
       });
     }
     const command = CommandIDs.projectDialog;
-    app.contextMenu.addItem({ command:command, rank:-1, selector:"body"})
+    app.contextMenu.addItem({ command:command, rank:0, selector:".jp-DirListing-content"})
+
 
   }
 };
