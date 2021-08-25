@@ -136,7 +136,6 @@ export const ProjectWidget: React.FunctionComponent<{
             fullWidth
           >
             {availableReleases.map((release, index) => {
-              console.log(release, index);
               return (
                 <MenuItem value={release} key={index}>
                   {release}
