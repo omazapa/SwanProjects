@@ -1,5 +1,6 @@
 // Copyright (c) SWAN Development Team.
 // Author: Omar.Zapata@cern.ch 2021
+
 import * as React from 'react';
 
 import Button from '@material-ui/core/Button';

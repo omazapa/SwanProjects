@@ -1,3 +1,6 @@
+// Copyright (c) SWAN Development Team.
+// Author: Omar.Zapata@cern.ch 2021
+
 import React from 'react';
 import { ReactWidget } from '@jupyterlab/apputils';
 import { Widget } from '@lumino/widgets';

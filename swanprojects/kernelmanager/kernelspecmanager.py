@@ -33,8 +33,8 @@ class SwanKernelSpecManager(KernelSpecManager):
 
     def save_native_spec(self, kernel_dir, python_path, display_name):
         """
-        This function creates a default kernel with info from the stack.
-        It's only necessary for CMSSW stacks as those don't have a Python kernel
+        This function creates a default kernel with the info from the stack.
+        It's necessary for CMSSW stacks and those that doesn't have a Python kernel in json file.
         """
         self.log.info(
             f"copying resources from {self.ksmconfig.kernel_resources} to {kernel_dir}")
@@ -102,8 +102,8 @@ class SwanKernelSpecManager(KernelSpecManager):
 
     def get_kernel_spec(self, kernel_name):
         """ Returns a :class:`KernelSpec` instance for the given kernel_name.
-            Additionally, SWAN kernelspecs are generated on the fly
-            accordingly with the detected envitonments.
+            Also, SWAN kernelspecs are generated on the fly
+              according to the detected environments.
         """
         kspec = super(SwanKernelSpecManager, self).get_kernel_spec(kernel_name)
         if self.project is None:

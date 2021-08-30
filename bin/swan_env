@@ -7,17 +7,6 @@
 # CWD: working directory path
 PARAMETERS=($@) #WARNING: empty options disappear
 
-# Source global definitions (this is producing error en swan-qa)
-# /scratch/ozapatam/.bash_profile is loaded 
-# if [ -f /etc/bashrc ]; then
-# 	. /etc/bashrc
-# fi
-# # Source HOME definitions
-# if [ -f $HOME/.bashrc ]; then
-# 	. $HOME/.bashrc
-# fi
-
-
 #Checking if jq is installed
 if ! [ -x "$(command -v jq)" ]; then
   echo 'Error: jq is not installed.' >&2
@@ -53,11 +42,6 @@ for j in $(seq 0 1 $((i)));do
 done
 
 COMMAND=${PARAMETERS[@]}
-
-#if [ "$SWAN_ENV_SILENCE" != "1" ]; then
-#clear
-#fi
-
 
 if [[ $STACK == "LCG" ]]; then 
     #example: swan_env SFT LCG_96 x86_64-centos7-gcc8-opt "" $PWD  which python

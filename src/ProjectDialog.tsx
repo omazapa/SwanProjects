@@ -39,6 +39,7 @@ export namespace ProjectDialog {
    * @param options - The dialog setup options.
    * @param create - true for a new project, false to modify.
    * @param commands - CommandRegistry object
+   * @param theme - colors in the interface 'light' | 'dark'.
    * @returns A promise that resolves with whether the dialog was accepted
    */
   // eslint-disable-next-line  no-inner-declarations

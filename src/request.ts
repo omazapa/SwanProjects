@@ -1,5 +1,6 @@
 // Copyright (c) SWAN Development Team.
 // Author: Omar.Zapata@cern.ch 2021
+
 import { URLExt } from '@jupyterlab/coreutils';
 
 import { ServerConnection } from '@jupyterlab/services';

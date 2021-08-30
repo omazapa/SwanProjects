@@ -83,6 +83,9 @@ def check_project_info(project_info):
 
 
 def get_env_isolated():
+    """
+    Command line required with environmental variables to isolate the environment.
+    """
     command = ["env", "-i", "HOME=%s" % os.environ["HOME"]]
     # checking if we are on EOS to add the env variables
     # we required this to read/write in a isolate environment with EOS
