@@ -12,20 +12,15 @@ Server and Lab extension that provides:
 
 ## Requirements
 
-JupyterLab~=3.0.x and SwanContents
+JupyterLab~=3.0 and SwanContents
 
 ## Install
 
-Install the package and the nbextension:
+Install the package and the lab extension:
 
 ```bash
 pip install swanprojects
-jupyter nbextension install --user --py swanprojects
-jupyter labextension install swanprojects
-jupyter labextension enable  swanprojects
-jupyter lab build
 ```
-
 
 To replace the default Jupyter Contents Manager and Kernel Spec Manager in the JupyterLab Notebook configuration (i.e in `jupyter_notebook_config.py`), set the following:
 
@@ -38,4 +33,3 @@ c.KernelSpecManager.ensure_native_kernel = False
 c.SwanProjects.stacks_path=path_to_stacks.json
 c.SwanKSMConfig.kernel_resources=path_to_native_kernel_resources
 ```
-
