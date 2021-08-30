@@ -12,7 +12,7 @@ Server and Lab extension that provides:
 
 ## Requirements
 
-JupyterLab~=2 and SwanContents
+JupyterLab~=3.0.x and SwanContents
 
 ## Install
 
